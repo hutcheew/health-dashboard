@@ -315,27 +315,19 @@ Phase target: {phase_info['phase']['km_min']}–{phase_info['phase']['km_max']} 
 
 Give 3-4 bullet insights. Each bullet: one sentence, specific and actionable. Flag any Achilles risk clearly. End with one sentence on today's recommended training."""
 
+        api_key = os.environ.get("GEMINI_API_KEY", "")
         resp = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "Content-Type": "application/json",
-                "x-api-key": os.environ.get("ANTHROPIC_API_KEY", ""),
-                "anthropic-version": "2023-06-01",
-            },
-            json={
-                "model": "claude-sonnet-4-20250514",
-                "max_tokens": 500,
-                "messages": [{"role": "user", "content": prompt}]
-            },
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
+            headers={"Content-Type": "application/json"},
+            json={"contents": [{"parts": [{"text": prompt}]}]},
             timeout=30
         )
         result = resp.json()
         print(f"  API status: {resp.status_code}")
-        print(f"  API response keys: {list(result.keys())}")
         if "error" in result:
             print(f"  API error: {result['error']}")
             return f"AI commentary unavailable: {result['error'].get('message', 'unknown error')}"
-        return result["content"][0]["text"]
+        return result["candidates"][0]["content"]["parts"][0]["text"]
     except Exception as e:
         return f"AI commentary unavailable: {e}"
 
