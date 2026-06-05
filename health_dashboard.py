@@ -1187,6 +1187,8 @@ def main():
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
 
     print("Getting AI commentary...")
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    print(f"  API key present: {bool(api_key)} length: {len(api_key)}")
     ai_commentary = get_ai_commentary(garmin_data, bp_readings, phase_info, achilles)
     print("  Done.")
 
