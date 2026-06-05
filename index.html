@@ -193,6 +193,15 @@
     transition: width 0.3s;
   }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ai-commentary { display: flex; flex-direction: column; gap: 10px; }
+  .ai-row {
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border-left: 3px solid #818cf8;
+    line-height: 1.6;
+    font-size: 13px;
+  }
 </style>
 </head>
 <body>
@@ -238,6 +247,97 @@
       <div class="card-value">542</div>
       <div class="card-unit">minutes</div>
     </div>
+  </div>
+</div>
+
+<!-- AI COMMENTARY -->
+<div class="section">
+  <div class="section-title">AI Coach Commentary</div>
+  <div class="card" style="border-top-color:#818cf8; padding: 20px;">
+    <div class="ai-commentary">
+      <div class="ai-row">AI commentary unavailable: 'content'</div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TRAINING PHASE -->
+<div class="section">
+  <div class="section-title">Training Plan — Week 6 of 28</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr))">
+    <div class="card accent2">
+      <div class="card-label">Current Week</div>
+      <div class="card-value">6</div>
+      <div class="card-unit">of 28 total</div>
+    </div>
+    <div class="card accent2">
+      <div class="card-label">Phase</div>
+      <div class="card-value" style="font-size:16px; padding-top:4px">Return to Run</div>
+      <div class="card-unit">Week 2 of 4</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Phase Target</div>
+      <div class="card-value" style="font-size:20px">30–40</div>
+      <div class="card-unit">km / week</div>
+    </div>
+    <div class="card">
+      <div class="card-label">This Week</div>
+      <div class="card-value" style="font-size:26px">17.4</div>
+      <div class="card-unit">km so far</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Days to Race</div>
+      <div class="card-value">129</div>
+      <div class="card-unit">12 Oct 2026</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Phase Focus</div>
+      <div class="card-value" style="font-size:12px; padding-top:6px; line-height:1.4">Gradual mileage build, form drills</div>
+    </div>
+  </div>
+  <!-- Phase progress bar -->
+  <div class="chart-card" style="margin-top:12px; padding: 14px 16px;">
+    <div class="chart-title" style="margin-bottom:10px">28-week plan progress</div>
+    <div style="position:relative; height:24px; background:var(--surface2); border-radius:4px; overflow:hidden;">
+      <div style="position:absolute; left:0; top:0; bottom:0; width:18%; background:linear-gradient(90deg,#818cf8,#38bdf8); border-radius:4px; opacity:0.7;"></div>
+      <div style="position:absolute; left:18%; top:0; bottom:0; width:2px; background:#fff; opacity:0.8;"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:var(--muted);">
+      <span>May 1</span><span>Rehab</span><span>Return</span><span>Build</span><span>Specific</span><span>Taper</span><span>Oct 12</span>
+    </div>
+  </div>
+</div>
+
+<!-- ACHILLES LOAD -->
+<div class="section">
+  <div class="section-title">Achilles Load Score</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); margin-bottom:12px">
+    <div class="card" style="border-top-color:#4ade80">
+      <div class="card-label">Load Score</div>
+      <div class="card-value" style="color:#4ade80">0</div>
+      <div class="card-unit">/ 100</div>
+      <div class="card-sub" style="color:#4ade80; text-transform:uppercase; font-size:10px; letter-spacing:1px">low risk</div>
+    </div>
+    <div class="card">
+      <div class="card-label">This Week</div>
+      <div class="card-value" style="font-size:24px">17.4</div>
+      <div class="card-unit">km</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Last Week</div>
+      <div class="card-value" style="font-size:24px">31.7</div>
+      <div class="card-unit">km</div>
+    </div>
+  </div>
+  <div class="card" style="padding:0; overflow:hidden; max-width:500px">
+    <table class="run-table">
+      <thead><tr><th>Factor</th><th>Value</th></tr></thead>
+      <tbody><tr><td>GCT imbalance</td><td style="color:#4ade80">50.5% left</td></tr>
+<tr><td>Weekly load</td><td style="color:#4ade80">17 km (within target)</td></tr>
+<tr><td>Mileage change</td><td style="color:#4ade80">-45% vs last week</td></tr>
+<tr><td>Consecutive days</td><td style="color:#4ade80">Max 2 in a row</td></tr>
+</tbody>
+    </table>
   </div>
 </div>
 
@@ -678,7 +778,7 @@ new Chart(document.getElementById('bpChart'), {
 </script>
 
 <div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED 2026-06-05 09:53 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+  GENERATED 2026-06-05 10:06 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
 </div>
 </body>
 </html>
