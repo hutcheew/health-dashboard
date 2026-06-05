@@ -272,67 +272,6 @@ def compute_achilles_score(runs, phase_info):
     level = "high" if score >= 60 else "medium" if score >= 30 else "low"
     return {"score": score, "level": level, "factors": factors, "this_week_km": round(this_week_km, 1), "last_week_km": round(last_week_km, 1)}
 
-# ─── AI COMMENTARY ───────────────────────────────────────────────────────────
-
-def get_ai_commentary(garmin_data, bp_readings, phase_info, achilles):
-    try:
-        runs     = garmin_data.get("runs", [])
-        readiness= garmin_data.get("readiness", {})
-        last_run = runs[0] if runs else {}
-        laps     = last_run.get("laps", [])
-        avg_gct_l = round(sum(l["gct_balance"] for l in laps) / len(laps), 1) if laps else 50.0
-        latest_bp = bp_readings[0] if bp_readings else {}
-
-        prompt = f"""You are a running coach and sports physiotherapist. Analyse this athlete's daily health data and give 3-4 concise, actionable insights. Be direct and specific. No fluff.
-
-ATHLETE CONTEXT:
-- Training for Melbourne Marathon on 12 Oct 2026 (sub-3:00 goal, current PB 3:16)
-- Left insertional Achilles tendinopathy (active management)
-- Seated calf raises 3x/week approved. Heel drops off step are PROHIBITED.
-- Currently in Week {phase_info['week_num']} of 28 — {phase_info['phase']['name']} phase
-
-TODAY'S DATA:
-- Training readiness: {readiness.get('score', 'N/A')}/100 ({readiness.get('level', '')})
-- Sleep score: {readiness.get('sleep_score', 'N/A')}/100
-- HRV weekly avg: {garmin_data.get('hrv', {}).get('weekly_avg', 'N/A')} ms
-- Resting HR: {garmin_data.get('resting_hr', 'N/A')} bpm
-- Body battery: {garmin_data.get('body_battery', 'N/A')}/100
-- Recovery time: {readiness.get('recovery_time', 'N/A')} min
-
-LAST RUN ({last_run.get('date', 'N/A')}):
-- Distance: {last_run.get('distance', 'N/A')} km
-- Avg pace: {pace_str(last_run.get('avg_pace'))} min/km
-- Avg HR: {last_run.get('avg_hr', 'N/A')} bpm
-- GCT balance LEFT: {avg_gct_l}% (right: {round(100-avg_gct_l,1)}%)
-
-ACHILLES LOAD SCORE: {achilles.get('score', 'N/A')}/100 ({achilles.get('level', '')})
-Factors: {', '.join(f['label'] + ': ' + f['value'] for f in achilles.get('factors', []))}
-
-BLOOD PRESSURE (latest): {latest_bp.get('systolic', 'N/A')}/{latest_bp.get('diastolic', 'N/A')} mmHg, pulse {latest_bp.get('pulse', 'N/A')} bpm
-
-This week: {achilles.get('this_week_km', 'N/A')} km | Last week: {achilles.get('last_week_km', 'N/A')} km
-Phase target: {phase_info['phase']['km_min']}–{phase_info['phase']['km_max']} km/wk
-
-Give 3-4 bullet insights. Each bullet: one sentence, specific and actionable. Flag any Achilles risk clearly. End with one sentence on today's recommended training."""
-
-        api_key = os.environ.get("GEMINI_API_KEY", "")
-        resp = requests.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
-            headers={"Content-Type": "application/json"},
-            json={"contents": [{"parts": [{"text": prompt}]}]},
-            timeout=30
-        )
-        result = resp.json()
-        print(f"  API status: {resp.status_code}")
-        if "error" in result:
-            print(f"  API error: {result['error']}")
-            return f"AI commentary unavailable: {result['error'].get('message', 'unknown error')}"
-        return result["candidates"][0]["content"]["parts"][0]["text"]
-    except Exception as e:
-        return f"AI commentary unavailable: {e}"
-
-# ─── EMAIL ALERT ─────────────────────────────────────────────────────────────
-
 def send_alert_email(subject, body):
     """Send alert via Gmail SMTP. Set GMAIL_APP_PASSWORD in .env"""
     import smtplib
@@ -461,13 +400,6 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     achilles_color = "#f87171" if achilles_level == "high" else "#facc15" if achilles_level == "medium" else "#4ade80"
     achilles_factors = achilles.get("factors", [])
 
-    # AI commentary — pre-build rows
-    ai_rows = ""
-    if ai_commentary:
-        for line in ai_commentary.strip().split("\n"):
-            line = line.strip().lstrip("•-* ")
-            if line:
-                ai_rows += f'<div class="ai-row">{line}</div>\n'
 
     # Achilles factor rows
     achilles_rows = ""
@@ -711,15 +643,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     transition: width 0.3s;
   }}
   .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
-  .ai-commentary {{ display: flex; flex-direction: column; gap: 10px; }}
-  .ai-row {{
-    padding: 10px 14px;
-    background: var(--surface2);
-    border-radius: 6px;
-    border-left: 3px solid #818cf8;
-    line-height: 1.6;
-    font-size: 13px;
-  }}
+
 </style>
 </head>
 <body>
@@ -764,16 +688,6 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
       <div class="card-label">Recovery Time</div>
       <div class="card-value">{readiness.get('recovery_time', '--')}</div>
       <div class="card-unit">minutes</div>
-    </div>
-  </div>
-</div>
-
-<!-- AI COMMENTARY -->
-<div class="section">
-  <div class="section-title">AI Coach Commentary</div>
-  <div class="card" style="border-top-color:#818cf8; padding: 20px;">
-    <div class="ai-commentary">
-      {ai_rows if ai_rows else '<div class="ai-row" style="color:var(--muted)">No commentary available.</div>'}
     </div>
   </div>
 </div>
@@ -1178,11 +1092,7 @@ def main():
     achilles = compute_achilles_score(garmin_data["runs"], phase_info)
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
 
-    print("Getting AI commentary...")
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    print(f"  API key present: {bool(api_key)} length: {len(api_key)}")
-    ai_commentary = get_ai_commentary(garmin_data, bp_readings, phase_info, achilles)
-    print("  Done.")
+    ai_commentary = ""
 
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
