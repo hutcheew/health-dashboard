@@ -130,7 +130,9 @@ def fetch_withings_bp():
     result = resp.json()
     readings = []
     for grp in result.get("body", {}).get("measuregrps", []):
-        entry = {"date": datetime.fromtimestamp(grp["date"]).strftime("%Y-%m-%d %H:%M")}
+        from zoneinfo import ZoneInfo
+        melb = ZoneInfo("Australia/Melbourne")
+        entry = {"date": datetime.fromtimestamp(grp["date"], tz=melb).strftime("%Y-%m-%d %H:%M")}
         for m in grp.get("measures", []):
             val = m["value"] * (10 ** m["unit"])
             if m["type"] == 9:   entry["diastolic"] = round(val)
