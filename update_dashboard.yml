@@ -2,8 +2,8 @@ name: Update Health Dashboard
 
 on:
   schedule:
-    - cron: '0 21 * * *'   # 7am Melbourne time (UTC+10) = 9pm UTC
-  workflow_dispatch:         # allow manual trigger from GitHub UI
+    - cron: '0 21 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install garminconnect withings-api requests python-dotenv
+          pip install garminconnect withings-api requests python-dotenv PyNaCl
 
       - name: Write token files
         env:
@@ -38,9 +38,17 @@ jobs:
           WITHINGS_REDIRECT_URI: http://localhost:8080
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python health_dashboard.py
+
+      - name: Refresh Withings token
+        env:
+          WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
+          WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python refresh_withings_token.py
 
       - name: Commit and push
         run: |

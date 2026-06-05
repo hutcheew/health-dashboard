@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Dashboard — 2026-06-06</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --green: #4ade80;
+    --yellow: #facc15;
+    --red: #f87171;
+    --orange: #fb923c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  .header {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 28px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+  }
+  .header .date {
+    color: var(--muted); font-size: 12px;
+  }
+  .header .tagline {
+    margin-left: auto; color: var(--muted);
+    font-size: 11px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .card.accent2::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .card.green::before  { background: linear-gradient(90deg, var(--green), transparent); }
+  .card.yellow::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+  .card.orange::before { background: linear-gradient(90deg, var(--orange), transparent); }
+  .card.red::before    { background: linear-gradient(90deg, var(--red), transparent); }
+
+  .card-label {
+    font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .card-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 700;
+    line-height: 1; color: var(--text);
+  }
+  .card-unit {
+    font-size: 11px; color: var(--muted);
+    margin-top: 4px;
+  }
+  .card-sub {
+    font-size: 11px; color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+  }
+
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .chart-title {
+    font-size: 11px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px;
+  }
+  canvas { max-height: 200px; }
+
+  .run-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .run-table th {
+    text-align: left; padding: 6px 10px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .run-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .run-table tr:last-child td { border-bottom: none; }
+  .run-table tr:hover td { background: var(--surface2); }
+
+  .bp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .bp-table th {
+    text-align: left; padding: 6px 10px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .bp-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bp-table tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; letter-spacing: 0.5px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  .badge-green  { background: rgba(74,222,128,0.15); color: var(--green); }
+  .badge-yellow { background: rgba(250,204,21,0.15); color: var(--yellow); }
+  .badge-red    { background: rgba(248,113,113,0.15); color: var(--red); }
+
+  .gct-bar-wrap {
+    margin-top: 4px;
+    height: 6px; border-radius: 3px;
+    background: var(--border); overflow: hidden;
+    position: relative;
+  }
+  .gct-bar {
+    height: 100%; border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>HEALTH DASHBOARD</h1>
+  <span class="date">2026-06-06</span>
+  <span class="tagline">Garmin + Withings</span>
+</div>
+
+<!-- READINESS ROW -->
+<div class="section">
+  <div class="section-title">Today's Readiness</div>
+  <div class="grid">
+    <div class="card green">
+      <div class="card-label">Training Readiness</div>
+      <div class="card-value">74</div>
+      <div class="card-unit">Moderate</div>
+      <div class="card-sub">Good Sleep History</div>
+    </div>
+    <div class="card accent2">
+      <div class="card-label">Sleep Score</div>
+      <div class="card-value">73</div>
+      <div class="card-unit">/ 100</div>
+    </div>
+    <div class="card">
+      <div class="card-label">HRV Avg (7d)</div>
+      <div class="card-value">34</div>
+      <div class="card-unit">ms</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Resting HR</div>
+      <div class="card-value">50</div>
+      <div class="card-unit">bpm</div>
+    </div>
+    <div class="card yellow">
+      <div class="card-label">Body Battery</div>
+      <div class="card-value">46</div>
+      <div class="card-unit">/ 100</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Recovery Time</div>
+      <div class="card-value">1</div>
+      <div class="card-unit">minutes</div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAINING PHASE -->
+<div class="section">
+  <div class="section-title">Training Plan — Week 6 of 28</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr))">
+    <div class="card accent2">
+      <div class="card-label">Current Week</div>
+      <div class="card-value">6</div>
+      <div class="card-unit">of 28 total</div>
+    </div>
+    <div class="card accent2">
+      <div class="card-label">Phase</div>
+      <div class="card-value" style="font-size:16px; padding-top:4px">Return to Run</div>
+      <div class="card-unit">Week 2 of 4</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Phase Target</div>
+      <div class="card-value" style="font-size:20px">30–40</div>
+      <div class="card-unit">km / week</div>
+    </div>
+    <div class="card">
+      <div class="card-label">This Week</div>
+      <div class="card-value" style="font-size:26px">33.4</div>
+      <div class="card-unit">km so far</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Days to Race</div>
+      <div class="card-value">128</div>
+      <div class="card-unit">12 Oct 2026</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Phase Focus</div>
+      <div class="card-value" style="font-size:12px; padding-top:6px; line-height:1.4">Gradual mileage build, form drills</div>
+    </div>
+  </div>
+  <!-- Phase progress bar -->
+  <div class="chart-card" style="margin-top:12px; padding: 14px 16px;">
+    <div class="chart-title" style="margin-bottom:10px">28-week plan progress</div>
+    <div style="position:relative; height:24px; background:var(--surface2); border-radius:4px; overflow:hidden;">
+      <div style="position:absolute; left:0; top:0; bottom:0; width:18%; background:linear-gradient(90deg,#818cf8,#38bdf8); border-radius:4px; opacity:0.7;"></div>
+      <div style="position:absolute; left:18%; top:0; bottom:0; width:2px; background:#fff; opacity:0.8;"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:var(--muted);">
+      <span>May 1</span><span>Rehab</span><span>Return</span><span>Build</span><span>Specific</span><span>Taper</span><span>Oct 12</span>
+    </div>
+  </div>
+</div>
+
+<!-- ACHILLES LOAD -->
+<div class="section">
+  <div class="section-title">Achilles Load Score</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); margin-bottom:12px">
+    <div class="card" style="border-top-color:#4ade80">
+      <div class="card-label">Load Score</div>
+      <div class="card-value" style="color:#4ade80">25</div>
+      <div class="card-unit">/ 100</div>
+      <div class="card-sub" style="color:#4ade80; text-transform:uppercase; font-size:10px; letter-spacing:1px">low risk</div>
+    </div>
+    <div class="card">
+      <div class="card-label">This Week</div>
+      <div class="card-value" style="font-size:24px">33.4</div>
+      <div class="card-unit">km</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Last Week</div>
+      <div class="card-value" style="font-size:24px">26.5</div>
+      <div class="card-unit">km</div>
+    </div>
+  </div>
+  <div class="card" style="padding:0; overflow:hidden; max-width:500px">
+    <table class="run-table">
+      <thead><tr><th>Factor</th><th>Value</th></tr></thead>
+      <tbody><tr><td>GCT imbalance</td><td style="color:#4ade80">50.6% left</td></tr>
+<tr><td>Weekly load</td><td style="color:#4ade80">33 km (within target)</td></tr>
+<tr><td>Mileage spike</td><td style="color:#f87171">+26% vs last week</td></tr>
+<tr><td>Consecutive days</td><td style="color:#4ade80">Max 2 in a row</td></tr>
+</tbody>
+    </table>
+  </div>
+</div>
+
+<!-- LAST RUN -->
+<div class="section">
+  <div class="section-title">Last Run — 2026-06-06 &nbsp;·&nbsp; 16.0 km</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr))">
+    <div class="card accent2">
+      <div class="card-label">Avg Pace</div>
+      <div class="card-value" style="font-size:26px">6:02</div>
+      <div class="card-unit">min/km</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg HR</div>
+      <div class="card-value">147.0</div>
+      <div class="card-unit">bpm</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cadence</div>
+      <div class="card-value">179</div>
+      <div class="card-unit">spm</div>
+    </div>
+    <div class="card" style="border-top-color:#4ade80">
+      <div class="card-label">GCT Balance L</div>
+      <div class="card-value" style="font-size:26px;color:#4ade80">50.6%</div>
+      <div class="card-unit">left foot contact</div>
+      <div class="gct-bar-wrap"><div class="gct-bar" style="width:50.6%;background:#4ade80"></div></div>
+    </div>
+    <div class="card" style="border-top-color:#4ade80">
+      <div class="card-label">GCT Balance R</div>
+      <div class="card-value" style="font-size:26px;color:#4ade80">49.4%</div>
+      <div class="card-unit">right foot contact</div>
+      <div class="gct-bar-wrap"><div class="gct-bar" style="width:49.4%;background:#4ade80"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg GCT</div>
+      <div class="card-value" style="font-size:26px">252.7</div>
+      <div class="card-unit">ms</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Calories</div>
+      <div class="card-value" style="font-size:26px">1118.0</div>
+      <div class="card-unit">kcal</div>
+    </div>
+  </div>
+</div>
+
+<!-- LAST RUN CHARTS -->
+<div class="section">
+  <div class="section-title">Last Run — Lap Breakdown</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">GCT Balance Left % per km (50% = perfect)</div>
+      <canvas id="lapBalanceChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Ground Contact Time per km (ms)</div>
+      <canvas id="lapGctChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Heart Rate per km (bpm)</div>
+      <canvas id="lapHrChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Pace per km (min/km)</div>
+      <canvas id="lapPaceChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- TRENDS -->
+<div class="section">
+  <div class="section-title">Training Trends</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">GCT Balance Left % — recent runs</div>
+      <canvas id="gctTrendChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Weekly Mileage (km)</div>
+      <canvas id="weeklyChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">HRV overnight readings (ms)</div>
+      <canvas id="hrvChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- RUN LOG -->
+<div class="section">
+  <div class="section-title">Run Log</div>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table class="run-table">
+      <thead>
+        <tr>
+          <th>Date</th><th>Dist</th><th>Pace</th>
+          <th>HR</th><th>Cadence</th><th>GCT L</th><th>GCT R</th><th>GCT avg</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>2026-06-06</td>
+          <td>16.0 km</td>
+          <td>6:02</td>
+          <td>147.0</td>
+          <td>179 spm</td>
+          <td><span class="badge badge-green">50.6%</span></td>
+          <td><span class="badge badge-green">49.4%</span></td>
+          <td>252.7 ms</td>
+        </tr>
+        <tr>
+          <td>2026-06-04</td>
+          <td>5.2 km</td>
+          <td>5:34</td>
+          <td>149.0</td>
+          <td>178 spm</td>
+          <td><span class="badge badge-green">50.5%</span></td>
+          <td><span class="badge badge-green">49.5%</span></td>
+          <td>250.5 ms</td>
+        </tr>
+        <tr>
+          <td>2026-06-02</td>
+          <td>7.0 km</td>
+          <td>5:24</td>
+          <td>156.0</td>
+          <td>176 spm</td>
+          <td><span class="badge badge-green">49.9%</span></td>
+          <td><span class="badge badge-green">50.1%</span></td>
+          <td>254.5 ms</td>
+        </tr>
+        <tr>
+          <td>2026-06-01</td>
+          <td>5.2 km</td>
+          <td>5:28</td>
+          <td>145.0</td>
+          <td>178 spm</td>
+          <td><span class="badge badge-green">50.5%</span></td>
+          <td><span class="badge badge-green">49.5%</span></td>
+          <td>250.3 ms</td>
+        </tr>
+        <tr>
+          <td>2026-05-30</td>
+          <td>10.4 km</td>
+          <td>6:15</td>
+          <td>144.0</td>
+          <td>179 spm</td>
+          <td><span class="badge badge-green">50.8%</span></td>
+          <td><span class="badge badge-green">49.2%</span></td>
+          <td>255.6 ms</td>
+        </tr>
+        <tr>
+          <td>2026-05-28</td>
+          <td>5.0 km</td>
+          <td>6:00</td>
+          <td>148.0</td>
+          <td>169 spm</td>
+          <td><span class="badge badge-green">50.6%</span></td>
+          <td><span class="badge badge-green">49.4%</span></td>
+          <td>298.6 ms</td>
+        </tr>
+        <tr>
+          <td>2026-05-28</td>
+          <td>5.1 km</td>
+          <td>5:51</td>
+          <td>140.0</td>
+          <td>181 spm</td>
+          <td><span class="badge badge-green">50.2%</span></td>
+          <td><span class="badge badge-green">49.8%</span></td>
+          <td>250.7 ms</td>
+        </tr>
+        <tr>
+          <td>2026-05-26</td>
+          <td>6.0 km</td>
+          <td>5:50</td>
+          <td>142.0</td>
+          <td>178 spm</td>
+          <td><span class="badge badge-green">50.6%</span></td>
+          <td><span class="badge badge-green">49.4%</span></td>
+          <td>256.3 ms</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BLOOD PRESSURE -->
+<div class="section">
+  <div class="section-title">Blood Pressure — Withings BPM Connect</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); margin-bottom:16px">
+    <div class="card yellow">
+      <div class="card-label">Systolic</div>
+      <div class="card-value">123</div>
+      <div class="card-unit">mmHg</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">Diastolic</div>
+      <div class="card-value">77</div>
+      <div class="card-unit">mmHg</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pulse</div>
+      <div class="card-value">62</div>
+      <div class="card-unit">bpm</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Last Reading</div>
+      <div class="card-value" style="font-size:16px">2026-06-06 05:22</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-title">Blood Pressure trend (mmHg)</div>
+      <canvas id="bpChart"></canvas>
+    </div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="bp-table">
+        <thead>
+          <tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th></tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td>2026-06-06 05:22</td>
+            <td style="color:var(--yellow)">123</td>
+            <td style="color:var(--green)">77</td>
+            <td>62</td>
+          </tr>
+          <tr>
+            <td>2026-06-05 05:16</td>
+            <td style="color:var(--red)">134</td>
+            <td style="color:var(--green)">76</td>
+            <td>61</td>
+          </tr>
+          <tr>
+            <td>2026-06-04 05:09</td>
+            <td style="color:var(--yellow)">125</td>
+            <td style="color:var(--green)">77</td>
+            <td>58</td>
+          </tr>
+          <tr>
+            <td>2026-06-03 04:46</td>
+            <td style="color:var(--yellow)">128</td>
+            <td style="color:var(--yellow)">81</td>
+            <td>60</td>
+          </tr>
+          <tr>
+            <td>2026-06-02 05:16</td>
+            <td style="color:var(--red)">130</td>
+            <td style="color:var(--yellow)">85</td>
+            <td>59</td>
+          </tr>
+          <tr>
+            <td>2026-06-01 04:30</td>
+            <td style="color:var(--yellow)">128</td>
+            <td style="color:var(--yellow)">85</td>
+            <td>54</td>
+          </tr>
+          <tr>
+            <td>2026-05-31 05:18</td>
+            <td style="color:var(--red)">134</td>
+            <td style="color:var(--yellow)">83</td>
+            <td>60</td>
+          </tr>
+          <tr>
+            <td>2026-05-30 05:23</td>
+            <td style="color:var(--yellow)">122</td>
+            <td style="color:var(--yellow)">85</td>
+            <td>61</td>
+          </tr>
+          <tr>
+            <td>2026-05-29 05:15</td>
+            <td style="color:var(--yellow)">123</td>
+            <td style="color:var(--yellow)">83</td>
+            <td>61</td>
+          </tr>
+          <tr>
+            <td>2026-05-28 04:25</td>
+            <td style="color:var(--red)">132</td>
+            <td style="color:var(--yellow)">87</td>
+            <td>55</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const accent  = '#38bdf8';
+const accent2 = '#818cf8';
+const green   = '#4ade80';
+const yellow  = '#facc15';
+const red     = '#f87171';
+const orange  = '#fb923c';
+const muted   = '#64748b';
+const gridColor = 'rgba(30,35,48,0.8)';
+
+const chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: true,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color: muted, font: { family: 'DM Mono', size: 10 } }, grid: { color: gridColor } },
+    y: { ticks: { color: muted, font: { family: 'DM Mono', size: 10 } }, grid: { color: gridColor } },
+  }
+};
+
+// Lap GCT Balance
+new Chart(document.getElementById('lapBalanceChart'), {
+  type: 'bar',
+  data: {
+    labels: ["km 1", "km 2", "km 3", "km 4", "km 5", "km 6", "km 7", "km 8", "km 9", "km 10", "km 11", "km 12", "km 13", "km 14", "km 15", "km 16", "km 17"],
+    datasets: [
+      {
+        label: 'Left',
+        data: [50.5, 50.7, 50.5, 50.6, 50.7, 50.4, 50.6, 50.6, 50.5, 50.5, 50.4, 50.5, 50.2, 50.6, 50.7, 50.5, 50.9],
+        backgroundColor: [50.5, 50.7, 50.5, 50.6, 50.7, 50.4, 50.6, 50.6, 50.5, 50.5, 50.4, 50.5, 50.2, 50.6, 50.7, 50.5, 50.9].map(v => v > 51.5 ? 'rgba(248,113,113,0.7)' : v > 50.5 ? 'rgba(250,204,21,0.7)' : 'rgba(74,222,128,0.7)'),
+        borderRadius: 3,
+      },
+      {
+        label: 'Right',
+        data: [49.5, 49.3, 49.5, 49.4, 49.3, 49.6, 49.4, 49.4, 49.5, 49.5, 49.6, 49.5, 49.8, 49.4, 49.3, 49.5, 49.1],
+        backgroundColor: [49.5, 49.3, 49.5, 49.4, 49.3, 49.6, 49.4, 49.4, 49.5, 49.5, 49.6, 49.5, 49.8, 49.4, 49.3, 49.5, 49.1].map(v => v > 51.5 ? 'rgba(248,113,113,0.4)' : v > 50.5 ? 'rgba(250,204,21,0.4)' : 'rgba(74,222,128,0.4)'),
+        borderRadius: 3,
+      }
+    ]
+  },
+  options: { ...chartDefaults,
+    plugins: { legend: { display: true, labels: { color: muted, font: { family: 'DM Mono', size: 10 } } } },
+    scales: { ...chartDefaults.scales,
+      y: { ...chartDefaults.scales.y, min: 47, max: 53,
+        ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } }
+    },
+  }
+});
+
+// Lap GCT ms
+new Chart(document.getElementById('lapGctChart'), {
+  type: 'line',
+  data: {
+    labels: ["km 1", "km 2", "km 3", "km 4", "km 5", "km 6", "km 7", "km 8", "km 9", "km 10", "km 11", "km 12", "km 13", "km 14", "km 15", "km 16", "km 17"],
+    datasets: [{ data: [248.3, 250.6, 253.4, 254.6, 254.1, 252.4, 252.5, 253.1, 253.1, 253.6, 253.8, 253.1, 251.0, 254.3, 252.2, 251.7, 254.0], borderColor: accent, backgroundColor: 'rgba(56,189,248,0.1)',
+      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: accent }]
+  },
+  options: { ...chartDefaults }
+});
+
+// Lap HR
+new Chart(document.getElementById('lapHrChart'), {
+  type: 'line',
+  data: {
+    labels: ["km 1", "km 2", "km 3", "km 4", "km 5", "km 6", "km 7", "km 8", "km 9", "km 10", "km 11", "km 12", "km 13", "km 14", "km 15", "km 16", "km 17"],
+    datasets: [{ data: [134.0, 141.0, 141.0, 144.0, 146.0, 146.0, 146.0, 148.0, 149.0, 149.0, 146.0, 152.0, 150.0, 153.0, 151.0, 152.0, 155.0], borderColor: red, backgroundColor: 'rgba(248,113,113,0.1)',
+      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: red }]
+  },
+  options: { ...chartDefaults }
+});
+
+// Lap Pace
+new Chart(document.getElementById('lapPaceChart'), {
+  type: 'line',
+  data: {
+    labels: ["km 1", "km 2", "km 3", "km 4", "km 5", "km 6", "km 7", "km 8", "km 9", "km 10", "km 11", "km 12", "km 13", "km 14", "km 15", "km 16", "km 17"],
+    datasets: [{ data: [5.57, 5.84, 5.94, 5.99, 6.06, 6.04, 6.09, 6.1, 6.08, 6.12, 6.16, 6.17, 5.93, 6.27, 6.04, 6.21, 5.33], borderColor: green, backgroundColor: 'rgba(74,222,128,0.1)',
+      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: green }]
+  },
+  options: { ...chartDefaults,
+    scales: { ...chartDefaults.scales,
+      y: { ...chartDefaults.scales.y, reverse: true,
+        ticks: { ...chartDefaults.scales.y.ticks,
+          callback: v => { const m=Math.floor(v); const s=Math.round((v-m)*60); return m+':'+(s<10?'0':'')+s } } } } }
+});
+
+// GCT trend
+new Chart(document.getElementById('gctTrendChart'), {
+  type: 'line',
+  data: {
+    labels: ["2026-05-26", "2026-05-28", "2026-05-28", "2026-05-30", "2026-06-01", "2026-06-02", "2026-06-04", "2026-06-06"],
+    datasets: [
+      {
+        label: 'Left %',
+        data: [50.59, 50.2, 50.61, 50.75, 50.52, 49.94, 50.5, 50.55],
+        borderColor: yellow, backgroundColor: 'rgba(250,204,21,0.1)',
+        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: yellow
+      },
+      {
+        label: 'Right %',
+        data: [49.41, 49.8, 49.39, 49.25, 49.48, 50.06, 49.5, 49.45],
+        borderColor: accent, backgroundColor: 'rgba(56,189,248,0.1)',
+        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: accent
+      }
+    ]
+  },
+  options: { ...chartDefaults,
+    plugins: { legend: { display: true, labels: { color: muted, font: { family: 'DM Mono', size: 10 } } } },
+    scales: { ...chartDefaults.scales,
+      y: { ...chartDefaults.scales.y, min: 47, max: 53,
+        ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } } } }
+});
+
+// Weekly mileage
+new Chart(document.getElementById('weeklyChart'), {
+  type: 'bar',
+  data: {
+    labels: ["2026-W22", "2026-W21"],
+    datasets: [{ data: [33.4, 26.5], backgroundColor: 'rgba(129,140,248,0.7)', borderRadius: 4 }]
+  },
+  options: { ...chartDefaults }
+});
+
+// HRV
+new Chart(document.getElementById('hrvChart'), {
+  type: 'line',
+  data: {
+    labels: ["03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35", "04:40", "04:45", "04:50", "04:55", "05:00"],
+    datasets: [{ data: [55, 25, 30, 30, 36, 26, 28, 28, 27, 29, 25, 26, 28, 30, 40, 37, 23, 39, 25, 19, 28, 23, 26, 27], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
+      tension: 0.3, fill: true, pointRadius: 2, pointBackgroundColor: accent2 }]
+  },
+  options: { ...chartDefaults }
+});
+
+// BP
+new Chart(document.getElementById('bpChart'), {
+  type: 'line',
+  data: {
+    labels: ["2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06"],
+    datasets: [
+      { label: 'Systolic',  data: [134, 127, 132, 123, 122, 134, 128, 130, 128, 125, 134, 123],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Diastolic', data: [85, 80, 87, 83, 85, 83, 85, 85, 81, 77, 76, 77], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Pulse',     data: [61, 61, 55, 61, 61, 60, 54, 59, 60, 58, 61, 62],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
+    ]
+  },
+  options: { ...chartDefaults,
+    plugins: { legend: { display: true, labels: { color: muted, font: { family: 'DM Mono', size: 10 } } } } }
+});
+</script>
+
+<div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
+  GENERATED 2026-06-06 09:56 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+</div>
+</body>
+</html>

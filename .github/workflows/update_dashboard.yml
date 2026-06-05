@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install garminconnect withings-api requests python-dotenv
+          pip install garminconnect withings-api requests python-dotenv PyNaCl
 
       - name: Write token files
         env:
@@ -41,6 +41,14 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python health_dashboard.py
+
+      - name: Refresh Withings token
+        env:
+          WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
+          WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python refresh_withings_token.py
 
       - name: Commit and push
         run: |
