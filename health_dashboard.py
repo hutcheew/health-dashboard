@@ -164,6 +164,11 @@ def generate_html(garmin_data, bp_readings):
         if r["laps"] else 50.0
         for r in reversed(runs[:8])
     ])
+    gct_trend_values_r = json.dumps([
+        round(100 - sum(l["gct_balance"] for l in r["laps"]) / len(r["laps"]), 2)
+        if r["laps"] else 50.0
+        for r in reversed(runs[:8])
+    ])
     gct_trend_gct = json.dumps([
         round(sum(l["gct"] for l in r["laps"]) / len(r["laps"]), 1)
         if r["laps"] else 0
@@ -183,6 +188,7 @@ def generate_html(garmin_data, bp_readings):
     lap_labels   = json.dumps([f"km {l['km']}" for l in laps])
     lap_gct      = json.dumps([l["gct"] for l in laps])
     lap_balance  = json.dumps([l["gct_balance"] for l in laps])
+    lap_balance_r = json.dumps([round(100 - l["gct_balance"], 1) for l in laps])
     lap_hr       = json.dumps([l["hr"] for l in laps])
     lap_pace     = json.dumps([l["pace"] for l in laps])
 
@@ -211,8 +217,51 @@ def generate_html(garmin_data, bp_readings):
         return "#f87171"
 
     last_gct_balance = round(sum(l["gct_balance"] for l in laps) / len(laps), 1) if laps else None
+    last_gct_balance_r = round(100 - last_gct_balance, 1) if last_gct_balance else None
     last_gct_avg     = round(sum(l["gct"] for l in laps) / len(laps), 1) if laps else "--"
     gct_bal_color    = gct_color(last_gct_balance)
+    gct_bal_color_r  = gct_color(last_gct_balance_r)
+
+    # Pre-build table rows (avoids nested f-string issues in Python < 3.12)
+    run_table_rows = ""
+    for r in runs:
+        if r['laps']:
+            avg_l = sum(l["gct_balance"] for l in r["laps"]) / len(r["laps"])
+            avg_r = 100 - avg_l
+            l_cls = "green" if abs(avg_l - 50) < 1 else "yellow" if abs(avg_l - 50) < 2 else "red"
+            r_cls = "green" if abs(avg_r - 50) < 1 else "yellow" if abs(avg_r - 50) < 2 else "red"
+            gct_l_cell = f'<span class="badge badge-{l_cls}">{round(avg_l,1)}%</span>'
+            gct_r_cell = f'<span class="badge badge-{r_cls}">{round(avg_r,1)}%</span>'
+            gct_avg = round(sum(l["gct"] for l in r["laps"]) / len(r["laps"]), 1)
+        else:
+            gct_l_cell = "--"
+            gct_r_cell = "--"
+            gct_avg = "--"
+        run_table_rows += f"""
+        <tr>
+          <td>{r['date']}</td>
+          <td>{r['distance']} km</td>
+          <td>{pace_str(r['avg_pace'])}</td>
+          <td>{r['avg_hr'] or '--'}</td>
+          <td>{r['cadence']} spm</td>
+          <td>{gct_l_cell}</td>
+          <td>{gct_r_cell}</td>
+          <td>{gct_avg} ms</td>
+        </tr>"""
+
+    bp_table_rows = ""
+    for b in bp_readings[:10]:
+        sys_val = b.get('systolic', 999)
+        dia_val = b.get('diastolic', 999)
+        sys_col = 'var(--green)' if sys_val < 120 else 'var(--yellow)' if sys_val < 130 else 'var(--red)'
+        dia_col = 'var(--green)' if dia_val < 80  else 'var(--yellow)' if dia_val < 90  else 'var(--red)'
+        bp_table_rows += f"""
+          <tr>
+            <td>{b['date']}</td>
+            <td style="color:{sys_col}">{b.get('systolic','--')}</td>
+            <td style="color:{dia_col}">{b.get('diastolic','--')}</td>
+            <td>{b.get('pulse','--')}</td>
+          </tr>"""
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -482,6 +531,12 @@ def generate_html(garmin_data, bp_readings):
       <div class="card-unit">left foot contact</div>
       <div class="gct-bar-wrap"><div class="gct-bar" style="width:{last_gct_balance if last_gct_balance else 50}%;background:{gct_bal_color}"></div></div>
     </div>
+    <div class="card" style="border-top-color:{gct_bal_color_r}">
+      <div class="card-label">GCT Balance R</div>
+      <div class="card-value" style="font-size:26px;color:{gct_bal_color_r}">{last_gct_balance_r if last_gct_balance_r else '--'}%</div>
+      <div class="card-unit">right foot contact</div>
+      <div class="gct-bar-wrap"><div class="gct-bar" style="width:{last_gct_balance_r if last_gct_balance_r else 50}%;background:{gct_bal_color_r}"></div></div>
+    </div>
     <div class="card">
       <div class="card-label">Avg GCT</div>
       <div class="card-value" style="font-size:26px">{last_gct_avg}</div>
@@ -545,23 +600,11 @@ def generate_html(garmin_data, bp_readings):
       <thead>
         <tr>
           <th>Date</th><th>Dist</th><th>Pace</th>
-          <th>HR</th><th>Cadence</th><th>GCT Balance L</th><th>GCT avg</th>
+          <th>HR</th><th>Cadence</th><th>GCT L</th><th>GCT R</th><th>GCT avg</th>
         </tr>
       </thead>
       <tbody>
-        {''.join(f"""
-        <tr>
-          <td>{r['date']}</td>
-          <td>{r['distance']} km</td>
-          <td>{pace_str(r['avg_pace'])}</td>
-          <td>{r['avg_hr'] or '--'}</td>
-          <td>{r['cadence']} spm</td>
-          <td>
-            {f'<span class="badge badge-{"green" if abs((sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]))-50)<1 else "yellow" if abs((sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]))-50)<2 else "red"}">{round(sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1)}%</span>' if r['laps'] else '--'}
-          </td>
-          <td>{round(sum(l['gct'] for l in r['laps'])/len(r['laps']),1) if r['laps'] else '--'} ms</td>
-        </tr>
-        """ for r in runs)}
+        {run_table_rows}
       </tbody>
     </table>
   </div>
@@ -602,14 +645,7 @@ def generate_html(garmin_data, bp_readings):
           <tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th></tr>
         </thead>
         <tbody>
-          {''.join(f"""
-          <tr>
-            <td>{b['date']}</td>
-            <td style="color:{'var(--green)' if b.get('systolic',999)<120 else 'var(--yellow)' if b.get('systolic',999)<130 else 'var(--red)'}">{b.get('systolic','--')}</td>
-            <td style="color:{'var(--green)' if b.get('diastolic',999)<80 else 'var(--yellow)' if b.get('diastolic',999)<90 else 'var(--red)'}">{b.get('diastolic','--')}</td>
-            <td>{b.get('pulse','--')}</td>
-          </tr>
-          """ for b in bp_readings[:10])}
+          {bp_table_rows}
         </tbody>
       </table>
     </div>
@@ -641,20 +677,27 @@ new Chart(document.getElementById('lapBalanceChart'), {{
   type: 'bar',
   data: {{
     labels: {lap_labels},
-    datasets: [{{
-      data: {lap_balance},
-      backgroundColor: {lap_balance}.map(v => v > 51.5 ? 'rgba(248,113,113,0.7)' : v > 50.5 ? 'rgba(250,204,21,0.7)' : 'rgba(74,222,128,0.7)'),
-      borderRadius: 3,
-    }}]
+    datasets: [
+      {{
+        label: 'Left',
+        data: {lap_balance},
+        backgroundColor: {lap_balance}.map(v => v > 51.5 ? 'rgba(248,113,113,0.7)' : v > 50.5 ? 'rgba(250,204,21,0.7)' : 'rgba(74,222,128,0.7)'),
+        borderRadius: 3,
+      }},
+      {{
+        label: 'Right',
+        data: {lap_balance_r},
+        backgroundColor: {lap_balance_r}.map(v => v > 51.5 ? 'rgba(248,113,113,0.4)' : v > 50.5 ? 'rgba(250,204,21,0.4)' : 'rgba(74,222,128,0.4)'),
+        borderRadius: 3,
+      }}
+    ]
   }},
   options: {{ ...chartDefaults,
+    plugins: {{ legend: {{ display: true, labels: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }} }} }},
     scales: {{ ...chartDefaults.scales,
-      y: {{ ...chartDefaults.scales.y, min: 48, max: 53,
+      y: {{ ...chartDefaults.scales.y, min: 47, max: 53,
         ticks: {{ ...chartDefaults.scales.y.ticks, callback: v => v + '%' }} }}
     }},
-    plugins: {{ ...chartDefaults.plugins,
-      annotation: {{ annotations: {{ line50: {{ type:'line', yMin:50, yMax:50, borderColor:'rgba(255,255,255,0.2)', borderDash:[4,4] }} }} }}
-    }}
   }}
 }});
 
@@ -700,17 +743,25 @@ new Chart(document.getElementById('gctTrendChart'), {{
   type: 'line',
   data: {{
     labels: {gct_trend_labels},
-    datasets: [{{
-      label: 'GCT Balance L%',
-      data: {gct_trend_values},
-      borderColor: yellow, backgroundColor: 'rgba(250,204,21,0.1)',
-      tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: yellow
-    }}]
+    datasets: [
+      {{
+        label: 'Left %',
+        data: {gct_trend_values},
+        borderColor: yellow, backgroundColor: 'rgba(250,204,21,0.1)',
+        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: yellow
+      }},
+      {{
+        label: 'Right %',
+        data: {gct_trend_values_r},
+        borderColor: accent, backgroundColor: 'rgba(56,189,248,0.1)',
+        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: accent
+      }}
+    ]
   }},
   options: {{ ...chartDefaults,
-    plugins: {{ legend: {{ display: false }} }},
+    plugins: {{ legend: {{ display: true, labels: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }} }} }},
     scales: {{ ...chartDefaults.scales,
-      y: {{ ...chartDefaults.scales.y, min: 48, max: 53,
+      y: {{ ...chartDefaults.scales.y, min: 47, max: 53,
         ticks: {{ ...chartDefaults.scales.y.ticks, callback: v => v + '%' }} }} }} }}
 }});
 
