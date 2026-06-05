@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Health Dashboard — 2026-06-04</title>
+<title>Health Dashboard — 2026-06-05</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -199,7 +199,7 @@
 
 <div class="header">
   <h1>HEALTH DASHBOARD</h1>
-  <span class="date">2026-06-04</span>
+  <span class="date">2026-06-05</span>
   <span class="tagline">Garmin + Withings</span>
 </div>
 
@@ -209,13 +209,13 @@
   <div class="grid">
     <div class="card green">
       <div class="card-label">Training Readiness</div>
-      <div class="card-value">83</div>
-      <div class="card-unit">High</div>
-      <div class="card-sub">Well Recovered</div>
+      <div class="card-value">71</div>
+      <div class="card-unit">Moderate</div>
+      <div class="card-sub">Good Sleep History</div>
     </div>
     <div class="card accent2">
       <div class="card-label">Sleep Score</div>
-      <div class="card-value">87</div>
+      <div class="card-value">75</div>
       <div class="card-unit">/ 100</div>
     </div>
     <div class="card">
@@ -225,17 +225,17 @@
     </div>
     <div class="card">
       <div class="card-label">Resting HR</div>
-      <div class="card-value">49</div>
+      <div class="card-value">52</div>
       <div class="card-unit">bpm</div>
     </div>
-    <div class="card yellow">
+    <div class="card green">
       <div class="card-label">Body Battery</div>
-      <div class="card-value">46</div>
+      <div class="card-value">70</div>
       <div class="card-unit">/ 100</div>
     </div>
     <div class="card">
       <div class="card-label">Recovery Time</div>
-      <div class="card-value">1</div>
+      <div class="card-value">542</div>
       <div class="card-unit">minutes</div>
     </div>
   </div>
@@ -265,6 +265,12 @@
       <div class="card-value" style="font-size:26px;color:#4ade80">50.5%</div>
       <div class="card-unit">left foot contact</div>
       <div class="gct-bar-wrap"><div class="gct-bar" style="width:50.5%;background:#4ade80"></div></div>
+    </div>
+    <div class="card" style="border-top-color:#4ade80">
+      <div class="card-label">GCT Balance R</div>
+      <div class="card-value" style="font-size:26px;color:#4ade80">49.5%</div>
+      <div class="card-unit">right foot contact</div>
+      <div class="gct-bar-wrap"><div class="gct-bar" style="width:49.5%;background:#4ade80"></div></div>
     </div>
     <div class="card">
       <div class="card-label">Avg GCT</div>
@@ -329,7 +335,7 @@
       <thead>
         <tr>
           <th>Date</th><th>Dist</th><th>Pace</th>
-          <th>HR</th><th>Cadence</th><th>GCT Balance L</th><th>GCT avg</th>
+          <th>HR</th><th>Cadence</th><th>GCT L</th><th>GCT R</th><th>GCT avg</th>
         </tr>
       </thead>
       <tbody>
@@ -340,96 +346,80 @@
           <td>5:34</td>
           <td>149.0</td>
           <td>178 spm</td>
-          <td>
-            <span class="badge badge-green">50.5%</span>
-          </td>
+          <td><span class="badge badge-green">50.5%</span></td>
+          <td><span class="badge badge-green">49.5%</span></td>
           <td>250.5 ms</td>
         </tr>
-        
         <tr>
           <td>2026-06-02</td>
           <td>7.0 km</td>
           <td>5:24</td>
           <td>156.0</td>
           <td>176 spm</td>
-          <td>
-            <span class="badge badge-green">49.9%</span>
-          </td>
+          <td><span class="badge badge-green">49.9%</span></td>
+          <td><span class="badge badge-green">50.1%</span></td>
           <td>254.5 ms</td>
         </tr>
-        
         <tr>
           <td>2026-06-01</td>
           <td>5.2 km</td>
           <td>5:28</td>
           <td>145.0</td>
           <td>178 spm</td>
-          <td>
-            <span class="badge badge-green">50.5%</span>
-          </td>
+          <td><span class="badge badge-green">50.5%</span></td>
+          <td><span class="badge badge-green">49.5%</span></td>
           <td>250.3 ms</td>
         </tr>
-        
         <tr>
           <td>2026-05-30</td>
           <td>10.4 km</td>
           <td>6:15</td>
           <td>144.0</td>
           <td>179 spm</td>
-          <td>
-            <span class="badge badge-green">50.8%</span>
-          </td>
+          <td><span class="badge badge-green">50.8%</span></td>
+          <td><span class="badge badge-green">49.2%</span></td>
           <td>255.6 ms</td>
         </tr>
-        
         <tr>
           <td>2026-05-28</td>
           <td>5.0 km</td>
           <td>6:00</td>
           <td>148.0</td>
           <td>169 spm</td>
-          <td>
-            <span class="badge badge-green">50.6%</span>
-          </td>
+          <td><span class="badge badge-green">50.6%</span></td>
+          <td><span class="badge badge-green">49.4%</span></td>
           <td>298.6 ms</td>
         </tr>
-        
         <tr>
           <td>2026-05-28</td>
           <td>5.1 km</td>
           <td>5:51</td>
           <td>140.0</td>
           <td>181 spm</td>
-          <td>
-            <span class="badge badge-green">50.2%</span>
-          </td>
+          <td><span class="badge badge-green">50.2%</span></td>
+          <td><span class="badge badge-green">49.8%</span></td>
           <td>250.7 ms</td>
         </tr>
-        
         <tr>
           <td>2026-05-26</td>
           <td>6.0 km</td>
           <td>5:50</td>
           <td>142.0</td>
           <td>178 spm</td>
-          <td>
-            <span class="badge badge-green">50.6%</span>
-          </td>
+          <td><span class="badge badge-green">50.6%</span></td>
+          <td><span class="badge badge-green">49.4%</span></td>
           <td>256.3 ms</td>
         </tr>
-        
         <tr>
           <td>2026-05-25</td>
           <td>5.2 km</td>
           <td>5:46</td>
           <td>142.0</td>
           <td>181 spm</td>
-          <td>
-            <span class="badge badge-green">50.7%</span>
-          </td>
-          <td>246.5 ms</td>
+          <td><span class="badge badge-green">50.7%</span></td>
+          <td><span class="badge badge-green">49.3%</span></td>
+          <td>246.6 ms</td>
         </tr>
-        
       </tbody>
     </table>
   </div>
@@ -439,24 +429,24 @@
 <div class="section">
   <div class="section-title">Blood Pressure — Withings BPM Connect</div>
   <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); margin-bottom:16px">
-    <div class="card yellow">
+    <div class="card red">
       <div class="card-label">Systolic</div>
-      <div class="card-value">125</div>
+      <div class="card-value">134</div>
       <div class="card-unit">mmHg</div>
     </div>
     <div class="card green">
       <div class="card-label">Diastolic</div>
-      <div class="card-value">77</div>
+      <div class="card-value">76</div>
       <div class="card-unit">mmHg</div>
     </div>
     <div class="card">
       <div class="card-label">Pulse</div>
-      <div class="card-value">58</div>
+      <div class="card-value">61</div>
       <div class="card-unit">bpm</div>
     </div>
     <div class="card">
       <div class="card-label">Last Reading</div>
-      <div class="card-value" style="font-size:16px">2026-06-04 05:09</div>
+      <div class="card-value" style="font-size:16px">2026-06-04 19:16</div>
     </div>
   </div>
   <div class="two-col">
@@ -472,75 +462,65 @@
         <tbody>
           
           <tr>
-            <td>2026-06-04 05:09</td>
+            <td>2026-06-04 19:16</td>
+            <td style="color:var(--red)">134</td>
+            <td style="color:var(--green)">76</td>
+            <td>61</td>
+          </tr>
+          <tr>
+            <td>2026-06-03 19:09</td>
             <td style="color:var(--yellow)">125</td>
             <td style="color:var(--green)">77</td>
             <td>58</td>
           </tr>
-          
           <tr>
-            <td>2026-06-03 04:46</td>
+            <td>2026-06-02 18:46</td>
             <td style="color:var(--yellow)">128</td>
             <td style="color:var(--yellow)">81</td>
             <td>60</td>
           </tr>
-          
           <tr>
-            <td>2026-06-02 05:16</td>
+            <td>2026-06-01 19:16</td>
             <td style="color:var(--red)">130</td>
             <td style="color:var(--yellow)">85</td>
             <td>59</td>
           </tr>
-          
           <tr>
-            <td>2026-06-01 04:30</td>
+            <td>2026-05-31 18:30</td>
             <td style="color:var(--yellow)">128</td>
             <td style="color:var(--yellow)">85</td>
             <td>54</td>
           </tr>
-          
           <tr>
-            <td>2026-05-31 05:18</td>
+            <td>2026-05-30 19:18</td>
             <td style="color:var(--red)">134</td>
             <td style="color:var(--yellow)">83</td>
             <td>60</td>
           </tr>
-          
           <tr>
-            <td>2026-05-30 05:23</td>
+            <td>2026-05-29 19:23</td>
             <td style="color:var(--yellow)">122</td>
             <td style="color:var(--yellow)">85</td>
             <td>61</td>
           </tr>
-          
           <tr>
-            <td>2026-05-29 05:15</td>
+            <td>2026-05-28 19:15</td>
             <td style="color:var(--yellow)">123</td>
             <td style="color:var(--yellow)">83</td>
             <td>61</td>
           </tr>
-          
           <tr>
-            <td>2026-05-28 04:25</td>
+            <td>2026-05-27 18:25</td>
             <td style="color:var(--red)">132</td>
             <td style="color:var(--yellow)">87</td>
             <td>55</td>
           </tr>
-          
           <tr>
-            <td>2026-05-27 05:16</td>
+            <td>2026-05-26 19:16</td>
             <td style="color:var(--yellow)">127</td>
             <td style="color:var(--yellow)">80</td>
             <td>61</td>
           </tr>
-          
-          <tr>
-            <td>2026-05-26 05:16</td>
-            <td style="color:var(--red)">134</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>61</td>
-          </tr>
-          
         </tbody>
       </table>
     </div>
@@ -572,20 +552,27 @@ new Chart(document.getElementById('lapBalanceChart'), {
   type: 'bar',
   data: {
     labels: ["km 1", "km 2", "km 3", "km 4", "km 5", "km 6"],
-    datasets: [{
-      data: [50.0, 50.4, 50.7, 50.8, 50.7, 50.4],
-      backgroundColor: [50.0, 50.4, 50.7, 50.8, 50.7, 50.4].map(v => v > 51.5 ? 'rgba(248,113,113,0.7)' : v > 50.5 ? 'rgba(250,204,21,0.7)' : 'rgba(74,222,128,0.7)'),
-      borderRadius: 3,
-    }]
+    datasets: [
+      {
+        label: 'Left',
+        data: [50.0, 50.4, 50.7, 50.8, 50.7, 50.4],
+        backgroundColor: [50.0, 50.4, 50.7, 50.8, 50.7, 50.4].map(v => v > 51.5 ? 'rgba(248,113,113,0.7)' : v > 50.5 ? 'rgba(250,204,21,0.7)' : 'rgba(74,222,128,0.7)'),
+        borderRadius: 3,
+      },
+      {
+        label: 'Right',
+        data: [50.0, 49.6, 49.3, 49.2, 49.3, 49.6],
+        backgroundColor: [50.0, 49.6, 49.3, 49.2, 49.3, 49.6].map(v => v > 51.5 ? 'rgba(248,113,113,0.4)' : v > 50.5 ? 'rgba(250,204,21,0.4)' : 'rgba(74,222,128,0.4)'),
+        borderRadius: 3,
+      }
+    ]
   },
   options: { ...chartDefaults,
+    plugins: { legend: { display: true, labels: { color: muted, font: { family: 'DM Mono', size: 10 } } } },
     scales: { ...chartDefaults.scales,
-      y: { ...chartDefaults.scales.y, min: 48, max: 53,
+      y: { ...chartDefaults.scales.y, min: 47, max: 53,
         ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } }
     },
-    plugins: { ...chartDefaults.plugins,
-      annotation: { annotations: { line50: { type:'line', yMin:50, yMax:50, borderColor:'rgba(255,255,255,0.2)', borderDash:[4,4] } } }
-    }
   }
 });
 
@@ -631,17 +618,25 @@ new Chart(document.getElementById('gctTrendChart'), {
   type: 'line',
   data: {
     labels: ["2026-05-25", "2026-05-26", "2026-05-28", "2026-05-28", "2026-05-30", "2026-06-01", "2026-06-02", "2026-06-04"],
-    datasets: [{
-      label: 'GCT Balance L%',
-      data: [50.72, 50.59, 50.2, 50.61, 50.75, 50.52, 49.94, 50.5],
-      borderColor: yellow, backgroundColor: 'rgba(250,204,21,0.1)',
-      tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: yellow
-    }]
+    datasets: [
+      {
+        label: 'Left %',
+        data: [50.72, 50.59, 50.2, 50.61, 50.75, 50.52, 49.94, 50.5],
+        borderColor: yellow, backgroundColor: 'rgba(250,204,21,0.1)',
+        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: yellow
+      },
+      {
+        label: 'Right %',
+        data: [49.28, 49.41, 49.8, 49.39, 49.25, 49.48, 50.06, 49.5],
+        borderColor: accent, backgroundColor: 'rgba(56,189,248,0.1)',
+        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: accent
+      }
+    ]
   },
   options: { ...chartDefaults,
-    plugins: { legend: { display: false } },
+    plugins: { legend: { display: true, labels: { color: muted, font: { family: 'DM Mono', size: 10 } } } },
     scales: { ...chartDefaults.scales,
-      y: { ...chartDefaults.scales.y, min: 48, max: 53,
+      y: { ...chartDefaults.scales.y, min: 47, max: 53,
         ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } } } }
 });
 
@@ -659,8 +654,8 @@ new Chart(document.getElementById('weeklyChart'), {
 new Chart(document.getElementById('hrvChart'), {
   type: 'line',
   data: {
-    labels: ["02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35", "04:40", "04:45", "04:50"],
-    datasets: [{ data: [31, 20, 26, 17, 27, 44, 43, 38, 37, 40, 35, 32, 38, 35, 29, 28, 44, 32, 34, 28, 30, 30, 28, 27], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
+    labels: ["02:35", "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30"],
+    datasets: [{ data: [20, 47, 32, 20, 28, 31, 23, 28, 26, 29, 23, 14, 29, 28, 20, 47, 38, 21, 20, 21, 18, 16, 18, 18], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
       tension: 0.3, fill: true, pointRadius: 2, pointBackgroundColor: accent2 }]
   },
   options: { ...chartDefaults }
@@ -672,9 +667,9 @@ new Chart(document.getElementById('bpChart'), {
   data: {
     labels: ["2026-05-24", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04"],
     datasets: [
-      { label: 'Systolic',  data: [130, 132, 134, 127, 132, 123, 122, 134, 128, 130, 128, 125],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
-      { label: 'Diastolic', data: [81, 82, 85, 80, 87, 83, 85, 83, 85, 85, 81, 77], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
-      { label: 'Pulse',     data: [63, 62, 61, 61, 55, 61, 61, 60, 54, 59, 60, 58],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
+      { label: 'Systolic',  data: [132, 134, 127, 132, 123, 122, 134, 128, 130, 128, 125, 134],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Diastolic', data: [82, 85, 80, 87, 83, 85, 83, 85, 85, 81, 77, 76], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Pulse',     data: [62, 61, 61, 55, 61, 61, 60, 54, 59, 60, 58, 61],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
     ]
   },
   options: { ...chartDefaults,
@@ -683,7 +678,7 @@ new Chart(document.getElementById('bpChart'), {
 </script>
 
 <div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED 2026-06-04 20:11 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+  GENERATED 2026-06-05 08:21 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
 </div>
 </body>
 </html>
