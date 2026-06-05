@@ -1,0 +1,49 @@
+name: Update Health Dashboard
+
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install garminconnect withings-api requests python-dotenv
+
+      - name: Write token files
+        env:
+          GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
+          WITHINGS_TOKENS: ${{ secrets.WITHINGS_TOKENS }}
+        run: |
+          mkdir -p ~/.garminconnect ~/.withings
+          echo "$GARMIN_TOKENS"  > ~/.garminconnect/garmin_tokens.json
+          echo "$WITHINGS_TOKENS" > ~/.withings/withings_tokens.json
+
+      - name: Generate dashboard
+        env:
+          WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
+          WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
+          WITHINGS_REDIRECT_URI: http://localhost:8080
+        run: |
+          python health_dashboard.py
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp health_dashboard.html index.html
+          git add index.html
+          git diff --staged --quiet || git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')"
+          git push
