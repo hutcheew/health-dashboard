@@ -531,22 +531,22 @@
   <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); margin-bottom:16px">
     <div class="card red">
       <div class="card-label">Systolic</div>
-      <div class="card-value">134</div>
+      <div class="card-value">--</div>
       <div class="card-unit">mmHg</div>
     </div>
-    <div class="card green">
+    <div class="card red">
       <div class="card-label">Diastolic</div>
-      <div class="card-value">76</div>
+      <div class="card-value">--</div>
       <div class="card-unit">mmHg</div>
     </div>
     <div class="card">
       <div class="card-label">Pulse</div>
-      <div class="card-value">61</div>
+      <div class="card-value">--</div>
       <div class="card-unit">bpm</div>
     </div>
     <div class="card">
       <div class="card-label">Last Reading</div>
-      <div class="card-value" style="font-size:16px">2026-06-05 05:16</div>
+      <div class="card-value" style="font-size:16px">--</div>
     </div>
   </div>
   <div class="two-col">
@@ -561,66 +561,6 @@
         </thead>
         <tbody>
           
-          <tr>
-            <td>2026-06-05 05:16</td>
-            <td style="color:var(--red)">134</td>
-            <td style="color:var(--green)">76</td>
-            <td>61</td>
-          </tr>
-          <tr>
-            <td>2026-06-04 05:09</td>
-            <td style="color:var(--yellow)">125</td>
-            <td style="color:var(--green)">77</td>
-            <td>58</td>
-          </tr>
-          <tr>
-            <td>2026-06-03 04:46</td>
-            <td style="color:var(--yellow)">128</td>
-            <td style="color:var(--yellow)">81</td>
-            <td>60</td>
-          </tr>
-          <tr>
-            <td>2026-06-02 05:16</td>
-            <td style="color:var(--red)">130</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>59</td>
-          </tr>
-          <tr>
-            <td>2026-06-01 04:30</td>
-            <td style="color:var(--yellow)">128</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>54</td>
-          </tr>
-          <tr>
-            <td>2026-05-31 05:18</td>
-            <td style="color:var(--red)">134</td>
-            <td style="color:var(--yellow)">83</td>
-            <td>60</td>
-          </tr>
-          <tr>
-            <td>2026-05-30 05:23</td>
-            <td style="color:var(--yellow)">122</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>61</td>
-          </tr>
-          <tr>
-            <td>2026-05-29 05:15</td>
-            <td style="color:var(--yellow)">123</td>
-            <td style="color:var(--yellow)">83</td>
-            <td>61</td>
-          </tr>
-          <tr>
-            <td>2026-05-28 04:25</td>
-            <td style="color:var(--red)">132</td>
-            <td style="color:var(--yellow)">87</td>
-            <td>55</td>
-          </tr>
-          <tr>
-            <td>2026-05-27 05:16</td>
-            <td style="color:var(--yellow)">127</td>
-            <td style="color:var(--yellow)">80</td>
-            <td>61</td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -765,11 +705,11 @@ new Chart(document.getElementById('hrvChart'), {
 new Chart(document.getElementById('bpChart'), {
   type: 'line',
   data: {
-    labels: ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05"],
+    labels: [],
     datasets: [
-      { label: 'Systolic',  data: [132, 134, 127, 132, 123, 122, 134, 128, 130, 128, 125, 134],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
-      { label: 'Diastolic', data: [82, 85, 80, 87, 83, 85, 83, 85, 85, 81, 77, 76], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
-      { label: 'Pulse',     data: [62, 61, 61, 55, 61, 61, 60, 54, 59, 60, 58, 61],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
+      { label: 'Systolic',  data: [],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Diastolic', data: [], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Pulse',     data: [],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
     ]
   },
   options: { ...chartDefaults,
@@ -778,7 +718,7 @@ new Chart(document.getElementById('bpChart'), {
 </script>
 
 <div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED 2026-06-05 10:13 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+  GENERATED 2026-06-05 10:41 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
 </div>
 </body>
 </html>
