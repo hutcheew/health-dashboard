@@ -330,6 +330,11 @@ Give 3-4 bullet insights. Each bullet: one sentence, specific and actionable. Fl
             timeout=30
         )
         result = resp.json()
+        print(f"  API status: {resp.status_code}")
+        print(f"  API response keys: {list(result.keys())}")
+        if "error" in result:
+            print(f"  API error: {result['error']}")
+            return f"AI commentary unavailable: {result['error'].get('message', 'unknown error')}"
         return result["content"][0]["text"]
     except Exception as e:
         return f"AI commentary unavailable: {e}"
