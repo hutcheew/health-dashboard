@@ -831,14 +831,14 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 </div>
 
 <!-- AI COMMENTARY -->
-<div class="section">
+{f'''<div class="section">
   <div class="section-title">AI Coach Commentary</div>
   <div class="card" style="border-top-color:#818cf8; padding: 20px;">
     <div class="ai-commentary">
-      {ai_rows if ai_rows else '<div class="ai-row" style="color:var(--muted)">No commentary available.</div>'}
+      {ai_rows}
     </div>
   </div>
-</div>
+</div>''' if ai_rows else ''}
 
 <!-- TRAINING PHASE -->
 <div class="section">
