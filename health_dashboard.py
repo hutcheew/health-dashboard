@@ -272,6 +272,75 @@ def compute_achilles_score(runs, phase_info):
     level = "high" if score >= 60 else "medium" if score >= 30 else "low"
     return {"score": score, "level": level, "factors": factors, "this_week_km": round(this_week_km, 1), "last_week_km": round(last_week_km, 1)}
 
+# ─── AI COMMENTARY ───────────────────────────────────────────────────────────
+
+def get_ai_commentary(garmin_data, bp_readings, phase_info, achilles):
+    try:
+        runs     = garmin_data.get("runs", [])
+        readiness= garmin_data.get("readiness", {})
+        last_run = runs[0] if runs else {}
+        laps     = last_run.get("laps", [])
+        avg_gct_l = round(sum(l["gct_balance"] for l in laps) / len(laps), 1) if laps else 50.0
+        latest_bp = bp_readings[0] if bp_readings else {}
+
+        prompt = f"""You are a running coach and sports physiotherapist. Analyse this athlete's daily health data and give 3-4 concise, actionable insights. Be direct and specific. No fluff.
+
+ATHLETE CONTEXT:
+- Training for Melbourne Marathon on 12 Oct 2026 (sub-3:00 goal, current PB 3:16)
+- Left insertional Achilles tendinopathy (active management)
+- Seated calf raises 3x/week approved. Heel drops off step are PROHIBITED.
+- Currently in Week {phase_info['week_num']} of 28 — {phase_info['phase']['name']} phase
+
+TODAY'S DATA:
+- Training readiness: {readiness.get('score', 'N/A')}/100 ({readiness.get('level', '')})
+- Sleep score: {readiness.get('sleep_score', 'N/A')}/100
+- HRV weekly avg: {garmin_data.get('hrv', {}).get('weekly_avg', 'N/A')} ms
+- Resting HR: {garmin_data.get('resting_hr', 'N/A')} bpm
+- Body battery: {garmin_data.get('body_battery', 'N/A')}/100
+- Recovery time: {readiness.get('recovery_time', 'N/A')} min
+
+LAST RUN ({last_run.get('date', 'N/A')}):
+- Distance: {last_run.get('distance', 'N/A')} km
+- Avg pace: {pace_str(last_run.get('avg_pace'))} min/km
+- Avg HR: {last_run.get('avg_hr', 'N/A')} bpm
+- GCT balance LEFT: {avg_gct_l}% (right: {round(100-avg_gct_l,1)}%)
+
+ACHILLES LOAD SCORE: {achilles.get('score', 'N/A')}/100 ({achilles.get('level', '')})
+Factors: {', '.join(f['label'] + ': ' + f['value'] for f in achilles.get('factors', []))}
+
+BLOOD PRESSURE (latest): {latest_bp.get('systolic', 'N/A')}/{latest_bp.get('diastolic', 'N/A')} mmHg, pulse {latest_bp.get('pulse', 'N/A')} bpm
+
+This week: {achilles.get('this_week_km', 'N/A')} km | Last week: {achilles.get('last_week_km', 'N/A')} km
+Phase target: {phase_info['phase']['km_min']}–{phase_info['phase']['km_max']} km/wk
+
+Give 3-4 bullet insights. Each bullet: one sentence, specific and actionable. Flag any Achilles risk clearly. End with one sentence on today's recommended training."""
+
+        resp = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": os.environ.get("ANTHROPIC_API_KEY", ""),
+                "anthropic-version": "2023-06-01",
+            },
+            json={
+                "model": "claude-sonnet-4-20250514",
+                "max_tokens": 500,
+                "messages": [{"role": "user", "content": prompt}]
+            },
+            timeout=30
+        )
+        result = resp.json()
+        print(f"  API status: {resp.status_code}")
+        print(f"  API response keys: {list(result.keys())}")
+        if "error" in result:
+            print(f"  API error: {result['error']}")
+            return f"AI commentary unavailable: {result['error'].get('message', 'unknown error')}"
+        return result["content"][0]["text"]
+    except Exception as e:
+        return f"AI commentary unavailable: {e}"
+
+# ─── EMAIL ALERT ─────────────────────────────────────────────────────────────
+
 def send_alert_email(subject, body):
     """Send alert via Gmail SMTP. Set GMAIL_APP_PASSWORD in .env"""
     import smtplib
@@ -400,6 +469,13 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     achilles_color = "#f87171" if achilles_level == "high" else "#facc15" if achilles_level == "medium" else "#4ade80"
     achilles_factors = achilles.get("factors", [])
 
+    # AI commentary — pre-build rows
+    ai_rows = ""
+    if ai_commentary:
+        for line in ai_commentary.strip().split("\n"):
+            line = line.strip().lstrip("•-* ")
+            if line:
+                ai_rows += f'<div class="ai-row">{line}</div>\n'
 
     # Achilles factor rows
     achilles_rows = ""
@@ -643,7 +719,15 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     transition: width 0.3s;
   }}
   .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
-
+  .ai-commentary {{ display: flex; flex-direction: column; gap: 10px; }}
+  .ai-row {{
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border-left: 3px solid #818cf8;
+    line-height: 1.6;
+    font-size: 13px;
+  }}
 </style>
 </head>
 <body>
@@ -688,6 +772,16 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
       <div class="card-label">Recovery Time</div>
       <div class="card-value">{readiness.get('recovery_time', '--')}</div>
       <div class="card-unit">minutes</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI COMMENTARY -->
+<div class="section">
+  <div class="section-title">AI Coach Commentary</div>
+  <div class="card" style="border-top-color:#818cf8; padding: 20px;">
+    <div class="ai-commentary">
+      {ai_rows if ai_rows else '<div class="ai-row" style="color:var(--muted)">No commentary available.</div>'}
     </div>
   </div>
 </div>
@@ -1064,9 +1158,143 @@ new Chart(document.getElementById('bpChart'), {{
 }});
 </script>
 
-<div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
+<!-- EXPORT SECTION -->
+<div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--border);">
+  <div class="section-title">Export & Analysis</div>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <button onclick="exportJSON()" style="
+      background:var(--surface); border:1px solid var(--border);
+      color:var(--text); padding:10px 20px; border-radius:6px;
+      font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+      transition: border-color 0.2s;">
+      ⬇ Export Data (JSON)
+    </button>
+    <button onclick="openClaude()" style="
+      background:var(--surface); border:1px solid #818cf8;
+      color:#818cf8; padding:10px 20px; border-radius:6px;
+      font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+      transition: border-color 0.2s;">
+      ✦ Analyse with Claude
+    </button>
+  </div>
+  <div style="margin-top:8px; font-size:10px; color:var(--muted);">
+    Export downloads all dashboard data as JSON. Analyse with Claude opens claude.ai with your data pre-loaded.
+  </div>
+</div>
+
+<div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
   GENERATED {datetime.now().strftime('%Y-%m-%d %H:%M')} &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
 </div>
+
+<script>
+const dashboardData = {json.dumps({
+    "generated": datetime.now().strftime('%Y-%m-%d %H:%M'),
+    "training": {
+        "week": week_num,
+        "phase": phase["name"],
+        "week_in_phase": week_in_phase,
+        "phase_total": phase_total,
+        "days_to_race": days_to_race,
+        "phase_target_km": f"{phase['km_min']}-{phase['km_max']}",
+        "this_week_km": achilles.get("this_week_km"),
+        "last_week_km": achilles.get("last_week_km"),
+    },
+    "readiness": {
+        "score": readiness.get("score"),
+        "level": readiness.get("level"),
+        "sleep_score": readiness.get("sleep_score"),
+        "hrv_weekly_avg": hrv.get("weekly_avg"),
+        "resting_hr": resting_hr,
+        "body_battery": body_battery,
+        "recovery_time": readiness.get("recovery_time"),
+        "acwr": readiness.get("acwr"),
+    },
+    "achilles": {
+        "score": achilles.get("score"),
+        "level": achilles.get("level"),
+        "factors": achilles.get("factors", []),
+    },
+    "last_run": {
+        "date": last_run.get("date"),
+        "distance_km": last_run.get("distance"),
+        "avg_pace_min_km": last_run.get("avg_pace"),
+        "avg_hr": last_run.get("avg_hr"),
+        "cadence": last_run.get("cadence"),
+        "gct_balance_left_pct": last_gct_balance,
+        "gct_balance_right_pct": last_gct_balance_r,
+        "avg_gct_ms": last_gct_avg,
+        "laps": last_run.get("laps", []),
+    },
+    "recent_runs": [{{
+        "date": r["date"],
+        "distance_km": r["distance"],
+        "avg_pace": r["avg_pace"],
+        "avg_hr": r["avg_hr"],
+        "gct_balance_left": round(sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
+        "gct_balance_right": round(100-sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
+    }} for r in runs[:8]],
+    "blood_pressure": bp_readings[:10],
+}, default=str)};
+
+function exportJSON() {{
+    const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {{type: 'application/json'}});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `health_data_${{dashboardData.generated.replace(/[: ]/g,'-')}}.json`;
+    a.click();
+}}
+
+function openClaude() {{
+    const d = dashboardData;
+    const r = d.readiness;
+    const lr = d.last_run;
+    const t = d.training;
+    const a = d.achilles;
+    const bp = d.blood_pressure[0] || {{}};
+
+    const prompt = `Please analyse my health and training data for ${{d.generated}} and give me specific, actionable insights.
+
+TRAINING CONTEXT:
+- Melbourne Marathon 12 Oct 2026, sub-3:00 goal (current PB 3:16)
+- Left insertional Achilles tendinopathy (active management)
+- Week ${{t.week}} of 28 — ${{t.phase}} phase (Week ${{t.week_in_phase}} of ${{t.phase_total}})
+- Phase target: ${{t.phase_target_km}} km/week
+- This week: ${{t.this_week_km}} km | Last week: ${{t.last_week_km}} km
+- Days to race: ${{t.days_to_race}}
+
+READINESS:
+- Training readiness: ${{r.score}}/100 (${{r.level}})
+- Sleep score: ${{r.sleep_score}}/100
+- HRV weekly avg: ${{r.hrv_weekly_avg}} ms
+- Resting HR: ${{r.resting_hr}} bpm
+- Body battery: ${{r.body_battery}}/100
+- Recovery time: ${{r.recovery_time}} min
+
+ACHILLES LOAD: ${{a.score}}/100 (${{a.level}} risk)
+Factors: ${{a.factors.map(f => f.label + ': ' + f.value).join(', ')}}
+
+LAST RUN (${{lr.date}}):
+- ${{lr.distance_km}} km @ ${{lr.avg_pace_min_km ? (Math.floor(lr.avg_pace_min_km)+':'+(Math.round((lr.avg_pace_min_km%1)*60)+'').padStart(2,'0')) : '--'}} min/km
+- HR: ${{lr.avg_hr}} bpm | Cadence: ${{lr.cadence}} spm
+- GCT balance: Left ${{lr.gct_balance_left_pct}}% / Right ${{lr.gct_balance_right_pct}}%
+- Avg GCT: ${{lr.avg_gct_ms}} ms
+
+RECENT RUNS:
+${{d.recent_runs.map(r => `${{r.date}}: ${{r.distance_km}}km, GCT L${{r.gct_balance_left}}%/R${{r.gct_balance_right}}%`).join('\\n')}}
+
+BLOOD PRESSURE (latest): ${{bp.systolic}}/${{bp.diastolic}} mmHg, pulse ${{bp.pulse}} bpm
+
+Please provide:
+1. Key observations about my readiness and recovery
+2. Achilles risk assessment based on GCT trend and load
+3. Training recommendations for today and this week
+4. Any concerns or things to watch`;
+
+    const encoded = encodeURIComponent(prompt);
+    window.open(`https://claude.ai/new?q=${{encoded}}`, '_blank');
+}}
+</script>
+
 </body>
 </html>"""
     return html
@@ -1092,7 +1320,9 @@ def main():
     achilles = compute_achilles_score(garmin_data["runs"], phase_info)
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
 
-    ai_commentary = ""
+    print("Getting AI commentary...")
+    ai_commentary = get_ai_commentary(garmin_data, bp_readings, phase_info, achilles)
+    print("  Done.")
 
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
