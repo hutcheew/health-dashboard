@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Health Dashboard — 2026-06-05</title>
+<title>Health Dashboard — 2026-06-06</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -193,22 +193,14 @@
     transition: width 0.3s;
   }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .ai-commentary { display: flex; flex-direction: column; gap: 10px; }
-  .ai-row {
-    padding: 10px 14px;
-    background: var(--surface2);
-    border-radius: 6px;
-    border-left: 3px solid #818cf8;
-    line-height: 1.6;
-    font-size: 13px;
-  }
+
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>HEALTH DASHBOARD</h1>
-  <span class="date">2026-06-05</span>
+  <span class="date">2026-06-06</span>
   <span class="tagline">Garmin + Withings</span>
 </div>
 
@@ -218,13 +210,13 @@
   <div class="grid">
     <div class="card green">
       <div class="card-label">Training Readiness</div>
-      <div class="card-value">71</div>
+      <div class="card-value">74</div>
       <div class="card-unit">Moderate</div>
       <div class="card-sub">Good Sleep History</div>
     </div>
     <div class="card accent2">
       <div class="card-label">Sleep Score</div>
-      <div class="card-value">75</div>
+      <div class="card-value">73</div>
       <div class="card-unit">/ 100</div>
     </div>
     <div class="card">
@@ -234,33 +226,18 @@
     </div>
     <div class="card">
       <div class="card-label">Resting HR</div>
-      <div class="card-value">52</div>
+      <div class="card-value">50</div>
       <div class="card-unit">bpm</div>
     </div>
     <div class="card yellow">
       <div class="card-label">Body Battery</div>
-      <div class="card-value">36</div>
+      <div class="card-value">34</div>
       <div class="card-unit">/ 100</div>
     </div>
     <div class="card">
       <div class="card-label">Recovery Time</div>
-      <div class="card-value">542</div>
+      <div class="card-value">1</div>
       <div class="card-unit">minutes</div>
-    </div>
-  </div>
-</div>
-
-<!-- AI COMMENTARY -->
-<div class="section">
-  <div class="section-title">AI Coach Commentary</div>
-  <div class="card" style="border-top-color:#818cf8; padding: 20px;">
-    <div class="ai-commentary">
-      <div class="ai-row">AI commentary unavailable: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit.</div>
-<div class="ai-row">Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash</div>
-<div class="ai-row">Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash</div>
-<div class="ai-row">Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash</div>
-<div class="ai-row">Please retry in 40.332405026s.</div>
-
     </div>
   </div>
 </div>
@@ -291,7 +268,7 @@
     </div>
     <div class="card">
       <div class="card-label">Days to Race</div>
-      <div class="card-value">129</div>
+      <div class="card-value">128</div>
       <div class="card-unit">12 Oct 2026</div>
     </div>
     <div class="card">
@@ -698,8 +675,8 @@ new Chart(document.getElementById('weeklyChart'), {
 new Chart(document.getElementById('hrvChart'), {
   type: 'line',
   data: {
-    labels: ["02:35", "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30"],
-    datasets: [{ data: [20, 47, 32, 20, 28, 31, 23, 28, 26, 29, 23, 14, 29, 28, 20, 47, 38, 21, 20, 21, 18, 16, 18, 18], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
+    labels: ["03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35", "04:40", "04:45", "04:50", "04:55", "05:00"],
+    datasets: [{ data: [55, 25, 30, 30, 36, 26, 28, 28, 27, 29, 25, 26, 28, 30, 40, 37, 23, 39, 25, 19, 28, 23, 26, 27], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
       tension: 0.3, fill: true, pointRadius: 2, pointBackgroundColor: accent2 }]
   },
   options: { ...chartDefaults }
@@ -722,7 +699,7 @@ new Chart(document.getElementById('bpChart'), {
 </script>
 
 <div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED 2026-06-05 23:38 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+  GENERATED 2026-06-06 04:44 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
 </div>
 </body>
 </html>
