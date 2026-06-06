@@ -1,7 +1,7 @@
 """
 refresh_withings_token.py
 --------------------------
-Refreshes Withings access token and updates GitHub secret.
+Refreshes Withings access token and updates GitHub secret using PAT.
 """
 
 import os
@@ -36,36 +36,37 @@ def refresh_token():
         "userid":        body["userid"],
     }
     json.dump(new_tokens, open(TOKEN_FILE, "w"), indent=2)
-    print(f"Token refreshed. Expires in {body['expires_in']}s")
+    print(f"Token refreshed. New access token: {body['access_token'][:10]}...")
     return new_tokens
 
 def update_github_secret(token_json):
-    github_token = os.environ.get("GITHUB_TOKEN", "")
-    repo = os.environ.get("GITHUB_REPOSITORY", "hutcheew/health-dashboard")
-    if not github_token:
-        print("No GITHUB_TOKEN — skipping secret update")
+    pat = os.environ.get("GH_PAT", "")
+    repo = "hutcheew/health-dashboard"
+
+    if not pat:
+        print("No GH_PAT — skipping secret update")
         return
 
     headers = {
-        "Authorization": f"Bearer {github_token}",
+        "Authorization": f"Bearer {pat}",
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
     }
 
-    # Get public key
+    # Get repo public key
     key_resp = requests.get(
         f"https://api.github.com/repos/{repo}/actions/secrets/public-key",
         headers=headers
     )
+    print(f"Public key status: {key_resp.status_code}")
     key_data = key_resp.json()
-    print(f"Public key API status: {key_resp.status_code}")
-    print(f"Public key response keys: {list(key_data.keys())}")
+    print(f"Public key data: {key_data}")
 
     public_key_b64 = key_data.get("key", "")
     key_id = key_data.get("key_id", "")
 
     if not public_key_b64:
-        print(f"Could not get public key: {key_data}")
+        print("Could not get public key — check GH_PAT has repo secrets permission")
         return
 
     # Encrypt with PyNaCl
