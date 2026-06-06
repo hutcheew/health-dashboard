@@ -193,7 +193,15 @@
     transition: width 0.3s;
   }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
+  .ai-commentary { display: flex; flex-direction: column; gap: 10px; }
+  .ai-row {
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border-left: 3px solid #818cf8;
+    line-height: 1.6;
+    font-size: 13px;
+  }
 </style>
 </head>
 <body>
@@ -238,6 +246,16 @@
       <div class="card-label">Recovery Time</div>
       <div class="card-value">1</div>
       <div class="card-unit">minutes</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI COMMENTARY -->
+<div class="section">
+  <div class="section-title">AI Coach Commentary</div>
+  <div class="card" style="border-top-color:#818cf8; padding: 20px;">
+    <div class="ai-commentary">
+      <div class="ai-row" style="color:var(--muted)">No commentary available.</div>
     </div>
   </div>
 </div>
@@ -510,24 +528,24 @@
 <div class="section">
   <div class="section-title">Blood Pressure — Withings BPM Connect</div>
   <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); margin-bottom:16px">
-    <div class="card yellow">
+    <div class="card red">
       <div class="card-label">Systolic</div>
-      <div class="card-value">123</div>
+      <div class="card-value">--</div>
       <div class="card-unit">mmHg</div>
     </div>
-    <div class="card green">
+    <div class="card red">
       <div class="card-label">Diastolic</div>
-      <div class="card-value">77</div>
+      <div class="card-value">--</div>
       <div class="card-unit">mmHg</div>
     </div>
     <div class="card">
       <div class="card-label">Pulse</div>
-      <div class="card-value">62</div>
+      <div class="card-value">--</div>
       <div class="card-unit">bpm</div>
     </div>
     <div class="card">
       <div class="card-label">Last Reading</div>
-      <div class="card-value" style="font-size:16px">2026-06-06 05:22</div>
+      <div class="card-value" style="font-size:16px">--</div>
     </div>
   </div>
   <div class="two-col">
@@ -542,66 +560,6 @@
         </thead>
         <tbody>
           
-          <tr>
-            <td>2026-06-06 05:22</td>
-            <td style="color:var(--yellow)">123</td>
-            <td style="color:var(--green)">77</td>
-            <td>62</td>
-          </tr>
-          <tr>
-            <td>2026-06-05 05:16</td>
-            <td style="color:var(--red)">134</td>
-            <td style="color:var(--green)">76</td>
-            <td>61</td>
-          </tr>
-          <tr>
-            <td>2026-06-04 05:09</td>
-            <td style="color:var(--yellow)">125</td>
-            <td style="color:var(--green)">77</td>
-            <td>58</td>
-          </tr>
-          <tr>
-            <td>2026-06-03 04:46</td>
-            <td style="color:var(--yellow)">128</td>
-            <td style="color:var(--yellow)">81</td>
-            <td>60</td>
-          </tr>
-          <tr>
-            <td>2026-06-02 05:16</td>
-            <td style="color:var(--red)">130</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>59</td>
-          </tr>
-          <tr>
-            <td>2026-06-01 04:30</td>
-            <td style="color:var(--yellow)">128</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>54</td>
-          </tr>
-          <tr>
-            <td>2026-05-31 05:18</td>
-            <td style="color:var(--red)">134</td>
-            <td style="color:var(--yellow)">83</td>
-            <td>60</td>
-          </tr>
-          <tr>
-            <td>2026-05-30 05:23</td>
-            <td style="color:var(--yellow)">122</td>
-            <td style="color:var(--yellow)">85</td>
-            <td>61</td>
-          </tr>
-          <tr>
-            <td>2026-05-29 05:15</td>
-            <td style="color:var(--yellow)">123</td>
-            <td style="color:var(--yellow)">83</td>
-            <td>61</td>
-          </tr>
-          <tr>
-            <td>2026-05-28 04:25</td>
-            <td style="color:var(--red)">132</td>
-            <td style="color:var(--yellow)">87</td>
-            <td>55</td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -746,11 +704,11 @@ new Chart(document.getElementById('hrvChart'), {
 new Chart(document.getElementById('bpChart'), {
   type: 'line',
   data: {
-    labels: ["2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06"],
+    labels: [],
     datasets: [
-      { label: 'Systolic',  data: [134, 127, 132, 123, 122, 134, 128, 130, 128, 125, 134, 123],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
-      { label: 'Diastolic', data: [85, 80, 87, 83, 85, 83, 85, 85, 81, 77, 76, 77], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
-      { label: 'Pulse',     data: [61, 61, 55, 61, 61, 60, 54, 59, 60, 58, 61, 62],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
+      { label: 'Systolic',  data: [],  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Diastolic', data: [], borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 },
+      { label: 'Pulse',     data: [],     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] },
     ]
   },
   options: { ...chartDefaults,
@@ -758,8 +716,95 @@ new Chart(document.getElementById('bpChart'), {
 });
 </script>
 
-<div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED 2026-06-06 04:51 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+<!-- EXPORT SECTION -->
+<div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--border);">
+  <div class="section-title">Export & Analysis</div>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <button onclick="exportJSON()" style="
+      background:var(--surface); border:1px solid var(--border);
+      color:var(--text); padding:10px 20px; border-radius:6px;
+      font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+      transition: border-color 0.2s;">
+      ⬇ Export Data (JSON)
+    </button>
+    <button onclick="openClaude()" style="
+      background:var(--surface); border:1px solid #818cf8;
+      color:#818cf8; padding:10px 20px; border-radius:6px;
+      font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
+      transition: border-color 0.2s;">
+      ✦ Analyse with Claude
+    </button>
+  </div>
+  <div style="margin-top:8px; font-size:10px; color:var(--muted);">
+    Export downloads all dashboard data as JSON. Analyse with Claude opens claude.ai with your data pre-loaded.
+  </div>
 </div>
+
+<div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
+  GENERATED 2026-06-06 04:58 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+</div>
+
+<script>
+const dashboardData = {"generated": "2026-06-06 04:58", "training": {"week": 6, "phase": "Return to Run", "week_in_phase": 2, "phase_total": 4, "days_to_race": 128, "phase_target_km": "30-40", "this_week_km": 33.4, "last_week_km": 26.5}, "readiness": {"score": 74, "level": "MODERATE", "sleep_score": 73, "hrv_weekly_avg": 34, "resting_hr": 50, "body_battery": 34, "recovery_time": 1, "acwr": 1.0}, "achilles": {"score": 25, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "33 km (within target)", "level": "low"}, {"label": "Mileage spike", "value": "+26% vs last week", "level": "high"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-06", "distance_km": 16.0, "avg_pace_min_km": 6.04, "avg_hr": 147.0, "cadence": 179, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 252.7, "laps": [{"km": 1, "pace": 5.57, "hr": 134.0, "gct": 248.3, "gct_balance": 50.5, "cadence": 0}, {"km": 2, "pace": 5.84, "hr": 141.0, "gct": 250.6, "gct_balance": 50.7, "cadence": 0}, {"km": 3, "pace": 5.94, "hr": 141.0, "gct": 253.4, "gct_balance": 50.5, "cadence": 0}, {"km": 4, "pace": 5.99, "hr": 144.0, "gct": 254.6, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 6.06, "hr": 146.0, "gct": 254.1, "gct_balance": 50.7, "cadence": 0}, {"km": 6, "pace": 6.04, "hr": 146.0, "gct": 252.4, "gct_balance": 50.4, "cadence": 0}, {"km": 7, "pace": 6.09, "hr": 146.0, "gct": 252.5, "gct_balance": 50.6, "cadence": 0}, {"km": 8, "pace": 6.1, "hr": 148.0, "gct": 253.1, "gct_balance": 50.6, "cadence": 0}, {"km": 9, "pace": 6.08, "hr": 149.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 10, "pace": 6.12, "hr": 149.0, "gct": 253.6, "gct_balance": 50.5, "cadence": 0}, {"km": 11, "pace": 6.16, "hr": 146.0, "gct": 253.8, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 6.17, "hr": 152.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 13, "pace": 5.93, "hr": 150.0, "gct": 251.0, "gct_balance": 50.2, "cadence": 0}, {"km": 14, "pace": 6.27, "hr": 153.0, "gct": 254.3, "gct_balance": 50.6, "cadence": 0}, {"km": 15, "pace": 6.04, "hr": 151.0, "gct": 252.2, "gct_balance": 50.7, "cadence": 0}, {"km": 16, "pace": 6.21, "hr": 152.0, "gct": 251.7, "gct_balance": 50.5, "cadence": 0}, {"km": 17, "pace": 5.33, "hr": 155.0, "gct": 254.0, "gct_balance": 50.9, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-06-02", "distance_km": 7.0, "avg_pace": 5.41, "avg_hr": 156.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-01", "distance_km": 5.2, "avg_pace": 5.48, "avg_hr": 145.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-05-30", "distance_km": 10.4, "avg_pace": 6.25, "avg_hr": 144.0, "gct_balance_left": 50.8, "gct_balance_right": 49.2}, {"date": "2026-05-28", "distance_km": 5.0, "avg_pace": 6.01, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-05-28", "distance_km": 5.1, "avg_pace": 5.86, "avg_hr": 140.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-05-26", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 142.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}], "blood_pressure": []};
+
+function exportJSON() {
+    const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `health_data_${dashboardData.generated.replace(/[: ]/g,'-')}.json`;
+    a.click();
+}
+
+function openClaude() {
+    const d = dashboardData;
+    const r = d.readiness;
+    const lr = d.last_run;
+    const t = d.training;
+    const a = d.achilles;
+    const bp = d.blood_pressure[0] || {};
+
+    const prompt = `Please analyse my health and training data for ${d.generated} and give me specific, actionable insights.
+
+TRAINING CONTEXT:
+- Melbourne Marathon 12 Oct 2026, sub-3:00 goal (current PB 3:16)
+- Left insertional Achilles tendinopathy (active management)
+- Week ${t.week} of 28 — ${t.phase} phase (Week ${t.week_in_phase} of ${t.phase_total})
+- Phase target: ${t.phase_target_km} km/week
+- This week: ${t.this_week_km} km | Last week: ${t.last_week_km} km
+- Days to race: ${t.days_to_race}
+
+READINESS:
+- Training readiness: ${r.score}/100 (${r.level})
+- Sleep score: ${r.sleep_score}/100
+- HRV weekly avg: ${r.hrv_weekly_avg} ms
+- Resting HR: ${r.resting_hr} bpm
+- Body battery: ${r.body_battery}/100
+- Recovery time: ${r.recovery_time} min
+
+ACHILLES LOAD: ${a.score}/100 (${a.level} risk)
+Factors: ${a.factors.map(f => f.label + ': ' + f.value).join(', ')}
+
+LAST RUN (${lr.date}):
+- ${lr.distance_km} km @ ${lr.avg_pace_min_km ? (Math.floor(lr.avg_pace_min_km)+':'+(Math.round((lr.avg_pace_min_km%1)*60)+'').padStart(2,'0')) : '--'} min/km
+- HR: ${lr.avg_hr} bpm | Cadence: ${lr.cadence} spm
+- GCT balance: Left ${lr.gct_balance_left_pct}% / Right ${lr.gct_balance_right_pct}%
+- Avg GCT: ${lr.avg_gct_ms} ms
+
+RECENT RUNS:
+${d.recent_runs.map(r => `${r.date}: ${r.distance_km}km, GCT L${r.gct_balance_left}%/R${r.gct_balance_right}%`).join('\n')}
+
+BLOOD PRESSURE (latest): ${bp.systolic}/${bp.diastolic} mmHg, pulse ${bp.pulse} bpm
+
+Please provide:
+1. Key observations about my readiness and recovery
+2. Achilles risk assessment based on GCT trend and load
+3. Training recommendations for today and this week
+4. Any concerns or things to watch`;
+
+    const encoded = encodeURIComponent(prompt);
+    window.open(`https://claude.ai/new?q=${encoded}`, '_blank');
+}
+</script>
+
 </body>
 </html>
