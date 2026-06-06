@@ -483,6 +483,60 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         col = "#f87171" if f["level"] == "high" else "#facc15" if f["level"] == "medium" else "#4ade80"
         achilles_rows += f'<tr><td>{f["label"]}</td><td style="color:{col}">{f["value"]}</td></tr>\n'
 
+    # Pre-build JSON data for export button
+    recent_runs_export = []
+    for r in runs[:8]:
+        recent_runs_export.append({
+            "date": r["date"],
+            "distance_km": r["distance"],
+            "avg_pace": r["avg_pace"],
+            "avg_hr": r["avg_hr"],
+            "gct_balance_left": round(sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
+            "gct_balance_right": round(100-sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
+        })
+
+    export_data = json.dumps({
+        "generated": datetime.now().strftime('%Y-%m-%d %H:%M'),
+        "training": {
+            "week": week_num,
+            "phase": phase["name"],
+            "week_in_phase": week_in_phase,
+            "phase_total": phase_total,
+            "days_to_race": days_to_race,
+            "phase_target_km": f"{phase['km_min']}-{phase['km_max']}",
+            "this_week_km": achilles.get("this_week_km"),
+            "last_week_km": achilles.get("last_week_km"),
+        },
+        "readiness": {
+            "score": readiness.get("score"),
+            "level": readiness.get("level"),
+            "sleep_score": readiness.get("sleep_score"),
+            "hrv_weekly_avg": hrv.get("weekly_avg"),
+            "resting_hr": resting_hr,
+            "body_battery": body_battery,
+            "recovery_time": readiness.get("recovery_time"),
+            "acwr": readiness.get("acwr"),
+        },
+        "achilles": {
+            "score": achilles.get("score"),
+            "level": achilles.get("level"),
+            "factors": achilles.get("factors", []),
+        },
+        "last_run": {
+            "date": last_run.get("date"),
+            "distance_km": last_run.get("distance"),
+            "avg_pace_min_km": last_run.get("avg_pace"),
+            "avg_hr": last_run.get("avg_hr"),
+            "cadence": last_run.get("cadence"),
+            "gct_balance_left_pct": last_gct_balance,
+            "gct_balance_right_pct": last_gct_balance_r,
+            "avg_gct_ms": last_gct_avg,
+            "laps": last_run.get("laps", []),
+        },
+        "recent_runs": recent_runs_export,
+        "blood_pressure": bp_readings[:10],
+    }, default=str)
+
     # Pre-build table rows (avoids nested f-string issues in Python < 3.12)
     run_table_rows = ""
     for r in runs:
@@ -1187,54 +1241,7 @@ new Chart(document.getElementById('bpChart'), {{
 </div>
 
 <script>
-const dashboardData = {json.dumps({
-    "generated": datetime.now().strftime('%Y-%m-%d %H:%M'),
-    "training": {
-        "week": week_num,
-        "phase": phase["name"],
-        "week_in_phase": week_in_phase,
-        "phase_total": phase_total,
-        "days_to_race": days_to_race,
-        "phase_target_km": f"{phase['km_min']}-{phase['km_max']}",
-        "this_week_km": achilles.get("this_week_km"),
-        "last_week_km": achilles.get("last_week_km"),
-    },
-    "readiness": {
-        "score": readiness.get("score"),
-        "level": readiness.get("level"),
-        "sleep_score": readiness.get("sleep_score"),
-        "hrv_weekly_avg": hrv.get("weekly_avg"),
-        "resting_hr": resting_hr,
-        "body_battery": body_battery,
-        "recovery_time": readiness.get("recovery_time"),
-        "acwr": readiness.get("acwr"),
-    },
-    "achilles": {
-        "score": achilles.get("score"),
-        "level": achilles.get("level"),
-        "factors": achilles.get("factors", []),
-    },
-    "last_run": {
-        "date": last_run.get("date"),
-        "distance_km": last_run.get("distance"),
-        "avg_pace_min_km": last_run.get("avg_pace"),
-        "avg_hr": last_run.get("avg_hr"),
-        "cadence": last_run.get("cadence"),
-        "gct_balance_left_pct": last_gct_balance,
-        "gct_balance_right_pct": last_gct_balance_r,
-        "avg_gct_ms": last_gct_avg,
-        "laps": last_run.get("laps", []),
-    },
-    "recent_runs": [{{
-        "date": r["date"],
-        "distance_km": r["distance"],
-        "avg_pace": r["avg_pace"],
-        "avg_hr": r["avg_hr"],
-        "gct_balance_left": round(sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
-        "gct_balance_right": round(100-sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
-    }} for r in runs[:8]],
-    "blood_pressure": bp_readings[:10],
-}, default=str)};
+const dashboardData = {export_data};
 
 function exportJSON() {{
     const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {{type: 'application/json'}});
@@ -1320,15 +1327,11 @@ def main():
     achilles = compute_achilles_score(garmin_data["runs"], phase_info)
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
 
-    print("Getting AI commentary...")
-    ai_commentary = get_ai_commentary(garmin_data, bp_readings, phase_info, achilles)
-    print("  Done.")
-
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
 
     print("Generating dashboard...")
-    html = generate_html(garmin_data, bp_readings, phase_info, achilles, ai_commentary)
+    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "")
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
