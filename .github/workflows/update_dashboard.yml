@@ -2,7 +2,10 @@ name: Update Health Dashboard
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 20 * * *'   # 7am AEDT (UTC+11, Oct-Apr)
+    - cron: '0 21 * * *'   # 7am AEST (UTC+10, Apr-Oct)
+    - cron: '0 6 * * *'    # 5pm AEDT (UTC+11, Oct-Apr)
+    - cron: '0 7 * * *'    # 5pm AEST (UTC+10, Apr-Oct)
   workflow_dispatch:
 
 jobs:
