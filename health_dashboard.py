@@ -623,6 +623,9 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <td>{c['calories'] or '--'}</td>
         </tr>"""
 
+    # Pre-compute cycle display values
+    last_cycle_duration = f"{last_cycle['duration']:.0f}" if last_cycle else '--'
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1143,7 +1146,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
       <div class="stat">
         <div class="stat-accent" style="background:var(--orange)"></div>
         <div class="stat-label">Duration</div>
-        <div class="stat-value sm">{last_cycle.get('duration','--'):.0f if last_cycle else '--'}</div>
+        <div class="stat-value sm">{last_cycle_duration}</div>
         <div class="stat-unit">min</div>
       </div>
       <div class="stat">
