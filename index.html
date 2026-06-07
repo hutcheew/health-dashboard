@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Health Dashboard — 2026-06-06</title>
+<title>Health Dashboard — 2026-06-07</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -208,7 +208,7 @@
 
 <div class="header">
   <h1>HEALTH DASHBOARD</h1>
-  <span class="date">2026-06-06</span>
+  <span class="date">2026-06-07</span>
   <span class="tagline">Garmin + Withings</span>
 </div>
 
@@ -216,35 +216,35 @@
 <div class="section">
   <div class="section-title">Today's Readiness</div>
   <div class="grid">
-    <div class="card green">
+    <div class="card yellow">
       <div class="card-label">Training Readiness</div>
-      <div class="card-value">74</div>
+      <div class="card-value">57</div>
       <div class="card-unit">Moderate</div>
-      <div class="card-sub">Good Sleep History</div>
+      <div class="card-sub">Listen To Your Body</div>
     </div>
     <div class="card accent2">
       <div class="card-label">Sleep Score</div>
-      <div class="card-value">73</div>
+      <div class="card-value">78</div>
       <div class="card-unit">/ 100</div>
     </div>
     <div class="card">
       <div class="card-label">HRV Avg (7d)</div>
-      <div class="card-value">34</div>
+      <div class="card-value">33</div>
       <div class="card-unit">ms</div>
     </div>
     <div class="card">
       <div class="card-label">Resting HR</div>
-      <div class="card-value">50</div>
+      <div class="card-value">52</div>
       <div class="card-unit">bpm</div>
     </div>
-    <div class="card orange">
+    <div class="card green">
       <div class="card-label">Body Battery</div>
-      <div class="card-value">24</div>
+      <div class="card-value">63</div>
       <div class="card-unit">/ 100</div>
     </div>
     <div class="card">
       <div class="card-label">Recovery Time</div>
-      <div class="card-value">1</div>
+      <div class="card-value">1534</div>
       <div class="card-unit">minutes</div>
     </div>
   </div>
@@ -279,7 +279,7 @@
     </div>
     <div class="card">
       <div class="card-label">Days to Race</div>
-      <div class="card-value">128</div>
+      <div class="card-value">127</div>
       <div class="card-unit">12 Oct 2026</div>
     </div>
     <div class="card">
@@ -746,8 +746,8 @@ new Chart(document.getElementById('weeklyChart'), {
 new Chart(document.getElementById('hrvChart'), {
   type: 'line',
   data: {
-    labels: ["03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35", "04:40", "04:45", "04:50", "04:55", "05:00"],
-    datasets: [{ data: [55, 25, 30, 30, 36, 26, 28, 28, 27, 29, 25, 26, 28, 30, 40, 37, 23, 39, 25, 19, 28, 23, 26, 27], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
+    labels: ["04:25", "04:30", "04:35", "04:40", "04:45", "04:50", "04:55", "05:00", "05:05", "05:10", "05:15", "05:20", "05:25", "05:30", "05:35", "05:40", "05:45", "05:50", "05:55", "06:00", "06:05", "06:10", "06:15", "06:20"],
+    datasets: [{ data: [47, 41, 30, 39, 44, 36, 31, 32, 32, 29, 40, 32, 35, 44, 28, 28, 30, 33, 28, 24, 40, 27, 26, 23], borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
       tension: 0.3, fill: true, pointRadius: 2, pointBackgroundColor: accent2 }]
   },
   options: { ...chartDefaults }
@@ -794,11 +794,11 @@ new Chart(document.getElementById('bpChart'), {
 </div>
 
 <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED 2026-06-06 23:56 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
+  GENERATED 2026-06-07 00:13 &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
 </div>
 
 <script>
-const dashboardData = {"generated": "2026-06-06 23:56", "training": {"week": 6, "phase": "Return to Run", "week_in_phase": 2, "phase_total": 4, "days_to_race": 128, "phase_target_km": "30-40", "this_week_km": 33.4, "last_week_km": 26.5}, "readiness": {"score": 74, "level": "MODERATE", "sleep_score": 73, "hrv_weekly_avg": 34, "resting_hr": 50, "body_battery": 24, "recovery_time": 1, "acwr": 1.0}, "achilles": {"score": 25, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "33 km (within target)", "level": "low"}, {"label": "Mileage spike", "value": "+26% vs last week", "level": "high"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-06", "distance_km": 16.0, "avg_pace_min_km": 6.04, "avg_hr": 147.0, "cadence": 179, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 252.7, "laps": [{"km": 1, "pace": 5.57, "hr": 134.0, "gct": 248.3, "gct_balance": 50.5, "cadence": 0}, {"km": 2, "pace": 5.84, "hr": 141.0, "gct": 250.6, "gct_balance": 50.7, "cadence": 0}, {"km": 3, "pace": 5.94, "hr": 141.0, "gct": 253.4, "gct_balance": 50.5, "cadence": 0}, {"km": 4, "pace": 5.99, "hr": 144.0, "gct": 254.6, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 6.06, "hr": 146.0, "gct": 254.1, "gct_balance": 50.7, "cadence": 0}, {"km": 6, "pace": 6.04, "hr": 146.0, "gct": 252.4, "gct_balance": 50.4, "cadence": 0}, {"km": 7, "pace": 6.09, "hr": 146.0, "gct": 252.5, "gct_balance": 50.6, "cadence": 0}, {"km": 8, "pace": 6.1, "hr": 148.0, "gct": 253.1, "gct_balance": 50.6, "cadence": 0}, {"km": 9, "pace": 6.08, "hr": 149.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 10, "pace": 6.12, "hr": 149.0, "gct": 253.6, "gct_balance": 50.5, "cadence": 0}, {"km": 11, "pace": 6.16, "hr": 146.0, "gct": 253.8, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 6.17, "hr": 152.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 13, "pace": 5.93, "hr": 150.0, "gct": 251.0, "gct_balance": 50.2, "cadence": 0}, {"km": 14, "pace": 6.27, "hr": 153.0, "gct": 254.3, "gct_balance": 50.6, "cadence": 0}, {"km": 15, "pace": 6.04, "hr": 151.0, "gct": 252.2, "gct_balance": 50.7, "cadence": 0}, {"km": 16, "pace": 6.21, "hr": 152.0, "gct": 251.7, "gct_balance": 50.5, "cadence": 0}, {"km": 17, "pace": 5.33, "hr": 155.0, "gct": 254.0, "gct_balance": 50.9, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-06-02", "distance_km": 7.0, "avg_pace": 5.41, "avg_hr": 156.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-01", "distance_km": 5.2, "avg_pace": 5.48, "avg_hr": 145.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-05-30", "distance_km": 10.4, "avg_pace": 6.25, "avg_hr": 144.0, "gct_balance_left": 50.8, "gct_balance_right": 49.2}, {"date": "2026-05-28", "distance_km": 5.0, "avg_pace": 6.01, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-05-28", "distance_km": 5.1, "avg_pace": 5.86, "avg_hr": 140.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-05-26", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 142.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}], "blood_pressure": [{"date": "2026-06-07 06:42", "diastolic": 77, "systolic": 142, "pulse": 60}, {"date": "2026-06-06 05:22", "diastolic": 77, "systolic": 123, "pulse": 62}, {"date": "2026-06-05 05:16", "diastolic": 76, "systolic": 134, "pulse": 61}, {"date": "2026-06-04 05:09", "diastolic": 77, "systolic": 125, "pulse": 58}, {"date": "2026-06-03 04:46", "diastolic": 81, "systolic": 128, "pulse": 60}, {"date": "2026-06-02 05:16", "diastolic": 85, "systolic": 130, "pulse": 59}, {"date": "2026-06-01 04:30", "diastolic": 85, "systolic": 128, "pulse": 54}, {"date": "2026-05-31 05:18", "diastolic": 83, "systolic": 134, "pulse": 60}, {"date": "2026-05-30 05:23", "diastolic": 85, "systolic": 122, "pulse": 61}, {"date": "2026-05-29 05:15", "diastolic": 83, "systolic": 123, "pulse": 61}]};
+const dashboardData = {"generated": "2026-06-07 00:13", "training": {"week": 6, "phase": "Return to Run", "week_in_phase": 2, "phase_total": 4, "days_to_race": 127, "phase_target_km": "30-40", "this_week_km": 33.4, "last_week_km": 26.5}, "readiness": {"score": 57, "level": "MODERATE", "sleep_score": 78, "hrv_weekly_avg": 33, "resting_hr": 52, "body_battery": 63, "recovery_time": 1534, "acwr": 0.94}, "achilles": {"score": 25, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "33 km (within target)", "level": "low"}, {"label": "Mileage spike", "value": "+26% vs last week", "level": "high"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-06", "distance_km": 16.0, "avg_pace_min_km": 6.04, "avg_hr": 147.0, "cadence": 179, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 252.7, "laps": [{"km": 1, "pace": 5.57, "hr": 134.0, "gct": 248.3, "gct_balance": 50.5, "cadence": 0}, {"km": 2, "pace": 5.84, "hr": 141.0, "gct": 250.6, "gct_balance": 50.7, "cadence": 0}, {"km": 3, "pace": 5.94, "hr": 141.0, "gct": 253.4, "gct_balance": 50.5, "cadence": 0}, {"km": 4, "pace": 5.99, "hr": 144.0, "gct": 254.6, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 6.06, "hr": 146.0, "gct": 254.1, "gct_balance": 50.7, "cadence": 0}, {"km": 6, "pace": 6.04, "hr": 146.0, "gct": 252.4, "gct_balance": 50.4, "cadence": 0}, {"km": 7, "pace": 6.09, "hr": 146.0, "gct": 252.5, "gct_balance": 50.6, "cadence": 0}, {"km": 8, "pace": 6.1, "hr": 148.0, "gct": 253.1, "gct_balance": 50.6, "cadence": 0}, {"km": 9, "pace": 6.08, "hr": 149.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 10, "pace": 6.12, "hr": 149.0, "gct": 253.6, "gct_balance": 50.5, "cadence": 0}, {"km": 11, "pace": 6.16, "hr": 146.0, "gct": 253.8, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 6.17, "hr": 152.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 13, "pace": 5.93, "hr": 150.0, "gct": 251.0, "gct_balance": 50.2, "cadence": 0}, {"km": 14, "pace": 6.27, "hr": 153.0, "gct": 254.3, "gct_balance": 50.6, "cadence": 0}, {"km": 15, "pace": 6.04, "hr": 151.0, "gct": 252.2, "gct_balance": 50.7, "cadence": 0}, {"km": 16, "pace": 6.21, "hr": 152.0, "gct": 251.7, "gct_balance": 50.5, "cadence": 0}, {"km": 17, "pace": 5.33, "hr": 155.0, "gct": 254.0, "gct_balance": 50.9, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-06-02", "distance_km": 7.0, "avg_pace": 5.41, "avg_hr": 156.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-01", "distance_km": 5.2, "avg_pace": 5.48, "avg_hr": 145.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-05-30", "distance_km": 10.4, "avg_pace": 6.25, "avg_hr": 144.0, "gct_balance_left": 50.8, "gct_balance_right": 49.2}, {"date": "2026-05-28", "distance_km": 5.0, "avg_pace": 6.01, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-05-28", "distance_km": 5.1, "avg_pace": 5.86, "avg_hr": 140.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-05-26", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 142.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}], "blood_pressure": [{"date": "2026-06-07 06:42", "diastolic": 77, "systolic": 142, "pulse": 60}, {"date": "2026-06-06 05:22", "diastolic": 77, "systolic": 123, "pulse": 62}, {"date": "2026-06-05 05:16", "diastolic": 76, "systolic": 134, "pulse": 61}, {"date": "2026-06-04 05:09", "diastolic": 77, "systolic": 125, "pulse": 58}, {"date": "2026-06-03 04:46", "diastolic": 81, "systolic": 128, "pulse": 60}, {"date": "2026-06-02 05:16", "diastolic": 85, "systolic": 130, "pulse": 59}, {"date": "2026-06-01 04:30", "diastolic": 85, "systolic": 128, "pulse": 54}, {"date": "2026-05-31 05:18", "diastolic": 83, "systolic": 134, "pulse": 60}, {"date": "2026-05-30 05:23", "diastolic": 85, "systolic": 122, "pulse": 61}, {"date": "2026-05-29 05:15", "diastolic": 83, "systolic": 123, "pulse": 61}]};
 
 function exportJSON() {
     const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {type: 'application/json'});
@@ -860,4 +860,4 @@ Please provide:
 </script>
 
 </body>
-</html>
+</html><!-- updated: 2026-06-07 00:13:38 -->
