@@ -702,24 +702,24 @@
 <div class="tab-panel" id="panel-bp">
 
   <div class="section">
-    <div class="section-header"><div class="section-title">Latest Reading — --</div></div>
+    <div class="section-header"><div class="section-title">Latest Reading — 2026-06-08 05:19</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Systolic</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">128</div>
         <div class="stat-unit">mmHg</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Diastolic</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">88</div>
         <div class="stat-unit">mmHg</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Pulse</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">56</div>
         <div class="stat-unit">bpm</div>
       </div>
     </div>
@@ -740,7 +740,67 @@
     <div class="tbl-wrap">
       <table class="tbl">
         <thead><tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th><th>Status</th></tr></thead>
-        <tbody></tbody>
+        <tbody>
+          <tr>
+            <td>2026-06-08 05:19</td>
+            <td style="color:var(--yellow)">128</td>
+            <td style="color:var(--yellow)">88</td>
+            <td>56</td>
+          </tr>
+          <tr>
+            <td>2026-06-07 06:42</td>
+            <td style="color:var(--red)">142</td>
+            <td style="color:var(--green)">77</td>
+            <td>60</td>
+          </tr>
+          <tr>
+            <td>2026-06-06 05:22</td>
+            <td style="color:var(--yellow)">123</td>
+            <td style="color:var(--green)">77</td>
+            <td>62</td>
+          </tr>
+          <tr>
+            <td>2026-06-05 05:16</td>
+            <td style="color:var(--red)">134</td>
+            <td style="color:var(--green)">76</td>
+            <td>61</td>
+          </tr>
+          <tr>
+            <td>2026-06-04 05:09</td>
+            <td style="color:var(--yellow)">125</td>
+            <td style="color:var(--green)">77</td>
+            <td>58</td>
+          </tr>
+          <tr>
+            <td>2026-06-03 04:46</td>
+            <td style="color:var(--yellow)">128</td>
+            <td style="color:var(--yellow)">81</td>
+            <td>60</td>
+          </tr>
+          <tr>
+            <td>2026-06-02 05:16</td>
+            <td style="color:var(--red)">130</td>
+            <td style="color:var(--yellow)">85</td>
+            <td>59</td>
+          </tr>
+          <tr>
+            <td>2026-06-01 04:30</td>
+            <td style="color:var(--yellow)">128</td>
+            <td style="color:var(--yellow)">85</td>
+            <td>54</td>
+          </tr>
+          <tr>
+            <td>2026-05-31 05:18</td>
+            <td style="color:var(--red)">134</td>
+            <td style="color:var(--yellow)">83</td>
+            <td>60</td>
+          </tr>
+          <tr>
+            <td>2026-05-30 05:23</td>
+            <td style="color:var(--yellow)">122</td>
+            <td style="color:var(--yellow)">85</td>
+            <td>61</td>
+          </tr></tbody>
       </table>
     </div>
   </div>
@@ -752,7 +812,7 @@
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
-    GENERATED 2026-06-07 21:12 · GARMIN + WITHINGS
+    GENERATED 2026-06-07 22:05 · GARMIN + WITHINGS
   </span>
 </div>
 
@@ -870,18 +930,18 @@ new Chart(document.getElementById('gctTrendChart'), {
 new Chart(document.getElementById('bpChart'), {
   type: 'line',
   data: {
-    labels: [],
+    labels: ["2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07", "2026-06-08"],
     datasets: [
-      { label: 'Systolic',  data: [],  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 },
-      { label: 'Diastolic', data: [], borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 },
-      { label: 'Pulse',     data: [],     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] },
+      { label: 'Systolic',  data: [132, 123, 122, 134, 128, 130, 128, 125, 134, 123, 142, 128],  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 },
+      { label: 'Diastolic', data: [87, 83, 85, 83, 85, 85, 81, 77, 76, 77, 77, 88], borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 },
+      { label: 'Pulse',     data: [55, 61, 61, 60, 54, 59, 60, 58, 61, 62, 60, 56],     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] },
     ]
   },
   options: { ...base, plugins: { legend: { display:true, labels: { color:C.muted, font:{size:10} } } } }
 });
 
 // ── EXPORT ──
-const dashboardData = {"generated": "2026-06-07 21:12", "training": {"week": 6, "phase": "Return to Run", "week_in_phase": 2, "phase_total": 4, "days_to_race": 127, "phase_target_km": "30-40", "this_week_km": 33.4, "last_week_km": 26.5}, "readiness": {"score": 57, "level": "MODERATE", "sleep_score": 78, "hrv_weekly_avg": 33, "resting_hr": 52, "body_battery": 48, "recovery_time": 1534, "acwr": 0.94}, "achilles": {"score": 25, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "33 km (within target)", "level": "low"}, {"label": "Mileage spike", "value": "+26% vs last week", "level": "high"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-06", "distance_km": 16.0, "avg_pace_min_km": 6.04, "avg_hr": 147.0, "cadence": 179, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 252.7, "laps": [{"km": 1, "pace": 5.57, "hr": 134.0, "gct": 248.3, "gct_balance": 50.5, "cadence": 0}, {"km": 2, "pace": 5.84, "hr": 141.0, "gct": 250.6, "gct_balance": 50.7, "cadence": 0}, {"km": 3, "pace": 5.94, "hr": 141.0, "gct": 253.4, "gct_balance": 50.5, "cadence": 0}, {"km": 4, "pace": 5.99, "hr": 144.0, "gct": 254.6, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 6.06, "hr": 146.0, "gct": 254.1, "gct_balance": 50.7, "cadence": 0}, {"km": 6, "pace": 6.04, "hr": 146.0, "gct": 252.4, "gct_balance": 50.4, "cadence": 0}, {"km": 7, "pace": 6.09, "hr": 146.0, "gct": 252.5, "gct_balance": 50.6, "cadence": 0}, {"km": 8, "pace": 6.1, "hr": 148.0, "gct": 253.1, "gct_balance": 50.6, "cadence": 0}, {"km": 9, "pace": 6.08, "hr": 149.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 10, "pace": 6.12, "hr": 149.0, "gct": 253.6, "gct_balance": 50.5, "cadence": 0}, {"km": 11, "pace": 6.16, "hr": 146.0, "gct": 253.8, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 6.17, "hr": 152.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 13, "pace": 5.93, "hr": 150.0, "gct": 251.0, "gct_balance": 50.2, "cadence": 0}, {"km": 14, "pace": 6.27, "hr": 153.0, "gct": 254.3, "gct_balance": 50.6, "cadence": 0}, {"km": 15, "pace": 6.04, "hr": 151.0, "gct": 252.2, "gct_balance": 50.7, "cadence": 0}, {"km": 16, "pace": 6.21, "hr": 152.0, "gct": 251.7, "gct_balance": 50.5, "cadence": 0}, {"km": 17, "pace": 5.33, "hr": 155.0, "gct": 254.0, "gct_balance": 50.9, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-06-02", "distance_km": 7.0, "avg_pace": 5.41, "avg_hr": 156.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-01", "distance_km": 5.2, "avg_pace": 5.48, "avg_hr": 145.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-05-30", "distance_km": 10.4, "avg_pace": 6.25, "avg_hr": 144.0, "gct_balance_left": 50.8, "gct_balance_right": 49.2}, {"date": "2026-05-28", "distance_km": 5.0, "avg_pace": 6.01, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-05-28", "distance_km": 5.1, "avg_pace": 5.86, "avg_hr": 140.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-05-26", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 142.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}], "blood_pressure": []};
+const dashboardData = {"generated": "2026-06-07 22:05", "training": {"week": 6, "phase": "Return to Run", "week_in_phase": 2, "phase_total": 4, "days_to_race": 127, "phase_target_km": "30-40", "this_week_km": 33.4, "last_week_km": 26.5}, "readiness": {"score": 57, "level": "MODERATE", "sleep_score": 78, "hrv_weekly_avg": 33, "resting_hr": 52, "body_battery": 48, "recovery_time": 1534, "acwr": 0.94}, "achilles": {"score": 25, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "33 km (within target)", "level": "low"}, {"label": "Mileage spike", "value": "+26% vs last week", "level": "high"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-06", "distance_km": 16.0, "avg_pace_min_km": 6.04, "avg_hr": 147.0, "cadence": 179, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 252.7, "laps": [{"km": 1, "pace": 5.57, "hr": 134.0, "gct": 248.3, "gct_balance": 50.5, "cadence": 0}, {"km": 2, "pace": 5.84, "hr": 141.0, "gct": 250.6, "gct_balance": 50.7, "cadence": 0}, {"km": 3, "pace": 5.94, "hr": 141.0, "gct": 253.4, "gct_balance": 50.5, "cadence": 0}, {"km": 4, "pace": 5.99, "hr": 144.0, "gct": 254.6, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 6.06, "hr": 146.0, "gct": 254.1, "gct_balance": 50.7, "cadence": 0}, {"km": 6, "pace": 6.04, "hr": 146.0, "gct": 252.4, "gct_balance": 50.4, "cadence": 0}, {"km": 7, "pace": 6.09, "hr": 146.0, "gct": 252.5, "gct_balance": 50.6, "cadence": 0}, {"km": 8, "pace": 6.1, "hr": 148.0, "gct": 253.1, "gct_balance": 50.6, "cadence": 0}, {"km": 9, "pace": 6.08, "hr": 149.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 10, "pace": 6.12, "hr": 149.0, "gct": 253.6, "gct_balance": 50.5, "cadence": 0}, {"km": 11, "pace": 6.16, "hr": 146.0, "gct": 253.8, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 6.17, "hr": 152.0, "gct": 253.1, "gct_balance": 50.5, "cadence": 0}, {"km": 13, "pace": 5.93, "hr": 150.0, "gct": 251.0, "gct_balance": 50.2, "cadence": 0}, {"km": 14, "pace": 6.27, "hr": 153.0, "gct": 254.3, "gct_balance": 50.6, "cadence": 0}, {"km": 15, "pace": 6.04, "hr": 151.0, "gct": 252.2, "gct_balance": 50.7, "cadence": 0}, {"km": 16, "pace": 6.21, "hr": 152.0, "gct": 251.7, "gct_balance": 50.5, "cadence": 0}, {"km": 17, "pace": 5.33, "hr": 155.0, "gct": 254.0, "gct_balance": 50.9, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-06-02", "distance_km": 7.0, "avg_pace": 5.41, "avg_hr": 156.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-01", "distance_km": 5.2, "avg_pace": 5.48, "avg_hr": 145.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}, {"date": "2026-05-30", "distance_km": 10.4, "avg_pace": 6.25, "avg_hr": 144.0, "gct_balance_left": 50.8, "gct_balance_right": 49.2}, {"date": "2026-05-28", "distance_km": 5.0, "avg_pace": 6.01, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-05-28", "distance_km": 5.1, "avg_pace": 5.86, "avg_hr": 140.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-05-26", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 142.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}], "blood_pressure": [{"date": "2026-06-08 05:19", "diastolic": 88, "systolic": 128, "pulse": 56}, {"date": "2026-06-07 06:42", "diastolic": 77, "systolic": 142, "pulse": 60}, {"date": "2026-06-06 05:22", "diastolic": 77, "systolic": 123, "pulse": 62}, {"date": "2026-06-05 05:16", "diastolic": 76, "systolic": 134, "pulse": 61}, {"date": "2026-06-04 05:09", "diastolic": 77, "systolic": 125, "pulse": 58}, {"date": "2026-06-03 04:46", "diastolic": 81, "systolic": 128, "pulse": 60}, {"date": "2026-06-02 05:16", "diastolic": 85, "systolic": 130, "pulse": 59}, {"date": "2026-06-01 04:30", "diastolic": 85, "systolic": 128, "pulse": 54}, {"date": "2026-05-31 05:18", "diastolic": 83, "systolic": 134, "pulse": 60}, {"date": "2026-05-30 05:23", "diastolic": 85, "systolic": 122, "pulse": 61}]};
 
 function exportJSON() {
   const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {type:'application/json'});
@@ -911,4 +971,4 @@ Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) To
 </script>
 
 </body>
-</html><!-- updated: 2026-06-07 21:12:03 -->
+</html><!-- updated: 2026-06-07 22:05:33 -->
