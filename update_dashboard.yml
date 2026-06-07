@@ -2,7 +2,10 @@ name: Update Health Dashboard
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 20 * * *'   # 7am AEDT (UTC+11, Oct-Apr)
+    - cron: '0 21 * * *'   # 7am AEST (UTC+10, Apr-Oct)
+    - cron: '0 6 * * *'    # 5pm AEDT (UTC+11, Oct-Apr)
+    - cron: '0 7 * * *'    # 5pm AEST (UTC+10, Apr-Oct)
   workflow_dispatch:
 
 jobs:
@@ -46,7 +49,7 @@ jobs:
         env:
           WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
           WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           python refresh_withings_token.py
 
@@ -55,6 +58,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           cp health_dashboard.html index.html
+          echo "<!-- updated: $(date +'%Y-%m-%d %H:%M:%S') -->" >> index.html
           git add index.html
-          git diff --staged --quiet || git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')"
           git push
