@@ -67,6 +67,21 @@ def fetch_garmin_data(garmin):
             "laps": lap_data,
         })
 
+    # Cycling activities
+    cycles = [a for a in activities if a.get("activityType", {}).get("typeKey") == "road_biking"]
+    data["cycles"] = []
+    for c in cycles[:8]:
+        data["cycles"].append({
+            "date": c["startTimeLocal"][:10],
+            "distance": round(c.get("distance", 0) / 1000, 1),
+            "duration": round(c.get("duration", 0) / 60, 1),
+            "avg_hr": c.get("averageHR"),
+            "avg_speed": round(c.get("averageSpeed", 0) * 3.6, 1),  # m/s to km/h
+            "max_speed": round(c.get("maxSpeed", 0) * 3.6, 1),
+            "calories": c.get("calories"),
+            "elevation": round(c.get("elevationGain", 0)),
+        })
+
     # Training readiness
     try:
         readiness = garmin.get_morning_training_readiness(TODAY)
@@ -578,727 +593,852 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             <td>{b.get('pulse','--')}</td>
           </tr>"""
 
+    # Cycling data prep
+    cycles = garmin_data.get("cycles", [])
+    last_cycle = cycles[0] if cycles else {}
+
+    weekly_cycle = {}
+    for c in cycles:
+        d = datetime.strptime(c["date"], "%Y-%m-%d")
+        wk = d.strftime("%Y-W%W")
+        weekly_cycle[wk] = weekly_cycle.get(wk, 0) + c["distance"]
+
+    # Merge weekly run + cycle for combined chart
+    all_weeks = sorted(set(list(weekly.keys()) + list(weekly_cycle.keys())))[-6:]
+    weekly_combined_labels = json.dumps(all_weeks)
+    weekly_run_vals   = json.dumps([round(weekly.get(w, 0), 1) for w in all_weeks])
+    weekly_cycle_vals = json.dumps([round(weekly_cycle.get(w, 0), 1) for w in all_weeks])
+
+    # Cycle table rows
+    cycle_table_rows = ""
+    for c in cycles[:8]:
+        cycle_table_rows += f"""
+        <tr>
+          <td>{c['date']}</td>
+          <td>{c['distance']} km</td>
+          <td>{c['duration']:.0f} min</td>
+          <td>{c['avg_speed']} km/h</td>
+          <td>{c['avg_hr'] or '--'}</td>
+          <td>{c['elevation']} m</td>
+          <td>{c['calories'] or '--'}</td>
+        </tr>"""
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Health Dashboard — {TODAY}</title>
+<title>Nat's Health Dashboard — {TODAY}</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {{
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #181c24;
-    --border: #1e2330;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --accent: #38bdf8;
-    --accent2: #818cf8;
-    --green: #4ade80;
-    --yellow: #facc15;
-    --red: #f87171;
-    --orange: #fb923c;
+    --bg: #0d0f14;
+    --surface: #13151c;
+    --surface2: #1a1d27;
+    --surface3: #21253a;
+    --border: #252836;
+    --border2: #2e3347;
+    --text: #f0f2f8;
+    --text2: #9ba3bf;
+    --text3: #5c6480;
+    --blue: #4f8ef7;
+    --purple: #7c6cf7;
+    --green: #3dd68c;
+    --yellow: #f5c842;
+    --red: #f26565;
+    --orange: #f59e42;
+    --cyan: #38d9f5;
+    --pink: #f06292;
   }}
-  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  * {{ box-sizing:border-box; margin:0; padding:0; }}
   body {{
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
     min-height: 100vh;
-    padding: 24px;
-  }}
-  /* noise overlay */
-  body::before {{
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
   }}
 
-  .header {{
-    display: flex; align-items: baseline; gap: 16px;
-    margin-bottom: 28px; padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }}
-  .header h1 {{
-    font-family: 'Syne', sans-serif;
-    font-size: 22px; font-weight: 800;
-    letter-spacing: -0.5px;
-    color: var(--accent);
-  }}
-  .header .date {{
-    color: var(--muted); font-size: 12px;
-  }}
-  .header .tagline {{
-    margin-left: auto; color: var(--muted);
-    font-size: 11px; letter-spacing: 1px;
-    text-transform: uppercase;
-  }}
-
-  .grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }}
-  .card {{
+  /* ── TOP BAR ── */
+  .topbar {{
+    display: flex; align-items: center;
+    padding: 0 20px;
+    height: 52px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    gap: 16px;
   }}
-  .card::before {{
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
+  .topbar-logo {{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 500;
+    color: var(--blue);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
   }}
-  .card.accent2::before {{ background: linear-gradient(90deg, var(--accent2), transparent); }}
-  .card.green::before  {{ background: linear-gradient(90deg, var(--green), transparent); }}
-  .card.yellow::before {{ background: linear-gradient(90deg, var(--yellow), transparent); }}
-  .card.orange::before {{ background: linear-gradient(90deg, var(--orange), transparent); }}
-  .card.red::before    {{ background: linear-gradient(90deg, var(--red), transparent); }}
-
-  .card-label {{
-    font-size: 10px; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--muted);
-    margin-bottom: 8px;
+  .topbar-date {{
+    font-size: 11px; color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
   }}
-  .card-value {{
-    font-family: 'Syne', sans-serif;
-    font-size: 32px; font-weight: 700;
-    line-height: 1; color: var(--text);
-  }}
-  .card-unit {{
-    font-size: 11px; color: var(--muted);
-    margin-top: 4px;
-  }}
-  .card-sub {{
-    font-size: 11px; color: var(--muted);
-    margin-top: 6px;
-  }}
-
-  .section {{
-    margin-bottom: 20px;
-  }}
-  .section-title {{
-    font-family: 'Syne', sans-serif;
-    font-size: 12px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
+  .topbar-right {{
+    margin-left: auto;
     display: flex; align-items: center; gap: 8px;
   }}
-  .section-title::after {{
+  .status-dot {{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }}
+  @keyframes pulse {{ 0%,100%{{opacity:1}} 50%{{opacity:0.4}} }}
+  .status-text {{ font-size: 10px; color: var(--text3); }}
+
+  /* ── TABS ── */
+  .tabs {{
+    display: flex;
+    padding: 0 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    gap: 0;
+    overflow-x: auto;
+  }}
+  .tab {{
+    padding: 10px 16px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    user-select: none;
+  }}
+  .tab:hover {{ color: var(--text2); }}
+  .tab.active {{ color: var(--text); border-bottom-color: var(--blue); }}
+  .tab-icon {{ margin-right: 6px; }}
+
+  /* ── CONTENT ── */
+  .content {{ padding: 20px; max-width: 1400px; margin: 0 auto; }}
+  .tab-panel {{ display: none; }}
+  .tab-panel.active {{ display: block; }}
+
+  /* ── STAT GRID ── */
+  .stat-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }}
+  .stat {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }}
+  .stat:hover {{ border-color: var(--border2); }}
+  .stat-accent {{
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; border-radius: 10px 10px 0 0;
+  }}
+  .stat-label {{
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 8px;
+  }}
+  .stat-value {{
+    font-size: 28px; font-weight: 600;
+    line-height: 1; color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+  }}
+  .stat-value.sm {{ font-size: 18px; padding-top: 4px; }}
+  .stat-unit {{ font-size: 10px; color: var(--text3); margin-top: 4px; }}
+  .stat-sub {{ font-size: 11px; color: var(--text2); margin-top: 6px; }}
+
+  /* ── SECTION ── */
+  .section {{ margin-bottom: 20px; }}
+  .section-header {{
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }}
+  .section-title {{
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text3);
+  }}
+  .section-header::after {{
     content: ''; flex: 1;
     height: 1px; background: var(--border);
   }}
 
+  /* ── CHARTS ── */
   .chart-grid {{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
   }}
-  .chart-card {{
+  .chart-box {{
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: 10px;
+    padding: 14px;
   }}
-  .chart-title {{
-    font-size: 11px; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--muted);
-    margin-bottom: 12px;
+  .chart-label {{
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 12px;
   }}
-  canvas {{ max-height: 200px; }}
+  canvas {{ max-height: 180px; }}
 
-  .run-table {{
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
+  /* ── TABLES ── */
+  .tbl-wrap {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
   }}
-  .run-table th {{
-    text-align: left; padding: 6px 10px;
-    font-size: 10px; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--muted);
-    border-bottom: 1px solid var(--border);
-  }}
-  .run-table td {{
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border);
-  }}
-  .run-table tr:last-child td {{ border-bottom: none; }}
-  .run-table tr:hover td {{ background: var(--surface2); }}
-
-  .bp-table {{
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }}
-  .bp-table th {{
-    text-align: left; padding: 6px 10px;
-    font-size: 10px; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--muted);
-    border-bottom: 1px solid var(--border);
-  }}
-  .bp-table td {{
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--border);
-  }}
-  .bp-table tr:last-child td {{ border-bottom: none; }}
-
-  .badge {{
-    display: inline-block;
-    padding: 2px 8px; border-radius: 4px;
-    font-size: 10px; letter-spacing: 0.5px;
-    text-transform: uppercase; font-weight: 600;
-  }}
-  .badge-green  {{ background: rgba(74,222,128,0.15); color: var(--green); }}
-  .badge-yellow {{ background: rgba(250,204,21,0.15); color: var(--yellow); }}
-  .badge-red    {{ background: rgba(248,113,113,0.15); color: var(--red); }}
-
-  .gct-bar-wrap {{
-    margin-top: 4px;
-    height: 6px; border-radius: 3px;
-    background: var(--border); overflow: hidden;
-    position: relative;
-  }}
-  .gct-bar {{
-    height: 100%; border-radius: 3px;
-    transition: width 0.3s;
-  }}
-  .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
-  .ai-commentary {{ display: flex; flex-direction: column; gap: 10px; }}
-  .ai-row {{
-    padding: 10px 14px;
+  .tbl {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
+  .tbl th {{
+    text-align: left; padding: 8px 12px;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text3);
     background: var(--surface2);
-    border-radius: 6px;
-    border-left: 3px solid #818cf8;
-    line-height: 1.6;
-    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }}
+  .tbl td {{
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+  }}
+  .tbl tr:last-child td {{ border-bottom: none; }}
+  .tbl tr:hover td {{ background: var(--surface2); color: var(--text); }}
+  .tbl td:first-child {{ color: var(--text); font-weight: 500; }}
+
+  /* ── BADGES ── */
+  .badge {{
+    display: inline-block; padding: 2px 7px;
+    border-radius: 4px; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }}
+  .badge-green  {{ background: rgba(61,214,140,0.12); color: var(--green); }}
+  .badge-yellow {{ background: rgba(245,200,66,0.12); color: var(--yellow); }}
+  .badge-red    {{ background: rgba(242,101,101,0.12); color: var(--red); }}
+  .badge-blue   {{ background: rgba(79,142,247,0.12); color: var(--blue); }}
+
+  /* ── GCT BAR ── */
+  .gct-bar-wrap {{
+    margin-top: 6px; height: 4px; border-radius: 2px;
+    background: var(--border); overflow: hidden;
+  }}
+  .gct-bar {{ height: 100%; border-radius: 2px; }}
+
+  /* ── PHASE BAR ── */
+  .phase-bar {{
+    height: 6px; background: var(--surface2);
+    border-radius: 3px; overflow: hidden; position: relative;
+    margin: 8px 0 4px;
+  }}
+  .phase-fill {{
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+  }}
+
+  /* ── EXPORT BUTTONS ── */
+  .btn {{
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 7px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; border: 1px solid;
+  }}
+  .btn-outline {{
+    background: transparent;
+    border-color: var(--border2);
+    color: var(--text2);
+  }}
+  .btn-outline:hover {{ border-color: var(--blue); color: var(--blue); }}
+  .btn-purple {{
+    background: rgba(124,108,247,0.1);
+    border-color: rgba(124,108,247,0.3);
+    color: var(--purple);
+  }}
+  .btn-purple:hover {{ background: rgba(124,108,247,0.2); }}
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {{
+    .content {{ padding: 12px; }}
+    .stat-grid {{ grid-template-columns: repeat(2, 1fr); }}
+    .chart-grid {{ grid-template-columns: 1fr; }}
+    .topbar-logo {{ font-size: 11px; }}
   }}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>HEALTH DASHBOARD</h1>
-  <span class="date">{TODAY}</span>
-  <span class="tagline">Garmin + Withings</span>
-</div>
-
-<!-- READINESS ROW -->
-<div class="section">
-  <div class="section-title">Today's Readiness</div>
-  <div class="grid">
-    <div class="card {'green' if isinstance(readiness_score, int) and readiness_score >= 70 else 'yellow' if isinstance(readiness_score, int) and readiness_score >= 50 else 'red'}">
-      <div class="card-label">Training Readiness</div>
-      <div class="card-value">{readiness_score}</div>
-      <div class="card-unit">{readiness_level}</div>
-      <div class="card-sub">{readiness.get('feedback', '')}</div>
-    </div>
-    <div class="card accent2">
-      <div class="card-label">Sleep Score</div>
-      <div class="card-value">{sleep_score}</div>
-      <div class="card-unit">/ 100</div>
-    </div>
-    <div class="card">
-      <div class="card-label">HRV Avg (7d)</div>
-      <div class="card-value">{hrv_avg}</div>
-      <div class="card-unit">ms</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Resting HR</div>
-      <div class="card-value">{resting_hr}</div>
-      <div class="card-unit">bpm</div>
-    </div>
-    <div class="card {'green' if isinstance(body_battery, int) and body_battery >= 60 else 'yellow' if isinstance(body_battery, int) and body_battery >= 30 else 'orange'}">
-      <div class="card-label">Body Battery</div>
-      <div class="card-value">{body_battery}</div>
-      <div class="card-unit">/ 100</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Recovery Time</div>
-      <div class="card-value">{readiness.get('recovery_time', '--')}</div>
-      <div class="card-unit">minutes</div>
-    </div>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">NAT / HEALTH</div>
+  <div class="topbar-date">{TODAY}</div>
+  <div class="topbar-right">
+    <div class="status-dot"></div>
+    <div class="status-text">LIVE</div>
   </div>
 </div>
 
-<!-- AI COMMENTARY -->
-{f'''<div class="section">
-  <div class="section-title">AI Coach Commentary</div>
-  <div class="card" style="border-top-color:#818cf8; padding: 20px;">
-    <div class="ai-commentary">
-      {ai_rows}
-    </div>
-  </div>
-</div>''' if ai_rows else ''}
-
-<!-- TRAINING PHASE -->
-<div class="section">
-  <div class="section-title">Training Plan — Week {week_num} of 28</div>
-  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr))">
-    <div class="card accent2">
-      <div class="card-label">Current Week</div>
-      <div class="card-value">{week_num}</div>
-      <div class="card-unit">of 28 total</div>
-    </div>
-    <div class="card accent2">
-      <div class="card-label">Phase</div>
-      <div class="card-value" style="font-size:16px; padding-top:4px">{phase["name"]}</div>
-      <div class="card-unit">Week {week_in_phase} of {phase_total}</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Phase Target</div>
-      <div class="card-value" style="font-size:20px">{phase["km_min"]}–{phase["km_max"]}</div>
-      <div class="card-unit">km / week</div>
-    </div>
-    <div class="card">
-      <div class="card-label">This Week</div>
-      <div class="card-value" style="font-size:26px">{achilles.get("this_week_km", "--")}</div>
-      <div class="card-unit">km so far</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Days to Race</div>
-      <div class="card-value">{days_to_race}</div>
-      <div class="card-unit">12 Oct 2026</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Phase Focus</div>
-      <div class="card-value" style="font-size:12px; padding-top:6px; line-height:1.4">{phase["focus"]}</div>
-    </div>
-  </div>
-  <!-- Phase progress bar -->
-  <div class="chart-card" style="margin-top:12px; padding: 14px 16px;">
-    <div class="chart-title" style="margin-bottom:10px">28-week plan progress</div>
-    <div style="position:relative; height:24px; background:var(--surface2); border-radius:4px; overflow:hidden;">
-      <div style="position:absolute; left:0; top:0; bottom:0; width:{round((week_num-1)/28*100)}%; background:linear-gradient(90deg,#818cf8,#38bdf8); border-radius:4px; opacity:0.7;"></div>
-      <div style="position:absolute; left:{round((week_num-1)/28*100)}%; top:0; bottom:0; width:2px; background:#fff; opacity:0.8;"></div>
-    </div>
-    <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:var(--muted);">
-      <span>May 1</span><span>Rehab</span><span>Return</span><span>Build</span><span>Specific</span><span>Taper</span><span>Oct 12</span>
-    </div>
-  </div>
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')"><span class="tab-icon">◎</span>Overview</div>
+  <div class="tab" onclick="switchTab('running')"><span class="tab-icon">⟋</span>Running</div>
+  <div class="tab" onclick="switchTab('cycling')"><span class="tab-icon">◯</span>Cycling</div>
+  <div class="tab" onclick="switchTab('health')"><span class="tab-icon">♡</span>Health</div>
+  <div class="tab" onclick="switchTab('bp')"><span class="tab-icon">↕</span>Blood Pressure</div>
 </div>
 
-<!-- ACHILLES LOAD -->
-<div class="section">
-  <div class="section-title">Achilles Load Score</div>
-  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); margin-bottom:12px">
-    <div class="card" style="border-top-color:{achilles_color}">
-      <div class="card-label">Load Score</div>
-      <div class="card-value" style="color:{achilles_color}">{achilles_score}</div>
-      <div class="card-unit">/ 100</div>
-      <div class="card-sub" style="color:{achilles_color}; text-transform:uppercase; font-size:10px; letter-spacing:1px">{achilles_level} risk</div>
-    </div>
-    <div class="card">
-      <div class="card-label">This Week</div>
-      <div class="card-value" style="font-size:24px">{achilles.get("this_week_km","--")}</div>
-      <div class="card-unit">km</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Last Week</div>
-      <div class="card-value" style="font-size:24px">{achilles.get("last_week_km","--")}</div>
-      <div class="card-unit">km</div>
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════════════ OVERVIEW -->
+<div class="tab-panel active" id="panel-overview">
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Today's Status</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if isinstance(readiness_score, int) and readiness_score >= 70 else 'var(--yellow)' if isinstance(readiness_score, int) and readiness_score >= 50 else 'var(--red)'}"></div>
+        <div class="stat-label">Readiness</div>
+        <div class="stat-value">{readiness_score}</div>
+        <div class="stat-unit">{readiness_level}</div>
+        <div class="stat-sub">{readiness.get('feedback','')}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Sleep Score</div>
+        <div class="stat-value">{sleep_score}</div>
+        <div class="stat-unit">/ 100</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">HRV Avg 7d</div>
+        <div class="stat-value">{hrv_avg}</div>
+        <div class="stat-unit">ms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Resting HR</div>
+        <div class="stat-value">{resting_hr}</div>
+        <div class="stat-unit">bpm</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if isinstance(body_battery, int) and body_battery >= 60 else 'var(--yellow)' if isinstance(body_battery, int) and body_battery >= 30 else 'var(--orange)'}"></div>
+        <div class="stat-label">Body Battery</div>
+        <div class="stat-value">{body_battery}</div>
+        <div class="stat-unit">/ 100</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Recovery</div>
+        <div class="stat-value sm">{readiness.get('recovery_time','--')}</div>
+        <div class="stat-unit">min</div>
+      </div>
     </div>
   </div>
-  <div class="card" style="padding:0; overflow:hidden; max-width:500px">
-    <table class="run-table">
-      <thead><tr><th>Factor</th><th>Value</th></tr></thead>
-      <tbody>{achilles_rows}</tbody>
-    </table>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Training Plan — Week {week_num} of 28</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Phase</div>
+        <div class="stat-value sm">{phase["name"]}</div>
+        <div class="stat-unit">Week {week_in_phase} of {phase_total}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">{achilles.get("this_week_km","--")}</div>
+        <div class="stat-unit">km (target {phase["km_min"]}–{phase["km_max"]})</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--orange)"></div>
+        <div class="stat-label">Days to Race</div>
+        <div class="stat-value">{days_to_race}</div>
+        <div class="stat-unit">12 Oct 2026</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--red)' if achilles_level=='high' else 'var(--yellow)' if achilles_level=='medium' else 'var(--green)'}"></div>
+        <div class="stat-label">Achilles Load</div>
+        <div class="stat-value" style="color:{achilles_color}">{achilles_score}</div>
+        <div class="stat-unit" style="color:{achilles_color}">{achilles_level} risk</div>
+      </div>
+    </div>
+    <div class="chart-box" style="padding:12px 16px;">
+      <div class="chart-label">28-week progress</div>
+      <div class="phase-bar">
+        <div class="phase-fill" style="width:{round((week_num-1)/28*100)}%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);">
+        <span>May 1</span><span>Rehab</span><span>Return</span><span>Build</span><span>Specific</span><span>Taper</span><span>Oct 12</span>
+      </div>
+    </div>
   </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Weekly Activity</div></div>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-label">Weekly km — Running + Cycling</div>
+        <canvas id="weeklyComboChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Overnight HRV (ms)</div>
+        <canvas id="hrvChart"></canvas>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- LAST RUN -->
-<div class="section">
-  <div class="section-title">Last Run — {last_run.get('date','--')} &nbsp;·&nbsp; {last_run.get('distance','--')} km</div>
-  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr))">
-    <div class="card accent2">
-      <div class="card-label">Avg Pace</div>
-      <div class="card-value" style="font-size:26px">{pace_str(last_run.get('avg_pace'))}</div>
-      <div class="card-unit">min/km</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Avg HR</div>
-      <div class="card-value">{last_run.get('avg_hr','--')}</div>
-      <div class="card-unit">bpm</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Cadence</div>
-      <div class="card-value">{last_run.get('cadence','--')}</div>
-      <div class="card-unit">spm</div>
-    </div>
-    <div class="card" style="border-top-color:{gct_bal_color}">
-      <div class="card-label">GCT Balance L</div>
-      <div class="card-value" style="font-size:26px;color:{gct_bal_color}">{last_gct_balance if last_gct_balance else '--'}%</div>
-      <div class="card-unit">left foot contact</div>
-      <div class="gct-bar-wrap"><div class="gct-bar" style="width:{last_gct_balance if last_gct_balance else 50}%;background:{gct_bal_color}"></div></div>
-    </div>
-    <div class="card" style="border-top-color:{gct_bal_color_r}">
-      <div class="card-label">GCT Balance R</div>
-      <div class="card-value" style="font-size:26px;color:{gct_bal_color_r}">{last_gct_balance_r if last_gct_balance_r else '--'}%</div>
-      <div class="card-unit">right foot contact</div>
-      <div class="gct-bar-wrap"><div class="gct-bar" style="width:{last_gct_balance_r if last_gct_balance_r else 50}%;background:{gct_bal_color_r}"></div></div>
-    </div>
-    <div class="card">
-      <div class="card-label">Avg GCT</div>
-      <div class="card-value" style="font-size:26px">{last_gct_avg}</div>
-      <div class="card-unit">ms</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Calories</div>
-      <div class="card-value" style="font-size:26px">{last_run.get('calories','--')}</div>
-      <div class="card-unit">kcal</div>
-    </div>
-  </div>
-</div>
+<!-- ═══════════════════════════════════════════════════════ RUNNING -->
+<div class="tab-panel" id="panel-running">
 
-<!-- LAST RUN CHARTS -->
-<div class="section">
-  <div class="section-title">Last Run — Lap Breakdown</div>
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title">GCT Balance Left % per km (50% = perfect)</div>
-      <canvas id="lapBalanceChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Ground Contact Time per km (ms)</div>
-      <canvas id="lapGctChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Heart Rate per km (bpm)</div>
-      <canvas id="lapHrChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Pace per km (min/km)</div>
-      <canvas id="lapPaceChart"></canvas>
+  <div class="section">
+    <div class="section-header"><div class="section-title">Last Run — {last_run.get('date','--')} · {last_run.get('distance','--')} km</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Avg Pace</div>
+        <div class="stat-value sm">{pace_str(last_run.get('avg_pace'))}</div>
+        <div class="stat-unit">min/km</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Avg HR</div>
+        <div class="stat-value">{last_run.get('avg_hr','--')}</div>
+        <div class="stat-unit">bpm</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">Cadence</div>
+        <div class="stat-value">{last_run.get('cadence','--')}</div>
+        <div class="stat-unit">spm</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{gct_bal_color}"></div>
+        <div class="stat-label">GCT Balance L</div>
+        <div class="stat-value sm" style="color:{gct_bal_color}">{last_gct_balance if last_gct_balance else '--'}%</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:{last_gct_balance or 50}%;background:{gct_bal_color}"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{gct_bal_color_r}"></div>
+        <div class="stat-label">GCT Balance R</div>
+        <div class="stat-value sm" style="color:{gct_bal_color_r}">{last_gct_balance_r if last_gct_balance_r else '--'}%</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:{last_gct_balance_r or 50}%;background:{gct_bal_color_r}"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">Avg GCT</div>
+        <div class="stat-value sm">{last_gct_avg}</div>
+        <div class="stat-unit">ms</div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- TRENDS -->
-<div class="section">
-  <div class="section-title">Training Trends</div>
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title">GCT Balance Left % — recent runs</div>
-      <canvas id="gctTrendChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Weekly Mileage (km)</div>
-      <canvas id="weeklyChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">HRV overnight readings (ms)</div>
-      <canvas id="hrvChart"></canvas>
+  <div class="section">
+    <div class="section-header"><div class="section-title">Lap Breakdown</div></div>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-label">GCT Balance L/R % per km</div>
+        <canvas id="lapBalanceChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">HR per km (bpm)</div>
+        <canvas id="lapHrChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Pace per km (min/km)</div>
+        <canvas id="lapPaceChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">GCT per km (ms)</div>
+        <canvas id="lapGctChart"></canvas>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- RUN LOG -->
-<div class="section">
-  <div class="section-title">Run Log</div>
-  <div class="card" style="padding:0; overflow:hidden;">
-    <table class="run-table">
-      <thead>
-        <tr>
-          <th>Date</th><th>Dist</th><th>Pace</th>
-          <th>HR</th><th>Cadence</th><th>GCT L</th><th>GCT R</th><th>GCT avg</th>
-        </tr>
-      </thead>
-      <tbody>
-        {run_table_rows}
-      </tbody>
-    </table>
+  <div class="section">
+    <div class="section-header"><div class="section-title">GCT Balance Trend</div></div>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-label">GCT Balance L/R % — recent runs</div>
+        <canvas id="gctTrendChart"></canvas>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- BLOOD PRESSURE -->
-<div class="section">
-  <div class="section-title">Blood Pressure — Withings BPM Connect</div>
-  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); margin-bottom:16px">
-    <div class="card {'green' if latest_bp.get('systolic',999) < 120 else 'yellow' if latest_bp.get('systolic',999) < 130 else 'red'}">
-      <div class="card-label">Systolic</div>
-      <div class="card-value">{latest_bp.get('systolic','--')}</div>
-      <div class="card-unit">mmHg</div>
+  <div class="section">
+    <div class="section-header"><div class="section-title">Achilles Load</div></div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat">
+        <div class="stat-accent" style="background:{achilles_color}"></div>
+        <div class="stat-label">Load Score</div>
+        <div class="stat-value" style="color:{achilles_color}">{achilles_score}</div>
+        <div class="stat-unit" style="color:{achilles_color}">{achilles_level} risk / 100</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">{achilles.get("this_week_km","--")}</div>
+        <div class="stat-unit">km</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--text3)"></div>
+        <div class="stat-label">Last Week</div>
+        <div class="stat-value">{achilles.get("last_week_km","--")}</div>
+        <div class="stat-unit">km</div>
+      </div>
     </div>
-    <div class="card {'green' if latest_bp.get('diastolic',999) < 80 else 'yellow' if latest_bp.get('diastolic',999) < 90 else 'red'}">
-      <div class="card-label">Diastolic</div>
-      <div class="card-value">{latest_bp.get('diastolic','--')}</div>
-      <div class="card-unit">mmHg</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Pulse</div>
-      <div class="card-value">{latest_bp.get('pulse','--')}</div>
-      <div class="card-unit">bpm</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Last Reading</div>
-      <div class="card-value" style="font-size:16px">{latest_bp.get('date','--')}</div>
-    </div>
-  </div>
-  <div class="two-col">
-    <div class="chart-card">
-      <div class="chart-title">Blood Pressure trend (mmHg)</div>
-      <canvas id="bpChart"></canvas>
-    </div>
-    <div class="card" style="padding:0; overflow:hidden;">
-      <table class="bp-table">
-        <thead>
-          <tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th></tr>
-        </thead>
-        <tbody>
-          {bp_table_rows}
-        </tbody>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Factor</th><th>Value</th></tr></thead>
+        <tbody>{achilles_rows}</tbody>
       </table>
     </div>
   </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Run Log</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Date</th><th>Dist</th><th>Pace</th><th>HR</th><th>Cadence</th><th>GCT L</th><th>GCT R</th><th>GCT avg</th></tr></thead>
+        <tbody>{run_table_rows}</tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
-<script>
-const accent  = '#38bdf8';
-const accent2 = '#818cf8';
-const green   = '#4ade80';
-const yellow  = '#facc15';
-const red     = '#f87171';
-const orange  = '#fb923c';
-const muted   = '#64748b';
-const gridColor = 'rgba(30,35,48,0.8)';
+<!-- ═══════════════════════════════════════════════════════ CYCLING -->
+<div class="tab-panel" id="panel-cycling">
 
-const chartDefaults = {{
-  responsive: true,
-  maintainAspectRatio: true,
+  <div class="section">
+    <div class="section-header"><div class="section-title">Last Ride — {last_cycle.get('date','--')}</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Distance</div>
+        <div class="stat-value">{last_cycle.get('distance','--')}</div>
+        <div class="stat-unit">km</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">Avg Speed</div>
+        <div class="stat-value">{last_cycle.get('avg_speed','--')}</div>
+        <div class="stat-unit">km/h</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Avg HR</div>
+        <div class="stat-value">{last_cycle.get('avg_hr','--')}</div>
+        <div class="stat-unit">bpm</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--orange)"></div>
+        <div class="stat-label">Duration</div>
+        <div class="stat-value sm">{last_cycle.get('duration','--'):.0f if last_cycle else '--'}</div>
+        <div class="stat-unit">min</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Elevation</div>
+        <div class="stat-value">{last_cycle.get('elevation','--')}</div>
+        <div class="stat-unit">m gain</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-label">Calories</div>
+        <div class="stat-value sm">{last_cycle.get('calories','--')}</div>
+        <div class="stat-unit">kcal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Ride Log</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Date</th><th>Distance</th><th>Duration</th><th>Avg Speed</th><th>HR</th><th>Elevation</th><th>Calories</th></tr></thead>
+        <tbody>{cycle_table_rows if cycle_table_rows else '<tr><td colspan="7" style="text-align:center;color:var(--text3)">No cycling activities found</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ HEALTH -->
+<div class="tab-panel" id="panel-health">
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Recovery Metrics</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if isinstance(readiness_score, int) and readiness_score >= 70 else 'var(--yellow)' if isinstance(readiness_score, int) and readiness_score >= 50 else 'var(--red)'}"></div>
+        <div class="stat-label">Training Readiness</div>
+        <div class="stat-value">{readiness_score}</div>
+        <div class="stat-unit">{readiness_level}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Sleep Score</div>
+        <div class="stat-value">{sleep_score}</div>
+        <div class="stat-unit">/ 100</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">HRV 7d Avg</div>
+        <div class="stat-value">{hrv_avg}</div>
+        <div class="stat-unit">ms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Resting HR</div>
+        <div class="stat-value">{resting_hr}</div>
+        <div class="stat-unit">bpm</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if isinstance(body_battery, int) and body_battery >= 60 else 'var(--yellow)' if isinstance(body_battery, int) and body_battery >= 30 else 'var(--orange)'}"></div>
+        <div class="stat-label">Body Battery</div>
+        <div class="stat-value">{body_battery}</div>
+        <div class="stat-unit">/ 100</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Recovery Time</div>
+        <div class="stat-value sm">{readiness.get('recovery_time','--')}</div>
+        <div class="stat-unit">min</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">HRV Overnight</div></div>
+    <div class="chart-grid">
+      <div class="chart-box" style="grid-column: span 2">
+        <div class="chart-label">HRV readings last night (ms)</div>
+        <canvas id="hrvDetailChart" style="max-height:200px"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ BLOOD PRESSURE -->
+<div class="tab-panel" id="panel-bp">
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Latest Reading — {latest_bp.get('date','--')}</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if latest_bp.get('systolic',999)<120 else 'var(--yellow)' if latest_bp.get('systolic',999)<130 else 'var(--red)'}"></div>
+        <div class="stat-label">Systolic</div>
+        <div class="stat-value">{latest_bp.get('systolic','--')}</div>
+        <div class="stat-unit">mmHg</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if latest_bp.get('diastolic',999)<80 else 'var(--yellow)' if latest_bp.get('diastolic',999)<90 else 'var(--red)'}"></div>
+        <div class="stat-label">Diastolic</div>
+        <div class="stat-value">{latest_bp.get('diastolic','--')}</div>
+        <div class="stat-unit">mmHg</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Pulse</div>
+        <div class="stat-value">{latest_bp.get('pulse','--')}</div>
+        <div class="stat-unit">bpm</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">BP Trend</div></div>
+    <div class="chart-grid">
+      <div class="chart-box" style="grid-column:span 2">
+        <div class="chart-label">Blood Pressure history (mmHg)</div>
+        <canvas id="bpChart" style="max-height:220px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">BP Log</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th><th>Status</th></tr></thead>
+        <tbody>{bp_table_rows}</tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT -->
+<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+  <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
+  <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
+  <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
+    GENERATED {datetime.now().strftime('%Y-%m-%d %H:%M')} · GARMIN + WITHINGS
+  </span>
+</div>
+
+</div><!-- end .content -->
+
+<script>
+// ── TAB SWITCHING ──
+function switchTab(name) {{
+  document.querySelectorAll('.tab').forEach((t,i) => {{
+    const panels = ['overview','running','cycling','health','bp'];
+    t.classList.toggle('active', panels[i] === name);
+  }});
+  document.querySelectorAll('.tab-panel').forEach(p => {{
+    p.classList.toggle('active', p.id === 'panel-' + name);
+  }});
+}}
+
+// ── CHART DEFAULTS ──
+const C = {{
+  blue: '#4f8ef7', purple: '#7c6cf7', green: '#3dd68c',
+  yellow: '#f5c842', red: '#f26565', orange: '#f59e42',
+  cyan: '#38d9f5', muted: '#5c6480', grid: 'rgba(37,40,54,0.8)'
+}};
+const base = {{
+  responsive: true, maintainAspectRatio: true,
   plugins: {{ legend: {{ display: false }} }},
   scales: {{
-    x: {{ ticks: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }}, grid: {{ color: gridColor }} }},
-    y: {{ ticks: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }}, grid: {{ color: gridColor }} }},
+    x: {{ ticks: {{ color: C.muted, font: {{ size:10 }} }}, grid: {{ color: C.grid }} }},
+    y: {{ ticks: {{ color: C.muted, font: {{ size:10 }} }}, grid: {{ color: C.grid }} }},
   }}
 }};
 
-// Lap GCT Balance
+// ── CHARTS ──
+new Chart(document.getElementById('weeklyComboChart'), {{
+  type: 'bar',
+  data: {{
+    labels: {weekly_combined_labels},
+    datasets: [
+      {{ label: 'Run', data: {weekly_run_vals}, backgroundColor: 'rgba(79,142,247,0.7)', borderRadius: 3 }},
+      {{ label: 'Cycle', data: {weekly_cycle_vals}, backgroundColor: 'rgba(124,108,247,0.7)', borderRadius: 3 }},
+    ]
+  }},
+  options: {{ ...base, plugins: {{ legend: {{ display: true, labels: {{ color: C.muted, font: {{ size:10 }} }} }} }} }}
+}});
+
+new Chart(document.getElementById('hrvChart'), {{
+  type: 'line',
+  data: {{
+    labels: {hrv_labels},
+    datasets: [{{ data: {hrv_values}, borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
+      tension: 0.3, fill: true, pointRadius: 2 }}]
+  }},
+  options: {{ ...base }}
+}});
+
+new Chart(document.getElementById('hrvDetailChart'), {{
+  type: 'line',
+  data: {{
+    labels: {hrv_labels},
+    datasets: [{{ data: {hrv_values}, borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
+      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: C.cyan }}]
+  }},
+  options: {{ ...base }}
+}});
+
 new Chart(document.getElementById('lapBalanceChart'), {{
   type: 'bar',
   data: {{
     labels: {lap_labels},
     datasets: [
-      {{
-        label: 'Left',
-        data: {lap_balance},
-        backgroundColor: {lap_balance}.map(v => v > 51.5 ? 'rgba(248,113,113,0.7)' : v > 50.5 ? 'rgba(250,204,21,0.7)' : 'rgba(74,222,128,0.7)'),
-        borderRadius: 3,
-      }},
-      {{
-        label: 'Right',
-        data: {lap_balance_r},
-        backgroundColor: {lap_balance_r}.map(v => v > 51.5 ? 'rgba(248,113,113,0.4)' : v > 50.5 ? 'rgba(250,204,21,0.4)' : 'rgba(74,222,128,0.4)'),
-        borderRadius: 3,
-      }}
+      {{ label: 'Left', data: {lap_balance}, backgroundColor: {lap_balance}.map(v => v>51.5?'rgba(242,101,101,0.7)':v>50.5?'rgba(245,200,66,0.7)':'rgba(61,214,140,0.7)'), borderRadius:3 }},
+      {{ label: 'Right', data: {lap_balance_r}, backgroundColor: {lap_balance_r}.map(v => v>51.5?'rgba(242,101,101,0.4)':v>50.5?'rgba(245,200,66,0.4)':'rgba(61,214,140,0.4)'), borderRadius:3 }},
     ]
   }},
-  options: {{ ...chartDefaults,
-    plugins: {{ legend: {{ display: true, labels: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }} }} }},
-    scales: {{ ...chartDefaults.scales,
-      y: {{ ...chartDefaults.scales.y, min: 47, max: 53,
-        ticks: {{ ...chartDefaults.scales.y.ticks, callback: v => v + '%' }} }}
-    }},
+  options: {{ ...base,
+    plugins: {{ legend: {{ display:true, labels: {{ color:C.muted, font:{{size:10}} }} }} }},
+    scales: {{ ...base.scales, y: {{ ...base.scales.y, min:47, max:53, ticks: {{ ...base.scales.y.ticks, callback: v=>v+'%' }} }} }}
   }}
 }});
 
-// Lap GCT ms
-new Chart(document.getElementById('lapGctChart'), {{
-  type: 'line',
-  data: {{
-    labels: {lap_labels},
-    datasets: [{{ data: {lap_gct}, borderColor: accent, backgroundColor: 'rgba(56,189,248,0.1)',
-      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: accent }}]
-  }},
-  options: {{ ...chartDefaults }}
-}});
-
-// Lap HR
 new Chart(document.getElementById('lapHrChart'), {{
   type: 'line',
-  data: {{
-    labels: {lap_labels},
-    datasets: [{{ data: {lap_hr}, borderColor: red, backgroundColor: 'rgba(248,113,113,0.1)',
-      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: red }}]
-  }},
-  options: {{ ...chartDefaults }}
+  data: {{ labels: {lap_labels}, datasets: [{{ data: {lap_hr}, borderColor: C.red, backgroundColor: 'rgba(242,101,101,0.08)', tension:0.3, fill:true, pointRadius:3, pointBackgroundColor:C.red }}] }},
+  options: {{ ...base }}
 }});
 
-// Lap Pace
 new Chart(document.getElementById('lapPaceChart'), {{
   type: 'line',
-  data: {{
-    labels: {lap_labels},
-    datasets: [{{ data: {lap_pace}, borderColor: green, backgroundColor: 'rgba(74,222,128,0.1)',
-      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: green }}]
-  }},
-  options: {{ ...chartDefaults,
-    scales: {{ ...chartDefaults.scales,
-      y: {{ ...chartDefaults.scales.y, reverse: true,
-        ticks: {{ ...chartDefaults.scales.y.ticks,
-          callback: v => {{ const m=Math.floor(v); const s=Math.round((v-m)*60); return m+':'+(s<10?'0':'')+s }} }} }} }} }}
+  data: {{ labels: {lap_labels}, datasets: [{{ data: {lap_pace}, borderColor: C.green, backgroundColor: 'rgba(61,214,140,0.08)', tension:0.3, fill:true, pointRadius:3, pointBackgroundColor:C.green }}] }},
+  options: {{ ...base, scales: {{ ...base.scales, y: {{ ...base.scales.y, reverse:true,
+    ticks: {{ ...base.scales.y.ticks, callback: v => {{ const m=Math.floor(v); const s=Math.round((v-m)*60); return m+':'+(s<10?'0':'')+s }} }} }} }} }}
 }});
 
-// GCT trend
+new Chart(document.getElementById('lapGctChart'), {{
+  type: 'line',
+  data: {{ labels: {lap_labels}, datasets: [{{ data: {lap_gct}, borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)', tension:0.3, fill:true, pointRadius:3, pointBackgroundColor:C.cyan }}] }},
+  options: {{ ...base }}
+}});
+
 new Chart(document.getElementById('gctTrendChart'), {{
   type: 'line',
   data: {{
     labels: {gct_trend_labels},
     datasets: [
-      {{
-        label: 'Left %',
-        data: {gct_trend_values},
-        borderColor: yellow, backgroundColor: 'rgba(250,204,21,0.1)',
-        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: yellow
-      }},
-      {{
-        label: 'Right %',
-        data: {gct_trend_values_r},
-        borderColor: accent, backgroundColor: 'rgba(56,189,248,0.1)',
-        tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: accent
-      }}
+      {{ label: 'Left %', data: {gct_trend_values}, borderColor: C.yellow, tension:0.3, fill:false, pointRadius:4, pointBackgroundColor:C.yellow }},
+      {{ label: 'Right %', data: {gct_trend_values_r}, borderColor: C.blue, tension:0.3, fill:false, pointRadius:4, pointBackgroundColor:C.blue }},
     ]
   }},
-  options: {{ ...chartDefaults,
-    plugins: {{ legend: {{ display: true, labels: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }} }} }},
-    scales: {{ ...chartDefaults.scales,
-      y: {{ ...chartDefaults.scales.y, min: 47, max: 53,
-        ticks: {{ ...chartDefaults.scales.y.ticks, callback: v => v + '%' }} }} }} }}
+  options: {{ ...base,
+    plugins: {{ legend: {{ display:true, labels: {{ color:C.muted, font:{{size:10}} }} }} }},
+    scales: {{ ...base.scales, y: {{ ...base.scales.y, min:47, max:53, ticks: {{ ...base.scales.y.ticks, callback:v=>v+'%' }} }} }}
+  }}
 }});
 
-// Weekly mileage
-new Chart(document.getElementById('weeklyChart'), {{
-  type: 'bar',
-  data: {{
-    labels: {weekly_labels},
-    datasets: [{{ data: {weekly_values}, backgroundColor: 'rgba(129,140,248,0.7)', borderRadius: 4 }}]
-  }},
-  options: {{ ...chartDefaults }}
-}});
-
-// HRV
-new Chart(document.getElementById('hrvChart'), {{
-  type: 'line',
-  data: {{
-    labels: {hrv_labels},
-    datasets: [{{ data: {hrv_values}, borderColor: accent2, backgroundColor: 'rgba(129,140,248,0.1)',
-      tension: 0.3, fill: true, pointRadius: 2, pointBackgroundColor: accent2 }}]
-  }},
-  options: {{ ...chartDefaults }}
-}});
-
-// BP
 new Chart(document.getElementById('bpChart'), {{
   type: 'line',
   data: {{
     labels: {bp_dates},
     datasets: [
-      {{ label: 'Systolic',  data: {bp_systolic},  borderColor: red,    backgroundColor: 'rgba(248,113,113,0.1)', tension: 0.3, fill: false, pointRadius: 3 }},
-      {{ label: 'Diastolic', data: {bp_diastolic}, borderColor: orange, backgroundColor: 'rgba(251,146,60,0.1)',  tension: 0.3, fill: false, pointRadius: 3 }},
-      {{ label: 'Pulse',     data: {bp_pulse},     borderColor: muted,  backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3, borderDash:[4,4] }},
+      {{ label: 'Systolic',  data: {bp_systolic},  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 }},
+      {{ label: 'Diastolic', data: {bp_diastolic}, borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 }},
+      {{ label: 'Pulse',     data: {bp_pulse},     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] }},
     ]
   }},
-  options: {{ ...chartDefaults,
-    plugins: {{ legend: {{ display: true, labels: {{ color: muted, font: {{ family: 'DM Mono', size: 10 }} }} }} }} }}
+  options: {{ ...base, plugins: {{ legend: {{ display:true, labels: {{ color:C.muted, font:{{size:10}} }} }} }} }}
 }});
-</script>
 
-<!-- EXPORT SECTION -->
-<div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--border);">
-  <div class="section-title">Export & Analysis</div>
-  <div style="display:flex; gap:12px; flex-wrap:wrap;">
-    <button onclick="exportJSON()" style="
-      background:var(--surface); border:1px solid var(--border);
-      color:var(--text); padding:10px 20px; border-radius:6px;
-      font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
-      transition: border-color 0.2s;">
-      ⬇ Export Data (JSON)
-    </button>
-    <button onclick="openClaude()" style="
-      background:var(--surface); border:1px solid #818cf8;
-      color:#818cf8; padding:10px 20px; border-radius:6px;
-      font-family:'DM Mono',monospace; font-size:12px; cursor:pointer;
-      transition: border-color 0.2s;">
-      ✦ Analyse with Claude
-    </button>
-  </div>
-  <div style="margin-top:8px; font-size:10px; color:var(--muted);">
-    Export downloads all dashboard data as JSON. Analyse with Claude opens claude.ai with your data pre-loaded.
-  </div>
-</div>
-
-<div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; letter-spacing:1px;">
-  GENERATED {datetime.now().strftime('%Y-%m-%d %H:%M')} &nbsp;·&nbsp; GARMIN CONNECT + WITHINGS API
-</div>
-
-<script>
+// ── EXPORT ──
 const dashboardData = {export_data};
 
 function exportJSON() {{
-    const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {{type: 'application/json'}});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `health_data_${{dashboardData.generated.replace(/[: ]/g,'-')}}.json`;
-    a.click();
+  const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {{type:'application/json'}});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `health_${{dashboardData.generated.replace(/[: ]/g,'-')}}.json`;
+  a.click();
 }}
 
 function openClaude() {{
-    const d = dashboardData;
-    const r = d.readiness;
-    const lr = d.last_run;
-    const t = d.training;
-    const a = d.achilles;
-    const bp = d.blood_pressure[0] || {{}};
+  const d = dashboardData;
+  const r = d.readiness; const lr = d.last_run;
+  const t = d.training; const a = d.achilles;
+  const bp = d.blood_pressure[0] || {{}};
+  const prompt = `Analyse my health data for ${{d.generated}} and give specific, actionable insights.
 
-    const prompt = `Please analyse my health and training data for ${{d.generated}} and give me specific, actionable insights.
+TRAINING: Week ${{t.week}}/28 — ${{t.phase}} | Target ${{t.phase_target_km}} km/wk | This week: ${{t.this_week_km}} km | Days to race: ${{t.days_to_race}}
+ATHLETE: Melbourne Marathon 12 Oct 2026, sub-3:00 goal (PB 3:16). Left insertional Achilles tendinopathy.
+READINESS: ${{r.score}}/100 (${{r.level}}) | Sleep: ${{r.sleep_score}} | HRV: ${{r.hrv_weekly_avg}}ms | RHR: ${{r.resting_hr}} | Battery: ${{r.body_battery}}
+ACHILLES: ${{a.score}}/100 (${{a.level}}) | ${{a.factors.map(f=>f.label+': '+f.value).join(', ')}}
+LAST RUN (${{lr.date}}): ${{lr.distance_km}}km @ ${{lr.avg_pace_min_km ? (Math.floor(lr.avg_pace_min_km)+':'+(Math.round((lr.avg_pace_min_km%1)*60)+'').padStart(2,'0')) : '--'}} | HR ${{lr.avg_hr}} | GCT L${{lr.gct_balance_left_pct}}%/R${{lr.gct_balance_right_pct}}%
+BP: ${{bp.systolic}}/${{bp.diastolic}} mmHg pulse ${{bp.pulse}}
 
-TRAINING CONTEXT:
-- Melbourne Marathon 12 Oct 2026, sub-3:00 goal (current PB 3:16)
-- Left insertional Achilles tendinopathy (active management)
-- Week ${{t.week}} of 28 — ${{t.phase}} phase (Week ${{t.week_in_phase}} of ${{t.phase_total}})
-- Phase target: ${{t.phase_target_km}} km/week
-- This week: ${{t.this_week_km}} km | Last week: ${{t.last_week_km}} km
-- Days to race: ${{t.days_to_race}}
-
-READINESS:
-- Training readiness: ${{r.score}}/100 (${{r.level}})
-- Sleep score: ${{r.sleep_score}}/100
-- HRV weekly avg: ${{r.hrv_weekly_avg}} ms
-- Resting HR: ${{r.resting_hr}} bpm
-- Body battery: ${{r.body_battery}}/100
-- Recovery time: ${{r.recovery_time}} min
-
-ACHILLES LOAD: ${{a.score}}/100 (${{a.level}} risk)
-Factors: ${{a.factors.map(f => f.label + ': ' + f.value).join(', ')}}
-
-LAST RUN (${{lr.date}}):
-- ${{lr.distance_km}} km @ ${{lr.avg_pace_min_km ? (Math.floor(lr.avg_pace_min_km)+':'+(Math.round((lr.avg_pace_min_km%1)*60)+'').padStart(2,'0')) : '--'}} min/km
-- HR: ${{lr.avg_hr}} bpm | Cadence: ${{lr.cadence}} spm
-- GCT balance: Left ${{lr.gct_balance_left_pct}}% / Right ${{lr.gct_balance_right_pct}}%
-- Avg GCT: ${{lr.avg_gct_ms}} ms
-
-RECENT RUNS:
-${{d.recent_runs.map(r => `${{r.date}}: ${{r.distance_km}}km, GCT L${{r.gct_balance_left}}%/R${{r.gct_balance_right}}%`).join('\\n')}}
-
-BLOOD PRESSURE (latest): ${{bp.systolic}}/${{bp.diastolic}} mmHg, pulse ${{bp.pulse}} bpm
-
-Please provide:
-1. Key observations about my readiness and recovery
-2. Achilles risk assessment based on GCT trend and load
-3. Training recommendations for today and this week
-4. Any concerns or things to watch`;
-
-    const encoded = encodeURIComponent(prompt);
-    window.open(`https://claude.ai/new?q=${{encoded}}`, '_blank');
+Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) Today's training recommendation 4) Any concerns`;
+  window.open("https://claude.ai/new?q=" + encodeURIComponent(prompt), '_blank');
 }}
 </script>
 
