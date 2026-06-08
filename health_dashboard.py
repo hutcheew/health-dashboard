@@ -749,6 +749,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             warning_html += f'<div style="padding:8px 12px;background:rgba(242,101,101,0.08);border-left:3px solid var(--red);border-radius:6px;font-size:12px;color:var(--text2);margin-bottom:6px;">{w}</div>'
 
         best_color = "var(--green)" if not warnings else "var(--yellow)"
+        tomorrow_date = days[1]["date"]
         window_detail = ""
         if morning and afternoon:
             window_detail = f"Morning: {morning['temp']}°C {morning['rain']}% rain · Afternoon: {afternoon['temp']}°C {afternoon['rain']}% rain"
@@ -759,7 +760,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     <div class="stat-grid">{day_cards}</div>
     {warning_html}
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;">
-      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Tomorrow\'s Best Run Window</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window — {tomorrow_date}</div>
       <div style="font-size:20px;font-weight:600;color:{best_color};margin-bottom:4px;">{best}</div>
       <div style="font-size:11px;color:var(--text3);">{window_detail}</div>
     </div>
@@ -1370,6 +1371,32 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 
   <div class="section">
     <div class="section-header"><div class="section-title">HRV Overnight</div></div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">HRV 7d Average</div>
+        <div class="stat-value">{hrv_avg}</div>
+        <div class="stat-unit">ms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">Last Reading</div>
+        <div class="stat-value">{hrv.get('values', [None])[-1] if hrv.get('values') else '--'}</div>
+        <div class="stat-unit">ms · {hrv.get('times', ['--'])[-1] if hrv.get('times') else '--'}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">Peak Last Night</div>
+        <div class="stat-value">{max(hrv.get('values', [0])) if hrv.get('values') else '--'}</div>
+        <div class="stat-unit">ms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">Low Last Night</div>
+        <div class="stat-value">{min(hrv.get('values', [0])) if hrv.get('values') else '--'}</div>
+        <div class="stat-unit">ms</div>
+      </div>
+    </div>
     <div class="chart-grid">
       <div class="chart-box" style="grid-column: span 2">
         <div class="chart-label">HRV readings last night (ms)</div>
