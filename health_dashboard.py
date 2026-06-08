@@ -165,7 +165,105 @@ def pace_str(pace_min):
     s = int((pace_min - m) * 60)
     return f"{m}:{s:02d}"
 
-# ─── TRAINING PHASE ──────────────────────────────────────────────────────────
+# ─── WEATHER ─────────────────────────────────────────────────────────────────
+# Wantirna South, VIC coordinates
+WEATHER_LAT = -37.8557
+WEATHER_LNG = 145.2311
+
+def fetch_weather():
+    try:
+        resp = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude":  WEATHER_LAT,
+                "longitude": WEATHER_LNG,
+                "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,weathercode",
+                "hourly": "temperature_2m,precipitation_probability,windspeed_10m",
+                "timezone": "Australia/Melbourne",
+                "forecast_days": 3,
+            },
+            timeout=10
+        )
+        data = resp.json()
+        daily = data["daily"]
+        hourly = data["hourly"]
+
+        # Build daily forecasts
+        days = []
+        for i in range(3):
+            days.append({
+                "date":       daily["time"][i],
+                "max_temp":   daily["temperature_2m_max"][i],
+                "min_temp":   daily["temperature_2m_min"][i],
+                "rain_pct":   daily["precipitation_probability_max"][i],
+                "wind_max":   daily["windspeed_10m_max"][i],
+                "weathercode": daily["weathercode"][i],
+            })
+
+        # Best run window for tomorrow (index 1)
+        # Check morning (6-9am) vs afternoon (4-7pm) hours
+        tomorrow = daily["time"][1]
+        morning_hours = [i for i, t in enumerate(hourly["time"]) if t.startswith(tomorrow) and "0" + t[11:13] in ["06","07","08","09"] or t.startswith(tomorrow) and t[11:13] in ["06","07","08","09"]]
+        afternoon_hours = [i for i, t in enumerate(hourly["time"]) if t.startswith(tomorrow) and t[11:13] in ["16","17","18","19"]]
+
+        def window_score(hours):
+            if not hours: return None
+            avg_temp = sum(hourly["temperature_2m"][h] for h in hours) / len(hours)
+            avg_rain = sum(hourly["precipitation_probability"][h] for h in hours) / len(hours)
+            avg_wind = sum(hourly["windspeed_10m"][h] for h in hours) / len(hours)
+            # Lower score = better (less heat, rain, wind)
+            score = avg_temp * 0.5 + avg_rain * 0.3 + avg_wind * 0.2
+            return {"score": score, "temp": round(avg_temp,1), "rain": round(avg_rain), "wind": round(avg_wind,1)}
+
+        morning = window_score(morning_hours)
+        afternoon = window_score(afternoon_hours)
+
+        best_window = "Morning"
+        if morning and afternoon:
+            best_window = "Morning" if morning["score"] <= afternoon["score"] else "Afternoon"
+        elif afternoon:
+            best_window = "Afternoon"
+
+        # Warnings
+        warnings = []
+        tmr = days[1]
+        if tmr["max_temp"] >= 28:
+            warnings.append(f"Heat: {tmr['max_temp']}°C — carry water, adjust pace")
+        if tmr["rain_pct"] >= 60:
+            warnings.append(f"Rain likely: {tmr['rain_pct']}% chance")
+        if tmr["wind_max"] >= 30:
+            warnings.append(f"Strong wind: {tmr['wind_max']} km/h")
+
+        return {
+            "days": days,
+            "best_window": best_window,
+            "morning": morning,
+            "afternoon": afternoon,
+            "warnings": warnings,
+        }
+    except Exception as e:
+        print(f"  Weather fetch failed: {e}")
+        return None
+
+WEATHER_CODES = {
+    0: "Clear", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+    45: "Foggy", 48: "Icy fog", 51: "Light drizzle", 53: "Drizzle",
+    55: "Heavy drizzle", 61: "Light rain", 63: "Rain", 65: "Heavy rain",
+    71: "Light snow", 73: "Snow", 75: "Heavy snow", 80: "Rain showers",
+    81: "Showers", 82: "Heavy showers", 95: "Thunderstorm", 99: "Hailstorm",
+}
+
+def weather_icon(code):
+    if code == 0: return "☀️"
+    if code in (1, 2): return "⛅"
+    if code == 3: return "☁️"
+    if code in (45, 48): return "🌫️"
+    if code in (51, 53, 55, 61, 63, 65, 80, 81, 82): return "🌧️"
+    if code in (71, 73, 75): return "❄️"
+    if code in (95, 99): return "⛈️"
+    return "🌤️"
+
+
 
 PLAN_START = date(2026, 5, 1)
 RACE_DATE  = date(2026, 10, 12)
@@ -392,7 +490,7 @@ def check_and_send_alerts(readiness, achilles, bp_readings):
         body = "\n\n".join(alerts) + f"\n\nDashboard: https://hutcheew.github.io/health-dashboard"
         send_alert_email(f"Health Alert — {date.today()}", body)
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary=""):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -623,6 +721,50 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <td>{c['calories'] or '--'}</td>
         </tr>"""
 
+    # Weather prep
+    weather_html = ""
+    if weather:
+        days = weather["days"]
+        best = weather["best_window"]
+        morning = weather.get("morning", {})
+        afternoon = weather.get("afternoon", {})
+        warnings = weather.get("warnings", [])
+
+        day_cards = ""
+        labels = ["Today", "Tomorrow", "Day after"]
+        for i, d in enumerate(days[:3]):
+            icon = weather_icon(d["weathercode"])
+            desc = WEATHER_CODES.get(d["weathercode"], "")
+            day_cards += f"""
+            <div class="stat">
+              <div class="stat-accent" style="background:{'var(--yellow)' if d['max_temp']>=28 else 'var(--blue)'}"></div>
+              <div class="stat-label">{labels[i]} · {d['date']}</div>
+              <div class="stat-value sm">{icon} {d['max_temp']}°</div>
+              <div class="stat-unit">{d['min_temp']}° low · {desc}</div>
+              <div class="stat-sub">💧{d['rain_pct']}% · 💨{d['wind_max']} km/h</div>
+            </div>"""
+
+        warning_html = ""
+        for w in warnings:
+            warning_html += f'<div style="padding:8px 12px;background:rgba(242,101,101,0.08);border-left:3px solid var(--red);border-radius:6px;font-size:12px;color:var(--text2);margin-bottom:6px;">{w}</div>'
+
+        best_color = "var(--green)" if not warnings else "var(--yellow)"
+        window_detail = ""
+        if morning and afternoon:
+            window_detail = f"Morning: {morning['temp']}°C {morning['rain']}% rain · Afternoon: {afternoon['temp']}°C {afternoon['rain']}% rain"
+
+        weather_html = f"""
+  <div class="section">
+    <div class="section-header"><div class="section-title">Weather — Wantirna South</div></div>
+    <div class="stat-grid">{day_cards}</div>
+    {warning_html}
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Tomorrow\'s Best Run Window</div>
+      <div style="font-size:20px;font-weight:600;color:{best_color};margin-bottom:4px;">{best}</div>
+      <div style="font-size:11px;color:var(--text3);">{window_detail}</div>
+    </div>
+  </div>"""
+
     # Pre-compute cycle display values
     last_cycle_duration = f"{last_cycle['duration']:.0f}" if last_cycle else '--'
 
@@ -631,6 +773,9 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Nat's Health Dashboard — {TODAY}</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -983,6 +1128,8 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
       </div>
     </div>
   </div>
+
+{weather_html}
 
   <div class="section">
     <div class="section-header"><div class="section-title">Weekly Activity</div></div>
@@ -1473,8 +1620,13 @@ def main():
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
 
+    print("Fetching weather...")
+    weather = fetch_weather()
+    if weather:
+        print(f"  Tomorrow: {weather['days'][1]['max_temp']}°C, {weather['days'][1]['rain_pct']}% rain — best window: {weather['best_window']}")
+
     print("Generating dashboard...")
-    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "")
+    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
