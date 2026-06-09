@@ -129,6 +129,26 @@ def fetch_garmin_data(garmin):
     except:
         data["body_battery"] = None
 
+    # Sleep data
+    try:
+        sleep = garmin.get_sleep_data(YESTERDAY)
+        daily = sleep.get("dailySleepDTO", {})
+        data["sleep"] = {
+            "duration_hrs": round(daily.get("sleepTimeSeconds", 0) / 3600, 1),
+            "deep_hrs": round(daily.get("deepSleepSeconds", 0) / 3600, 1),
+            "light_hrs": round(daily.get("lightSleepSeconds", 0) / 3600, 1),
+            "rem_hrs": round(daily.get("remSleepSeconds", 0) / 3600, 1),
+            "awake_hrs": round(daily.get("awakeSleepSeconds", 0) / 3600, 1),
+            "score": daily.get("sleepScores", {}).get("overall", {}).get("value"),
+            "start": daily.get("sleepStartTimestampLocal"),
+            "end": daily.get("sleepEndTimestampLocal"),
+            "avg_spo2": daily.get("averageSpO2Value"),
+            "avg_respiration": daily.get("averageRespirationValue"),
+            "avg_stress": daily.get("avgSleepStress"),
+        }
+    except:
+        data["sleep"] = {}
+
     return data
 
 # ─── WITHINGS ────────────────────────────────────────────────────────────────
@@ -164,6 +184,72 @@ def pace_str(pace_min):
     m = int(pace_min)
     s = int((pace_min - m) * 60)
     return f"{m}:{s:02d}"
+
+# ─── INTERVALS.ICU ───────────────────────────────────────────────────────────
+
+INTERVALS_ATHLETE_ID = os.environ.get("INTERVALS_ATHLETE_ID", "i416094")
+INTERVALS_API_KEY    = os.environ.get("INTERVALS_API_KEY", "")
+
+def fetch_intervals():
+    try:
+        auth = ("API_KEY", INTERVALS_API_KEY)
+        base = "https://intervals.icu/api/v1"
+        today = date.today().isoformat()
+        start = (date.today() - timedelta(days=90)).isoformat()
+
+        # Wellness — CTL, ATL, TSB
+        r = requests.get(
+            f"{base}/athlete/{INTERVALS_ATHLETE_ID}/wellness",
+            auth=auth, params={"oldest": start, "newest": today}
+        )
+        if r.status_code != 200:
+            print(f"  intervals.icu wellness error: {r.status_code}")
+            return None
+
+        wellness = r.json()
+        ctl_atl = []
+        for d in wellness:
+            if d.get("ctl") is not None:
+                ctl_atl.append({
+                    "date": d["id"],
+                    "ctl":  round(d["ctl"], 1),
+                    "atl":  round(d["atl"], 1),
+                    "tsb":  round(d["ctl"] - d["atl"], 1),
+                    "ramp": round(d.get("rampRate", 0), 2),
+                })
+
+        # Recent activities for training load
+        r2 = requests.get(
+            f"{base}/athlete/{INTERVALS_ATHLETE_ID}/activities",
+            auth=auth, params={"oldest": (date.today() - timedelta(days=30)).isoformat(), "newest": today}
+        )
+        activities = r2.json() if r2.status_code == 200 else []
+        load_data = []
+        for a in activities:
+            if a.get("icu_training_load"):
+                load_data.append({
+                    "date": a["start_date_local"][:10],
+                    "type": a.get("type", ""),
+                    "load": a["icu_training_load"],
+                    "ctl":  round(a.get("icu_ctl", 0), 1),
+                    "atl":  round(a.get("icu_atl", 0), 1),
+                    "hr_zones": a.get("icu_hr_zone_times", []),
+                    "decoupling": a.get("decoupling"),
+                    "efficiency": a.get("icu_efficiency_factor"),
+                    "intensity": a.get("icu_intensity"),
+                })
+
+        latest = ctl_atl[-1] if ctl_atl else {}
+        print(f"  CTL: {latest.get('ctl')}  ATL: {latest.get('atl')}  TSB: {latest.get('tsb')}")
+
+        return {
+            "ctl_atl": ctl_atl,
+            "load_data": load_data,
+            "latest": latest,
+        }
+    except Exception as e:
+        print(f"  intervals.icu fetch failed: {e}")
+        return None
 
 # ─── WEATHER ─────────────────────────────────────────────────────────────────
 # Wantirna South, VIC coordinates
@@ -490,7 +576,7 @@ def check_and_send_alerts(readiness, achilles, bp_readings):
         body = "\n\n".join(alerts) + f"\n\nDashboard: https://hutcheew.github.io/health-dashboard"
         send_alert_email(f"Health Alert — {date.today()}", body)
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -720,6 +806,49 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <td>{c['elevation']} m</td>
           <td>{c['calories'] or '--'}</td>
         </tr>"""
+
+    # Sleep data
+    sleep = garmin_data.get("sleep", {})
+    sleep_duration = sleep.get("duration_hrs", "--")
+    sleep_deep     = sleep.get("deep_hrs", "--")
+    sleep_light    = sleep.get("light_hrs", "--")
+    sleep_rem      = sleep.get("rem_hrs", "--")
+    sleep_awake    = sleep.get("awake_hrs", "--")
+    sleep_spo2     = sleep.get("avg_spo2", "--")
+    sleep_resp     = sleep.get("avg_respiration", "--")
+    sleep_stress   = sleep.get("avg_stress", "--")
+
+    # Sleep stage chart data
+    sleep_stages_data = json.dumps([
+        sleep.get("deep_hrs", 0) or 0,
+        sleep.get("light_hrs", 0) or 0,
+        sleep.get("rem_hrs", 0) or 0,
+        sleep.get("awake_hrs", 0) or 0,
+    ])
+
+    # Intervals.icu CTL/ATL/TSB
+    ctl_atl_labels = json.dumps([])
+    ctl_values     = json.dumps([])
+    atl_values     = json.dumps([])
+    tsb_values     = json.dumps([])
+    latest_ctl = "--"
+    latest_atl = "--"
+    latest_tsb = "--"
+    latest_ramp = "--"
+
+    if intervals:
+        ctl_atl = intervals.get("ctl_atl", [])[-60:]  # last 60 days
+        ctl_atl_labels = json.dumps([d["date"] for d in ctl_atl])
+        ctl_values     = json.dumps([d["ctl"] for d in ctl_atl])
+        atl_values     = json.dumps([d["atl"] for d in ctl_atl])
+        tsb_values     = json.dumps([d["tsb"] for d in ctl_atl])
+        latest = intervals.get("latest", {})
+        latest_ctl  = latest.get("ctl", "--")
+        latest_atl  = latest.get("atl", "--")
+        latest_tsb  = latest.get("tsb", "--")
+        latest_ramp = latest.get("ramp", "--")
+
+    tsb_color = "var(--green)" if isinstance(latest_tsb, (int, float)) and latest_tsb >= 0 else "var(--red)"
 
     # Weather prep
     weather_html = ""
@@ -1133,6 +1262,42 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 {weather_html}
 
   <div class="section">
+    <div class="section-header"><div class="section-title">Fitness / Fatigue / Form — intervals.icu</div></div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Fitness (CTL)</div>
+        <div class="stat-value">{latest_ctl}</div>
+        <div class="stat-unit">chronic training load</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Fatigue (ATL)</div>
+        <div class="stat-value">{latest_atl}</div>
+        <div class="stat-unit">acute training load</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{tsb_color}"></div>
+        <div class="stat-label">Form (TSB)</div>
+        <div class="stat-value" style="color:{tsb_color}">{latest_tsb}</div>
+        <div class="stat-unit">{'fresh' if isinstance(latest_tsb,(int,float)) and latest_tsb>=0 else 'fatigued'}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Ramp Rate</div>
+        <div class="stat-value sm">{latest_ramp}</div>
+        <div class="stat-unit">CTL/week</div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box" style="grid-column:span 2">
+        <div class="chart-label">CTL / ATL / TSB — 60 days</div>
+        <canvas id="ctlChart" style="max-height:200px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
     <div class="section-header"><div class="section-title">Weekly Activity</div></div>
     <div class="chart-grid">
       <div class="chart-box">
@@ -1326,6 +1491,66 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 
 <!-- ═══════════════════════════════════════════════════════ HEALTH -->
 <div class="tab-panel" id="panel-health">
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Last Night's Sleep</div></div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Total Sleep</div>
+        <div class="stat-value">{sleep_duration}</div>
+        <div class="stat-unit">hours</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Deep Sleep</div>
+        <div class="stat-value">{sleep_deep}</div>
+        <div class="stat-unit">hours</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--cyan)"></div>
+        <div class="stat-label">REM Sleep</div>
+        <div class="stat-value">{sleep_rem}</div>
+        <div class="stat-unit">hours</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--text3)"></div>
+        <div class="stat-label">Light Sleep</div>
+        <div class="stat-value">{sleep_light}</div>
+        <div class="stat-unit">hours</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-label">Awake</div>
+        <div class="stat-value">{sleep_awake}</div>
+        <div class="stat-unit">hours</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">Avg SpO2</div>
+        <div class="stat-value">{sleep_spo2}</div>
+        <div class="stat-unit">%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Respiration</div>
+        <div class="stat-value">{sleep_resp}</div>
+        <div class="stat-unit">breaths/min</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--orange)"></div>
+        <div class="stat-label">Sleep Stress</div>
+        <div class="stat-value">{sleep_stress}</div>
+        <div class="stat-unit">avg stress</div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-label">Sleep stages breakdown (hours)</div>
+        <canvas id="sleepStagesChart" style="max-height:200px"></canvas>
+      </div>
+    </div>
+  </div>
 
   <div class="section">
     <div class="section-header"><div class="section-title">Recovery Metrics</div></div>
@@ -1589,6 +1814,38 @@ new Chart(document.getElementById('bpChart'), {{
   options: {{ ...base, plugins: {{ legend: {{ display:true, labels: {{ color:C.muted, font:{{size:10}} }} }} }} }}
 }});
 
+// CTL/ATL/TSB chart
+new Chart(document.getElementById('ctlChart'), {{
+  type: 'line',
+  data: {{
+    labels: {ctl_atl_labels},
+    datasets: [
+      {{ label: 'Fitness (CTL)', data: {ctl_values}, borderColor: C.blue,   backgroundColor:'rgba(79,142,247,0.08)', tension:0.3, fill:true,  pointRadius:0, borderWidth:2 }},
+      {{ label: 'Fatigue (ATL)', data: {atl_values}, borderColor: C.red,    backgroundColor:'rgba(242,101,101,0.08)', tension:0.3, fill:true,  pointRadius:0, borderWidth:2 }},
+      {{ label: 'Form (TSB)',    data: {tsb_values}, borderColor: C.green,  backgroundColor:'rgba(61,214,140,0.08)',  tension:0.3, fill:true,  pointRadius:0, borderWidth:1, borderDash:[4,4] }},
+    ]
+  }},
+  options: {{ ...base, plugins: {{ legend: {{ display:true, labels: {{ color:C.muted, font:{{size:10}} }} }} }} }}
+}});
+
+// Sleep stages doughnut
+new Chart(document.getElementById('sleepStagesChart'), {{
+  type: 'doughnut',
+  data: {{
+    labels: ['Deep', 'Light', 'REM', 'Awake'],
+    datasets: [{{ 
+      data: {sleep_stages_data},
+      backgroundColor: [C.blue, C.muted, C.cyan, C.yellow],
+      borderWidth: 0,
+      hoverOffset: 4,
+    }}]
+  }},
+  options: {{
+    responsive: true, maintainAspectRatio: true,
+    plugins: {{ legend: {{ display:true, position:'right', labels: {{ color:C.muted, font:{{size:10}}, boxWidth:10 }} }} }},
+  }}
+}});
+
 // ── EXPORT ──
 const dashboardData = {export_data};
 
@@ -1647,13 +1904,16 @@ def main():
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
 
+    print("Fetching intervals.icu data...")
+    intervals = fetch_intervals()
+
     print("Fetching weather...")
     weather = fetch_weather()
     if weather:
         print(f"  Tomorrow: {weather['days'][1]['max_temp']}°C, {weather['days'][1]['rain_pct']}% rain — best window: {weather['best_window']}")
 
     print("Generating dashboard...")
-    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather)
+    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
