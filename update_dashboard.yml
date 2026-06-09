@@ -2,10 +2,10 @@ name: Update Health Dashboard
 
 on:
   schedule:
-    - cron: '0 20 * * *'   # 7am AEDT (UTC+11, Oct-Apr)
-    - cron: '0 21 * * *'   # 7am AEST (UTC+10, Apr-Oct)
-    - cron: '0 6 * * *'    # 5pm AEDT (UTC+11, Oct-Apr)
-    - cron: '0 7 * * *'    # 5pm AEST (UTC+10, Apr-Oct)
+    - cron: '30 21 * * *'   # 7:30am AEST (UTC+10) — main morning trigger
+    - cron: '30 22 * * *'   # 8:30am AEST — retry if 7:30 delayed
+    - cron: '0 0 * * *'     # 10am AEST — guaranteed Garmin data ready
+    - cron: '0 7 * * *'     # 5pm AEST — afternoon post-run update
   workflow_dispatch:
 
 jobs:
@@ -42,6 +42,8 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          INTERVALS_ATHLETE_ID: i416094
+          INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
         run: |
           python health_dashboard.py
 
