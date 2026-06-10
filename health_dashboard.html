@@ -397,10 +397,95 @@
       <div class="chart-title">GCT Balance Left % — recent runs</div>
       <canvas id="gctTrendChart"></canvas>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">Weekly Mileage (km)</div>
-      <canvas id="weeklyChart"></canvas>
-    </div>
+    // ==========================================
+// REPLACE YOUR EXISTING WEEKLY MILEAGE CHART WITH THIS:
+// ==========================================
+
+// 1. Your historical data array (add your past weeks here)
+const weeklyLabels = ["2026-W21", "2026-W22"];
+const mileageData = [26.5, 33.4]; // Last week vs This week
+
+// 2. Automatically calculate the Week-on-Week % change
+const wowChangeData = mileageData.map((current, index) => {
+    if (index === 0) return 0; // First week has no previous week to compare to
+    const previous = mileageData[index - 1];
+    return Math.round(((current - previous) / previous) * 100);
+});
+
+// 3. Decide the color of the line points based on your 10% / 20% rules
+const pointColors = wowChangeData.map(change => {
+    if (change <= 10) return green;   // Safe zone (#4ade80)
+    if (change <= 20) return yellow;  // Caution zone (#facc15)
+    return red;                       // High Risk spike (#f87171)
+});
+
+// 4. Render the dual-axis mixed chart
+new Chart(document.getElementById('weeklyChart'), {
+    type: 'bar', // Base type is bar
+    data: {
+        labels: weeklyLabels,
+        datasets: [
+            {
+                label: 'Weekly Mileage (km)',
+                data: mileageData,
+                backgroundColor: 'rgba(129, 140, 248, 0.3)', // Faded accent2 background
+                borderColor: accent2,
+                borderWidth: 1,
+                borderRadius: 4,
+                yAxisID: 'yMileage', // Binds this data to the left scale
+            },
+            {
+                type: 'line', // Overrides base type to make this a line
+                label: 'WoW Change (%)',
+                data: wowChangeData,
+                borderColor: orange,
+                borderWidth: 2,
+                pointBackgroundColor: pointColors, // Dynamic fill color
+                pointBorderColor: pointColors,     // Dynamic border color
+                pointRadius: 5,
+                tension: 0.2,
+                yAxisID: 'yPercent', // Binds this data to the right scale
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: {
+            legend: {
+                display: true, // Show the legend so you know what is what
+                labels: { color: muted, font: { family: 'DM Mono', size: 10 } }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: muted, font: { family: 'DM Mono', size: 10 } },
+                grid: { color: gridColor }
+            },
+            // Left Y-Axis for Kilometers
+            yMileage: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: 'Distance (km)', color: muted },
+                ticks: { color: muted, font: { family: 'DM Mono', size: 10 } },
+                grid: { color: gridColor }
+            },
+            // Right Y-Axis for Percentages
+            yPercent: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'Change (%)', color: muted },
+                ticks: { 
+                    color: muted, 
+                    font: { family: 'DM Mono', size: 10 },
+                    callback: value => value + '%' // Adds the '%' symbol to the axis ticks
+                },
+                grid: { drawOnChartArea: false }, // Prevents criss-crossing gridlines from looking messy
+                suggestedMax: 30,
+                suggestedMin: -10
+            }
+        }
+    }
+});
     <div class="chart-card">
       <div class="chart-title">HRV overnight readings (ms)</div>
       <canvas id="hrvChart"></canvas>
