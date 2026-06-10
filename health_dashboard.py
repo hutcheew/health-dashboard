@@ -1170,6 +1170,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   <div class="tab" onclick="switchTab('cycling')"><span class="tab-icon">◯</span>Cycling</div>
   <div class="tab" onclick="switchTab('health')"><span class="tab-icon">♡</span>Health</div>
   <div class="tab" onclick="switchTab('bp')"><span class="tab-icon">↕</span>Blood Pressure</div>
+  <div class="tab" onclick="switchTab('hrcompare')"><span class="tab-icon">⇌</span>HR Compare</div>
 </div>
 
 <div class="content">
@@ -1681,6 +1682,19 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ HR COMPARE -->
+<div class="tab-panel" id="panel-hrcompare">
+  <div class="section">
+    <div class="section-header"><div class="section-title">Polar Verity Sense vs Garmin HR</div></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;width:100%;min-height:600px;">
+      <iframe src="hr_comparison.html" style="width:100%;height:700px;border:none;background:var(--bg);" title="HR Comparison"></iframe>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);line-height:1.6;">
+      To update: export Polar FIT file → drop into <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;">Desktop/polar_fits/</code> folder → watcher auto-generates and pushes.
+    </div>
+  </div>
+</div>
+
 <!-- EXPORT -->
 <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
@@ -1695,8 +1709,8 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <script>
 // ── TAB SWITCHING ──
 function switchTab(name) {{
+  const panels = ['overview','running','cycling','health','bp','hrcompare'];
   document.querySelectorAll('.tab').forEach((t,i) => {{
-    const panels = ['overview','running','cycling','health','bp'];
     t.classList.toggle('active', panels[i] === name);
   }});
   document.querySelectorAll('.tab-panel').forEach(p => {{
