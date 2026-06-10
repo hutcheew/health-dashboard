@@ -266,7 +266,7 @@ def fetch_weather():
                 "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,weathercode",
                 "hourly": "temperature_2m,precipitation_probability,windspeed_10m",
                 "timezone": "Australia/Melbourne",
-                "forecast_days": 3,
+                "forecast_days": 7,
             },
             timeout=10
         )
@@ -274,57 +274,65 @@ def fetch_weather():
         daily = data["daily"]
         hourly = data["hourly"]
 
-        # Build daily forecasts
-        days = []
-        for i in range(3):
-            days.append({
-                "date":       daily["time"][i],
-                "max_temp":   daily["temperature_2m_max"][i],
-                "min_temp":   daily["temperature_2m_min"][i],
-                "rain_pct":   daily["precipitation_probability_max"][i],
-                "wind_max":   daily["windspeed_10m_max"][i],
-                "weathercode": daily["weathercode"][i],
-            })
-
-        # Best run window for tomorrow (index 1)
-        # Check morning (6-9am) vs afternoon (4-7pm) hours
-        tomorrow = daily["time"][1]
-        morning_hours = [i for i, t in enumerate(hourly["time"]) if t.startswith(tomorrow) and "0" + t[11:13] in ["06","07","08","09"] or t.startswith(tomorrow) and t[11:13] in ["06","07","08","09"]]
-        afternoon_hours = [i for i, t in enumerate(hourly["time"]) if t.startswith(tomorrow) and t[11:13] in ["16","17","18","19"]]
-
         def window_score(hours):
             if not hours: return None
             avg_temp = sum(hourly["temperature_2m"][h] for h in hours) / len(hours)
             avg_rain = sum(hourly["precipitation_probability"][h] for h in hours) / len(hours)
             avg_wind = sum(hourly["windspeed_10m"][h] for h in hours) / len(hours)
-            # Lower score = better (less heat, rain, wind)
             score = avg_temp * 0.5 + avg_rain * 0.3 + avg_wind * 0.2
             return {"score": score, "temp": round(avg_temp,1), "rain": round(avg_rain), "wind": round(avg_wind,1)}
 
-        morning = window_score(morning_hours)
-        afternoon = window_score(afternoon_hours)
+        # Build daily forecasts with best run windows
+        days = []
+        for i in range(7):
+            day_date = daily["time"][i]
+            morning_hours   = [j for j, t in enumerate(hourly["time"]) if t.startswith(day_date) and t[11:13] in ["06","07","08","09"]]
+            afternoon_hours = [j for j, t in enumerate(hourly["time"]) if t.startswith(day_date) and t[11:13] in ["16","17","18","19"]]
+            morning   = window_score(morning_hours)
+            afternoon = window_score(afternoon_hours)
+            if morning and afternoon:
+                best = "Morning" if morning["score"] <= afternoon["score"] else "Afternoon"
+                best_detail = morning if best == "Morning" else afternoon
+            elif morning:
+                best = "Morning"
+                best_detail = morning
+            elif afternoon:
+                best = "Afternoon"
+                best_detail = afternoon
+            else:
+                best = "--"
+                best_detail = None
 
-        best_window = "Morning"
-        if morning and afternoon:
-            best_window = "Morning" if morning["score"] <= afternoon["score"] else "Afternoon"
-        elif afternoon:
-            best_window = "Afternoon"
+            max_t = daily["temperature_2m_max"][i]
+            rain  = daily["precipitation_probability_max"][i]
+            wind  = daily["windspeed_10m_max"][i]
+            warnings = []
+            if max_t >= 28: warnings.append(f"Heat {max_t}°C")
+            if rain >= 60:  warnings.append(f"Rain {rain}%")
+            if wind >= 30:  warnings.append(f"Wind {wind}km/h")
 
-        # Warnings
-        warnings = []
+            days.append({
+                "date":        day_date,
+                "max_temp":    max_t,
+                "min_temp":    daily["temperature_2m_min"][i],
+                "rain_pct":    rain,
+                "wind_max":    wind,
+                "weathercode": daily["weathercode"][i],
+                "best_window": best,
+                "best_detail": best_detail,
+                "morning":     morning,
+                "afternoon":   afternoon,
+                "warnings":    warnings,
+            })
+
+        # Tomorrow summary (index 1) for top card
         tmr = days[1]
-        if tmr["max_temp"] >= 28:
-            warnings.append(f"Heat: {tmr['max_temp']}°C — carry water, adjust pace")
-        if tmr["rain_pct"] >= 60:
-            warnings.append(f"Rain likely: {tmr['rain_pct']}% chance")
-        if tmr["wind_max"] >= 30:
-            warnings.append(f"Strong wind: {tmr['wind_max']} km/h")
-
+        warnings = tmr["warnings"]
         return {
             "days": days,
-            "best_window": best_window,
-            "morning": morning,
-            "afternoon": afternoon,
+            "best_window": tmr["best_window"],
+            "morning": tmr["morning"],
+            "afternoon": tmr["afternoon"],
             "warnings": warnings,
         }
     except Exception as e:
@@ -791,6 +799,16 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     all_weeks = sorted(set(list(weekly.keys()) + list(weekly_cycle.keys())))[-6:]
     weekly_combined_labels = json.dumps(all_weeks)
     weekly_run_vals   = json.dumps([round(weekly.get(w, 0), 1) for w in all_weeks])
+
+    # Mileage week-on-week change %
+    run_vals_list = [round(weekly.get(w, 0), 1) for w in all_weeks]
+    wow_changes = []
+    for i, v in enumerate(run_vals_list):
+        if i == 0 or run_vals_list[i-1] == 0:
+            wow_changes.append(0)
+        else:
+            wow_changes.append(round((v - run_vals_list[i-1]) / run_vals_list[i-1] * 100, 1))
+    mileage_change_vals = json.dumps(wow_changes)
     weekly_cycle_vals = json.dumps([round(weekly_cycle.get(w, 0), 1) for w in all_weeks])
 
     # Cycle table rows
@@ -859,8 +877,9 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         afternoon = weather.get("afternoon", {})
         warnings = weather.get("warnings", [])
 
+        # 3-day forecast cards
         day_cards = ""
-        labels = ["Today", "Tomorrow", "Day after"]
+        labels = ["Today", "Tomorrow", "Day +2"]
         for i, d in enumerate(days[:3]):
             icon = weather_icon(d["weathercode"])
             desc = WEATHER_CODES.get(d["weathercode"], "")
@@ -877,6 +896,31 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         for w in warnings:
             warning_html += f'<div style="padding:8px 12px;background:rgba(242,101,101,0.08);border-left:3px solid var(--red);border-radius:6px;font-size:12px;color:var(--text2);margin-bottom:6px;">{w}</div>'
 
+        # 7-day run windows table
+        run_window_rows = ""
+        day_names = ["Today", "Tomorrow", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        from datetime import datetime as dt
+        for i, d in enumerate(days):
+            try:
+                day_name = dt.strptime(d["date"], "%Y-%m-%d").strftime("%a")
+            except:
+                day_name = day_names[i] if i < len(day_names) else d["date"]
+            bw = d.get("best_window", "--")
+            bd_detail = d.get("best_detail")
+            warn_str = " · ".join(d.get("warnings", [])) or "Good"
+            warn_color = "var(--red)" if d.get("warnings") else "var(--green)"
+            bw_color = "var(--green)" if not d.get("warnings") else "var(--yellow)"
+            detail_str = f"{bd_detail['temp']}°C {bd_detail['rain']}% rain" if bd_detail else "--"
+            run_window_rows += f"""
+            <tr>
+              <td style="font-weight:500">{day_name} {d['date'][5:]}</td>
+              <td>{weather_icon(d['weathercode'])} {d['max_temp']}° / {d['min_temp']}°</td>
+              <td>💧{d['rain_pct']}%</td>
+              <td style="color:{bw_color};font-weight:500">{bw}</td>
+              <td style="color:var(--text3)">{detail_str}</td>
+              <td style="color:{warn_color}">{warn_str}</td>
+            </tr>"""
+
         best_color = "var(--green)" if not warnings else "var(--yellow)"
         tomorrow_date = days[1]["date"]
         window_detail = ""
@@ -888,10 +932,16 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     <div class="section-header"><div class="section-title">Weather — Wantirna South</div></div>
     <div class="stat-grid">{day_cards}</div>
     {warning_html}
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;">
-      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window — {tomorrow_date}</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window Tomorrow — {tomorrow_date}</div>
       <div style="font-size:20px;font-weight:600;color:{best_color};margin-bottom:4px;">{best}</div>
       <div style="font-size:11px;color:var(--text3);">{window_detail}</div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Day</th><th>Temp</th><th>Rain</th><th>Best Window</th><th>Conditions</th><th>Status</th></tr></thead>
+        <tbody>{run_window_rows}</tbody>
+      </table>
     </div>
   </div>"""
 
@@ -1157,6 +1207,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <div class="topbar">
   <div class="topbar-logo">NAT / HEALTH</div>
   <div class="topbar-date">{TODAY}</div>
+  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated {datetime.now().strftime('%H:%M')}</div>
   <div class="topbar-right">
     <div class="status-dot"></div>
     <div class="status-text">LIVE</div>
@@ -1377,6 +1428,20 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
       <div class="chart-box">
         <div class="chart-label">GCT per km (ms)</div>
         <canvas id="lapGctChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Weekly Mileage Trend</div></div>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-label">Weekly km with 10% rule</div>
+        <canvas id="mileageTrendChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Week-on-week change % (safe limit: 10%)</div>
+        <canvas id="mileageChangeChart"></canvas>
       </div>
     </div>
   </div>
@@ -1798,6 +1863,45 @@ new Chart(document.getElementById('lapGctChart'), {{
   type: 'line',
   data: {{ labels: {lap_labels}, datasets: [{{ data: {lap_gct}, borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)', tension:0.3, fill:true, pointRadius:3, pointBackgroundColor:C.cyan }}] }},
   options: {{ ...base }}
+}});
+
+// Mileage trend with 10% rule
+new Chart(document.getElementById('mileageTrendChart'), {{
+  type: 'bar',
+  data: {{
+    labels: {weekly_combined_labels},
+    datasets: [
+      {{ label: 'Run km', data: {weekly_run_vals}, backgroundColor: {weekly_run_vals}.map((v,i) => {{
+        const prev = {weekly_run_vals}[i-1] || v;
+        const chg = prev > 0 ? (v - prev) / prev * 100 : 0;
+        return chg > 20 ? 'rgba(242,101,101,0.8)' : chg > 10 ? 'rgba(245,200,66,0.8)' : 'rgba(79,142,247,0.7)';
+      }}), borderRadius: 4 }},
+    ]
+  }},
+  options: {{ ...base, plugins: {{ legend: {{ display:false }} }} }}
+}});
+
+// Mileage week-on-week change
+new Chart(document.getElementById('mileageChangeChart'), {{
+  type: 'bar',
+  data: {{
+    labels: {weekly_combined_labels},
+    datasets: [
+      {{ label: 'WoW Change %', data: {mileage_change_vals},
+        backgroundColor: {mileage_change_vals}.map(v => v > 20 ? 'rgba(242,101,101,0.8)' : v > 10 ? 'rgba(245,200,66,0.8)' : v < 0 ? 'rgba(92,100,128,0.5)' : 'rgba(61,214,140,0.7)'),
+        borderRadius: 4
+      }},
+    ]
+  }},
+  options: {{ ...base,
+    plugins: {{ legend: {{ display:false }},
+      annotation: {{ annotations: {{
+        safe: {{ type:'line', yMin:10, yMax:10, borderColor:'rgba(245,200,66,0.5)', borderDash:[4,4], label:{{ content:'10% limit', display:true, color:'rgba(245,200,66,0.7)', font:{{size:9}} }} }},
+        danger: {{ type:'line', yMin:20, yMax:20, borderColor:'rgba(242,101,101,0.5)', borderDash:[4,4] }},
+      }} }}
+    }},
+    scales: {{ ...base.scales, y: {{ ...base.scales.y, ticks: {{ ...base.scales.y.ticks, callback: v => v + '%' }} }} }}
+  }}
 }});
 
 new Chart(document.getElementById('gctTrendChart'), {{
