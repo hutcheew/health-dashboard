@@ -14,7 +14,9 @@ Requires:
 """
 
 import os, json, requests
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
+from zoneinfo import ZoneInfo
+MELB_TZ = ZoneInfo("Australia/Melbourne")
 from dotenv import load_dotenv
 from garminconnect import Garmin
 
@@ -135,26 +137,25 @@ def fetch_garmin_data(garmin):
         daily = sleep.get("dailySleepDTO", {})
 
         # Sleep stage timeline — convert GMT to Melbourne local HH:MM
-        from zoneinfo import ZoneInfo
-        melb_tz = ZoneInfo("Australia/Melbourne")
         stage_map = {0.0: "deep", 1.0: "light", 2.0: "awake", 3.0: "rem",
                      0: "deep", 1: "light", 2: "awake", 3: "rem"}
         sleep_levels = []
-        for level in sleep.get("sleepLevels", []):
+        raw_levels = sleep.get("sleepLevels", [])
+        print(f"  Raw sleep levels from Garmin: {len(raw_levels)}")
+        for level in raw_levels:
             try:
                 start_gmt = level.get("startGMT", "")
                 end_gmt   = level.get("endGMT", "")
-                # Parse GMT timestamp
-                from datetime import datetime as dt2
-                start_dt = dt2.fromisoformat(start_gmt.replace("Z","")).replace(tzinfo=timezone.utc).astimezone(melb_tz)
-                end_dt   = dt2.fromisoformat(end_gmt.replace("Z","")).replace(tzinfo=timezone.utc).astimezone(melb_tz)
+                start_dt = datetime.fromisoformat(start_gmt.rstrip("0").rstrip(".")).replace(tzinfo=timezone.utc).astimezone(MELB_TZ)
+                end_dt   = datetime.fromisoformat(end_gmt.rstrip("0").rstrip(".")).replace(tzinfo=timezone.utc).astimezone(MELB_TZ)
                 sleep_levels.append({
                     "start": start_dt.strftime("%H:%M"),
                     "end":   end_dt.strftime("%H:%M"),
                     "stage": stage_map.get(level.get("activityLevel"), "light"),
                 })
-            except:
-                pass
+            except Exception as e:
+                print(f"  Sleep level parse error: {e} — {level}")
+        print(f"  Parsed sleep levels: {len(sleep_levels)}, sample: {sleep_levels[:2] if sleep_levels else 'none'}")
 
         # Sleep start in minutes from midnight for chart alignment
         sleep_start_ts = daily.get("sleepStartTimestampLocal", 0)
@@ -192,9 +193,7 @@ def fetch_withings_bp():
     result = resp.json()
     readings = []
     for grp in result.get("body", {}).get("measuregrps", []):
-        from zoneinfo import ZoneInfo
-        melb = ZoneInfo("Australia/Melbourne")
-        entry = {"date": datetime.fromtimestamp(grp["date"], tz=melb).strftime("%Y-%m-%d %H:%M")}
+        entry = {"date": datetime.fromtimestamp(grp["date"], tz=MELB_TZ).strftime("%Y-%m-%d %H:%M")}
         for m in grp.get("measures", []):
             val = m["value"] * (10 ** m["unit"])
             if m["type"] == 9:   entry["diastolic"] = round(val)
