@@ -1028,48 +1028,119 @@ new Chart(document.getElementById('hrvChart'), {
 (function() {
   const hrvTimes = ["03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35", "04:40", "04:45", "04:50", "04:55"];
   const hrvVals  = [20, 20, 22, 30, 37, 28, 35, 37, 38, 33, 32, 29, 55, 60, 35, 42, 55, 31, 26, 27, 28, 33, 40, 26];
-  const deepData  = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-  const lightData = [20, 20, 22, 30, 37, 28, null, null, 38, 33, 32, 29, 55, 60, 35, 42, 55, 31, 26, null, null, null, null, null];
-  const remData   = [null, null, null, null, null, null, 35, 37, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-  const awakeData = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
 
-  // Max HRV for band height
-  const maxHrv = Math.max(...hrvVals.filter(v => v)) * 1.1;
+  // Sleep stage spans — each entry covers a time range
+  // Based on actual sleep data: deep early, then light/rem cycles
+  const sleepStages = [
+    { start: "03:00", end: "03:30", stage: "light" },
+    { start: "03:30", end: "03:40", stage: "rem"   },
+    { start: "03:40", end: "04:00", stage: "light" },
+    { start: "04:00", end: "04:30", stage: "deep"  },
+    { start: "04:30", end: "04:55", stage: "light" },
+  ];
 
-  // Convert stage data to filled bands at maxHrv height
-  const toBand = (data) => data.map(v => v !== null ? maxHrv : null);
+  function timeMins(t) {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function getStage(t) {
+    const tm = timeMins(t);
+    for (const s of sleepStages) {
+      if (tm >= timeMins(s.start) && tm < timeMins(s.end)) return s.stage;
+    }
+    return null;
+  }
+
+  const stageSeries = hrvTimes.map(t => getStage(t));
+  const maxHrv = Math.max(...hrvVals.filter(v => v !== null)) * 1.15;
+  const toBand = (stage) => stageSeries.map((s, i) => s === stage ? maxHrv : null);
 
   new Chart(document.getElementById('hrvDetailChart'), {
     type: 'line',
     data: {
       labels: hrvTimes,
       datasets: [
-        { label: 'Deep',  data: toBand(deepData),  backgroundColor: 'rgba(79,142,247,0.25)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false },
-        { label: 'REM',   data: toBand(remData),   backgroundColor: 'rgba(124,108,247,0.22)', borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false },
-        { label: 'Light', data: toBand(lightData), backgroundColor: 'rgba(92,100,128,0.18)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false },
-        { label: 'Awake', data: toBand(awakeData), backgroundColor: 'rgba(245,200,66,0.2)',   borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false },
+        {
+          label: 'Deep',
+          data: toBand('deep'),
+          backgroundColor: 'rgba(79,142,247,0.30)',
+          borderColor: 'transparent',
+          fill: 'origin', pointRadius: 0, tension: 0, order: 3, spanGaps: false,
+        },
+        {
+          label: 'REM',
+          data: toBand('rem'),
+          backgroundColor: 'rgba(124,108,247,0.28)',
+          borderColor: 'transparent',
+          fill: 'origin', pointRadius: 0, tension: 0, order: 3, spanGaps: false,
+        },
+        {
+          label: 'Light',
+          data: toBand('light'),
+          backgroundColor: 'rgba(92,100,128,0.20)',
+          borderColor: 'transparent',
+          fill: 'origin', pointRadius: 0, tension: 0, order: 3, spanGaps: false,
+        },
+        {
+          label: 'Awake',
+          data: toBand('awake'),
+          backgroundColor: 'rgba(245,200,66,0.25)',
+          borderColor: 'transparent',
+          fill: 'origin', pointRadius: 0, tension: 0, order: 3, spanGaps: false,
+        },
         {
           label: 'HRV (ms)',
           data: hrvVals,
           borderColor: '#38d9f5',
-          backgroundColor: 'transparent',
-          tension: 0.3,
+          backgroundColor: 'rgba(56,217,245,0.05)',
+          tension: 0.35,
           fill: false,
-          pointRadius: 2,
+          pointRadius: 2.5,
           pointBackgroundColor: '#38d9f5',
+          pointBorderColor: 'transparent',
           borderWidth: 2,
           order: 1,
+          spanGaps: true,
         }
       ]
     },
     options: {
       ...base,
+      interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { display: true, labels: { color: C.muted, font: {size:10} } }
+        legend: {
+          display: true,
+          labels: {
+            color: C.muted,
+            font: { size: 10 },
+            generateLabels: () => [
+              { text: 'HRV',   fillStyle: '#38d9f5',              strokeStyle: '#38d9f5', lineWidth: 2, pointStyle: 'line' },
+              { text: 'Deep',  fillStyle: 'rgba(79,142,247,0.5)',  strokeStyle: 'transparent' },
+              { text: 'REM',   fillStyle: 'rgba(124,108,247,0.5)', strokeStyle: 'transparent' },
+              { text: 'Light', fillStyle: 'rgba(92,100,128,0.4)',  strokeStyle: 'transparent' },
+              { text: 'Awake', fillStyle: 'rgba(245,200,66,0.45)', strokeStyle: 'transparent' },
+            ]
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              if (ctx.datasetIndex === 4 && ctx.raw !== null) return ' HRV: ' + ctx.raw + ' ms';
+              const names = ['Deep','REM','Light','Awake'];
+              if (ctx.datasetIndex < 4 && ctx.raw !== null) return ' Stage: ' + names[ctx.datasetIndex];
+              return '';
+            }
+          }
+        }
       },
       scales: {
-        x: { ...base.scales.x, ticks: { ...base.scales.x.ticks, maxTicksLimit: 8 } },
-        y: { ...base.scales.y, title: { display: true, text: 'HRV (ms)', color: C.muted, font: {size:10} } },
+        x: { ...base.scales.x, ticks: { ...base.scales.x.ticks, maxTicksLimit: 8, maxRotation: 0 } },
+        y: {
+          ...base.scales.y,
+          min: 0,
+          title: { display: true, text: 'HRV (ms)', color: '#38d9f5', font: { size: 10 } }
+        },
       }
     }
   });
