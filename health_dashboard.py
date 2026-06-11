@@ -284,7 +284,6 @@ WEATHER_LNG = 145.2311
 
 def fetch_weather():
     try:
-        print("  Fetching weather from Open-Meteo...")
         resp = requests.get(
             "https://api.open-meteo.com/v1/forecast",
             params={
@@ -295,7 +294,7 @@ def fetch_weather():
                 "timezone": "Australia/Melbourne",
                 "forecast_days": 7,
             },
-            timeout=30
+            timeout=10
         )
         data = resp.json()
         daily = data["daily"]
@@ -352,14 +351,9 @@ def fetch_weather():
                 "warnings":    warnings,
             })
 
-        if not days:
-            print("  Weather: no days returned")
-            return None
-
-        # Tomorrow summary (index 1) for top card — guard if fewer than 2 days
-        tmr = days[1] if len(days) > 1 else days[0]
+        # Tomorrow summary (index 1) for top card
+        tmr = days[1]
         warnings = tmr["warnings"]
-        print(f"  Weather OK: {len(days)} days fetched, tomorrow best window: {tmr['best_window']}")
         return {
             "days": days,
             "best_window": tmr["best_window"],
@@ -1112,50 +1106,50 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     tsb_color = "var(--green)" if isinstance(latest_tsb, (int, float)) and latest_tsb >= 0 else "var(--red)"
 
     # HRV + Sleep stage overlay data
-    hrv_times_raw = hrv.get("times", [])  # HH:MM strings in Melbourne local time
-    hrv_values_raw = hrv.get("values", [])
-    sleep_levels  = sleep.get("levels", [])  # also HH:MM Melbourne time
+    hrv_times_raw = hrv.get("times", [])
+    hrv_vals_raw  = hrv.get("values", [])
+    sleep_levels  = sleep.get("levels", [])
 
-    def time_to_mins(t):
-        """Convert HH:MM to minutes. Times < 09:00 treated as next-day (add 24h)."""
+    def time_to_minutes(t):
+        """Convert HH:MM to minutes since midnight. Returns int."""
         try:
-            h, m = int(t[:2]), int(t[3:5])
-            if h < 9:
-                h += 24
-            return h * 60 + m
+            h, m = t.split(":")
+            return int(h) * 60 + int(m)
         except:
-            return 0
+            return -1
 
-    def get_stage_at(t):
-        """Return sleep stage for a given HH:MM time, handling midnight crossover."""
-        t_mins = time_to_mins(t)
-        for lv in sleep_levels:
-            s_mins = time_to_mins(lv["start"])
-            e_mins = time_to_mins(lv["end"])
-            # Handle overnight: if end <= start, segment wraps midnight
-            if e_mins <= s_mins:
-                e_mins += 24 * 60
-            if s_mins <= t_mins < e_mins:
-                return lv["stage"]
+    def get_stage_at(t_str):
+        t = time_to_minutes(t_str)
+        if t < 0: return None
+        for l in sleep_levels:
+            s = time_to_minutes(l["start"])
+            e = time_to_minutes(l["end"])
+            if s <= e:
+                if s <= t <= e: return l["stage"]
+            else:  # overnight wrap e.g. 22:00 -> 06:00
+                if t >= s or t <= e: return l["stage"]
         return None
 
     stage_series = [get_stage_at(t) for t in hrv_times_raw]
+    matched = sum(1 for s in stage_series if s is not None)
+    print(f"  Sleep stage overlay: {len(sleep_levels)} segments, {matched}/{len(hrv_times_raw)} HRV points matched")
 
-    # Per-stage HRV value series (None where stage doesn't match = gaps in chart)
-    hrv_vals_safe = hrv_values_raw if hrv_values_raw else []
-    deep_data  = json.dumps([hrv_vals_safe[i] if i < len(hrv_vals_safe) and s == "deep"  else None for i, s in enumerate(stage_series)])
-    light_data = json.dumps([hrv_vals_safe[i] if i < len(hrv_vals_safe) and s == "light" else None for i, s in enumerate(stage_series)])
-    rem_data   = json.dumps([hrv_vals_safe[i] if i < len(hrv_vals_safe) and s == "rem"   else None for i, s in enumerate(stage_series)])
-    awake_data = json.dumps([hrv_vals_safe[i] if i < len(hrv_vals_safe) and s == "awake" else None for i, s in enumerate(stage_series)])
+    # Build per-stage datasets — null where stage doesn't match, HRV value where it does
+    def stage_data(stage_name):
+        return json.dumps([
+            hrv_vals_raw[i] if stage_series[i] == stage_name else None
+            for i in range(len(stage_series))
+        ])
+
+    deep_data  = stage_data("deep")
+    light_data = stage_data("light")
+    rem_data   = stage_data("rem")
+    awake_data = stage_data("awake")
 
     sleep_stages_json = json.dumps([
         {"start": l["start"], "end": l["end"], "stage": l["stage"]}
         for l in sleep_levels
     ] if sleep_levels else [])
-
-    # Debug
-    matched = sum(1 for s in stage_series if s is not None)
-    print(f"  Sleep stage overlay: {len(sleep_levels)} segments, {matched}/{len(hrv_times_raw)} HRV points matched")
 
     # Weather prep
     weather_html = ""
@@ -2119,12 +2113,10 @@ new Chart(document.getElementById('hrvChart'), {{
   const remData   = {rem_data};
   const awakeData = {awake_data};
 
-  // Max HRV for background band height — fill to top of chart
-  const validVals = hrvVals.filter(v => v !== null && v !== undefined);
-  const maxHrv = validVals.length ? Math.max(...validVals) * 1.15 : 100;
+  // Max HRV for band height
+  const maxHrv = Math.max(...hrvVals.filter(v => v)) * 1.1;
 
-  // Convert sparse per-point data to solid filled bands at maxHrv height
-  // spanGaps:false means null = gap, so bands only appear where stage is active
+  // Convert stage data to filled bands at maxHrv height
   const toBand = (data) => data.map(v => v !== null ? maxHrv : null);
 
   new Chart(document.getElementById('hrvDetailChart'), {{
@@ -2132,104 +2124,32 @@ new Chart(document.getElementById('hrvChart'), {{
     data: {{
       labels: hrvTimes,
       datasets: [
-        {{
-          label: 'Deep',
-          data: toBand(deepData),
-          backgroundColor: 'rgba(79,142,247,0.30)',
-          borderColor: 'transparent',
-          fill: 'origin',
-          pointRadius: 0,
-          tension: 0,
-          order: 3,
-          spanGaps: false,
-        }},
-        {{
-          label: 'REM',
-          data: toBand(remData),
-          backgroundColor: 'rgba(124,108,247,0.28)',
-          borderColor: 'transparent',
-          fill: 'origin',
-          pointRadius: 0,
-          tension: 0,
-          order: 3,
-          spanGaps: false,
-        }},
-        {{
-          label: 'Light',
-          data: toBand(lightData),
-          backgroundColor: 'rgba(92,100,128,0.20)',
-          borderColor: 'transparent',
-          fill: 'origin',
-          pointRadius: 0,
-          tension: 0,
-          order: 3,
-          spanGaps: false,
-        }},
-        {{
-          label: 'Awake',
-          data: toBand(awakeData),
-          backgroundColor: 'rgba(245,200,66,0.25)',
-          borderColor: 'transparent',
-          fill: 'origin',
-          pointRadius: 0,
-          tension: 0,
-          order: 3,
-          spanGaps: false,
-        }},
+        {{ label: 'Deep',  data: toBand(deepData),  backgroundColor: 'rgba(79,142,247,0.25)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'REM',   data: toBand(remData),   backgroundColor: 'rgba(124,108,247,0.22)', borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Light', data: toBand(lightData), backgroundColor: 'rgba(92,100,128,0.18)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Awake', data: toBand(awakeData), backgroundColor: 'rgba(245,200,66,0.2)',   borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
         {{
           label: 'HRV (ms)',
           data: hrvVals,
           borderColor: '#38d9f5',
-          backgroundColor: 'rgba(56,217,245,0.05)',
-          tension: 0.35,
+          backgroundColor: 'transparent',
+          tension: 0.3,
           fill: false,
-          pointRadius: 2.5,
+          pointRadius: 2,
           pointBackgroundColor: '#38d9f5',
-          pointBorderColor: 'transparent',
           borderWidth: 2,
           order: 1,
-          spanGaps: true,
         }}
       ]
     }},
     options: {{
       ...base,
-      interaction: {{ mode: 'index', intersect: false }},
       plugins: {{
-        legend: {{
-          display: true,
-          labels: {{
-            color: C.muted,
-            font: {{ size: 10 }},
-            generateLabels: () => [
-              {{ text: 'HRV',   fillStyle: '#38d9f5',              strokeStyle: '#38d9f5', lineWidth: 2, pointStyle: 'line' }},
-              {{ text: 'Deep',  fillStyle: 'rgba(79,142,247,0.5)',  strokeStyle: 'transparent' }},
-              {{ text: 'REM',   fillStyle: 'rgba(124,108,247,0.5)', strokeStyle: 'transparent' }},
-              {{ text: 'Light', fillStyle: 'rgba(92,100,128,0.4)',  strokeStyle: 'transparent' }},
-              {{ text: 'Awake', fillStyle: 'rgba(245,200,66,0.45)', strokeStyle: 'transparent' }},
-            ]
-          }}
-        }},
-        tooltip: {{
-          callbacks: {{
-            label: (ctx) => {{
-              if (ctx.datasetIndex === 4 && ctx.raw !== null)
-                return ' HRV: ' + ctx.raw + ' ms';
-              const names = ['Deep','REM','Light','Awake'];
-              if (ctx.datasetIndex < 4 && ctx.raw !== null)
-                return ' Stage: ' + names[ctx.datasetIndex];
-              return '';
-            }}
-          }}
-        }}
+        legend: {{ display: true, labels: {{ color: C.muted, font: {{size:10}} }} }}
       }},
       scales: {{
-        x: {{ ...base.scales.x, ticks: {{ ...base.scales.x.ticks, maxTicksLimit: 8, maxRotation: 0 }} }},
-        y: {{
-          ...base.scales.y,
-          min: 0,
-          title: {{ display: true, text: 'HRV (ms)', color: '#38d9f5', font: {{ size: 10 }} }}
-        }},
+        x: {{ ...base.scales.x, ticks: {{ ...base.scales.x.ticks, maxTicksLimit: 8 }} }},
+        y: {{ ...base.scales.y, title: {{ display: true, text: 'HRV (ms)', color: C.muted, font: {{size:10}} }} }},
       }}
     }}
   }});
