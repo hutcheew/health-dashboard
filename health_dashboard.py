@@ -2230,12 +2230,6 @@ def main():
     achilles = compute_achilles_score(garmin_data["runs"], phase_info)
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
 
-    print("Checking alerts...")
-    check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
-
-    print("Generating daily email report...")
-    generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals)
-
     print("Fetching intervals.icu data...")
     intervals = fetch_intervals()
 
@@ -2243,6 +2237,12 @@ def main():
     weather = fetch_weather()
     if weather:
         print(f"  Tomorrow: {weather['days'][1]['max_temp']}°C, {weather['days'][1]['rain_pct']}% rain — best window: {weather['best_window']}")
+
+    print("Checking alerts...")
+    check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
+
+    print("Generating daily email report...")
+    generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals)
 
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals)
