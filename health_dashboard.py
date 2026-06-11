@@ -548,26 +548,237 @@ Give 3-4 bullet insights. Each bullet: one sentence, specific and actionable. Fl
 
 # ─── EMAIL ALERT ─────────────────────────────────────────────────────────────
 
-def send_alert_email(subject, body):
-    """Send alert via Gmail SMTP. Set GMAIL_APP_PASSWORD in .env"""
+def send_html_email(subject, html_body):
+    """Send HTML email via Gmail SMTP."""
     import smtplib
+    from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
-    gmail_user = os.environ.get("GMAIL_USER", "")
+    gmail_user = os.environ.get("GMAIL_USER", "hutcheew@gmail.com")
     gmail_pass = os.environ.get("GMAIL_APP_PASSWORD", "")
-    if not gmail_user or not gmail_pass:
-        print("  Email alerts not configured (set GMAIL_USER + GMAIL_APP_PASSWORD in .env)")
+    if not gmail_pass:
+        print("  Email not configured (set GMAIL_APP_PASSWORD)")
         return
     try:
-        msg = MIMEText(body)
+        msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"]    = gmail_user
         msg["To"]      = gmail_user
+        msg.attach(MIMEText(html_body, "html"))
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
             s.login(gmail_user, gmail_pass)
             s.send_message(msg)
-        print(f"  Alert sent: {subject}")
+        print(f"  Email sent: {subject}")
     except Exception as e:
-        print(f"  Alert failed: {e}")
+        print(f"  Email failed: {e}")
+
+def generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals):
+    """Call Gemini to generate a full daily report and email it."""
+    gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    if not gemini_key:
+        print("  No Gemini key — skipping daily report")
+        return
+
+    runs      = garmin_data.get("runs", [])
+    readiness = garmin_data.get("readiness", {})
+    hrv       = garmin_data.get("hrv", {})
+    sleep     = garmin_data.get("sleep", {})
+    last_run  = runs[0] if runs else {}
+    laps      = last_run.get("laps", [])
+    avg_gct_l = round(sum(l["gct_balance"] for l in laps) / len(laps), 1) if laps else 50.0
+    latest_bp = bp_readings[0] if bp_readings else {}
+    phase     = phase_info["phase"]
+    latest_ctl = intervals.get("latest", {}) if intervals else {}
+
+    # Best run window today and tomorrow
+    weather_summary = "Weather data unavailable"
+    best_today = "--"
+    best_tomorrow = "--"
+    if weather and weather.get("days"):
+        days = weather["days"]
+        today_d = days[0]
+        tmr_d   = days[1] if len(days) > 1 else {}
+        best_today    = f"{today_d.get('best_window','--')} ({today_d.get('max_temp')}°C, {today_d.get('rain_pct')}% rain)"
+        best_tomorrow = f"{tmr_d.get('best_window','--')} ({tmr_d.get('max_temp')}°C, {tmr_d.get('rain_pct')}% rain)" if tmr_d else "--"
+        weather_summary = f"Today: {today_d.get('max_temp')}°C {today_d.get('rain_pct')}% rain | Tomorrow: {tmr_d.get('max_temp','?')}°C {tmr_d.get('rain_pct','?')}% rain"
+
+    prompt = f"""You are an expert running coach and sports physiotherapist. Generate a comprehensive daily health and training report for Nat.
+
+ATHLETE PROFILE:
+- Melbourne Marathon 12 Oct 2026, sub-3:00 goal (current PB 3:16)
+- Left insertional Achilles tendinopathy (active management)
+- Seated calf raises 3x/week APPROVED. Heel drops off step PROHIBITED.
+- Week {phase_info['week_num']}/28 — {phase['name']} phase (Week {phase_info['week_in_phase']} of {phase_info['phase_total']})
+- Phase target: {phase['km_min']}–{phase['km_max']} km/week
+- Days to race: {phase_info['days_to_race']}
+
+TODAY'S METRICS:
+- Readiness: {readiness.get('score','N/A')}/100 ({readiness.get('level','')})
+- Sleep: {readiness.get('sleep_score','N/A')}/100 | Duration: {sleep.get('duration_hrs','N/A')}h | Deep: {sleep.get('deep_hrs','N/A')}h | REM: {sleep.get('rem_hrs','N/A')}h
+- HRV 7d avg: {hrv.get('weekly_avg','N/A')} ms | Resting HR: {garmin_data.get('resting_hr','N/A')} bpm
+- Body battery: {garmin_data.get('body_battery','N/A')}/100 | Recovery time: {readiness.get('recovery_time','N/A')} min
+- CTL (fitness): {latest_ctl.get('ctl','N/A')} | ATL (fatigue): {latest_ctl.get('atl','N/A')} | TSB (form): {latest_ctl.get('tsb','N/A')}
+
+LAST RUN ({last_run.get('date','N/A')}):
+- {last_run.get('distance','N/A')} km @ {pace_str(last_run.get('avg_pace'))} min/km | HR: {last_run.get('avg_hr','N/A')} bpm
+- GCT balance: Left {avg_gct_l}% / Right {round(100-avg_gct_l,1)}% | Cadence: {last_run.get('cadence','N/A')} spm
+
+ACHILLES LOAD: {achilles.get('score','N/A')}/100 ({achilles.get('level','low')} risk)
+Factors: {', '.join(f['label']+': '+f['value'] for f in achilles.get('factors',[]))}
+This week: {achilles.get('this_week_km','N/A')} km | Last week: {achilles.get('last_week_km','N/A')} km
+
+BLOOD PRESSURE: {latest_bp.get('systolic','N/A')}/{latest_bp.get('diastolic','N/A')} mmHg | Pulse: {latest_bp.get('pulse','N/A')} bpm
+
+WEATHER (Wantirna South):
+{weather_summary}
+Best run window today: {best_today}
+Best run window tomorrow: {best_tomorrow}
+
+Generate a report with these exact sections:
+
+## Daily Status
+One sentence summary of how Nat is feeling today based on readiness, sleep, HRV and body battery.
+
+## Achilles Update
+2-3 sentences on Achilles risk based on GCT balance trend and load score. Include specific advice.
+
+## Today's Training Recommendation
+Specific session recommendation for today (type, distance, pace, effort level). Consider readiness score, phase target, and best run window. If readiness < 50, recommend rest or easy cross-training. Include best time to run based on weather.
+
+## This Week's Plan
+Day by day plan for the rest of the week aligned to the {phase['name']} phase target of {phase['km_min']}–{phase['km_max']} km. Be specific with session types and distances.
+
+## Blood Pressure Note
+One sentence on BP trend — is it within healthy range?
+
+## Key Focus
+One sentence on the single most important thing to focus on this week for the sub-3:00 goal.
+
+Keep each section concise and actionable. Use specific numbers."""
+
+    try:
+        resp = requests.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}",
+            headers={"Content-Type": "application/json"},
+            json={"contents": [{"parts": [{"text": prompt}]}]},
+            timeout=30
+        )
+        result = resp.json()
+        if "error" in result:
+            print(f"  Gemini error: {result['error']}")
+            return
+        report_text = result["candidates"][0]["content"]["parts"][0]["text"]
+        print("  Daily report generated.")
+
+        # Convert markdown to HTML email
+        html_report = format_email_html(report_text, garmin_data, bp_readings, phase_info, achilles, weather, latest_ctl)
+        today_str = date.today().strftime("%A, %d %b %Y")
+        subject = f"Daily Training Report — {today_str} | Week {phase_info['week_num']}/28"
+        send_html_email(subject, html_report)
+
+    except Exception as e:
+        print(f"  Daily report failed: {e}")
+
+def format_email_html(report_text, garmin_data, bp_readings, phase_info, achilles, weather, latest_ctl):
+    """Format the report as a clean HTML email."""
+    readiness = garmin_data.get("readiness", {})
+    runs = garmin_data.get("runs", [])
+    last_run = runs[0] if runs else {}
+    latest_bp = bp_readings[0] if bp_readings else {}
+    phase = phase_info["phase"]
+
+    r_score = readiness.get("score", "--")
+    r_color = "#3dd68c" if isinstance(r_score, int) and r_score >= 70 else "#f5c842" if isinstance(r_score, int) and r_score >= 50 else "#f26565"
+    a_score = achilles.get("score", "--")
+    a_color = "#f26565" if achilles.get("level") == "high" else "#f5c842" if achilles.get("level") == "medium" else "#3dd68c"
+    tsb = latest_ctl.get("tsb", "--")
+    tsb_color = "#3dd68c" if isinstance(tsb, (int, float)) and tsb >= 0 else "#f26565"
+
+    best_window = "--"
+    if weather and weather.get("days"):
+        best_window = f"{weather['days'][0].get('best_window','--')} — {weather['days'][0].get('max_temp')}°C, {weather['days'][0].get('rain_pct')}% rain"
+
+    # Convert markdown sections to HTML
+    import re
+    sections_html = ""
+    current_section = ""
+    current_content = []
+    for line in report_text.split("\n"):
+        if line.startswith("## "):
+            if current_section and current_content:
+                content = "<br>".join(c for c in current_content if c.strip())
+                sections_html += f"""
+                <div style="margin-bottom:20px;">
+                  <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5c6480;margin-bottom:8px;border-bottom:1px solid #252836;padding-bottom:6px;">{current_section}</div>
+                  <div style="font-size:14px;line-height:1.7;color:#c0c8e0;">{content}</div>
+                </div>"""
+            current_section = line[3:].strip()
+            current_content = []
+        else:
+            line = re.sub(r'\*\*(.*?)\*\*', r'<strong style="color:#f0f2f8">\1</strong>', line)
+            line = re.sub(r'^\- ', '• ', line)
+            current_content.append(line)
+
+    if current_section and current_content:
+        content = "<br>".join(c for c in current_content if c.strip())
+        sections_html += f"""
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5c6480;margin-bottom:8px;border-bottom:1px solid #252836;padding-bottom:6px;">{current_section}</div>
+          <div style="font-size:14px;line-height:1.7;color:#c0c8e0;">{content}</div>
+        </div>"""
+
+    today_str = date.today().strftime("%A, %d %b %Y")
+
+    return f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#0d0f14;font-family:Inter,Arial,sans-serif;">
+<div style="max-width:600px;margin:0 auto;padding:24px;">
+
+  <!-- Header -->
+  <div style="border-bottom:1px solid #252836;padding-bottom:16px;margin-bottom:24px;">
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#5c6480;margin-bottom:4px;">NAT / HEALTH DASHBOARD</div>
+    <div style="font-size:20px;font-weight:600;color:#f0f2f8;">{today_str}</div>
+    <div style="font-size:12px;color:#5c6480;margin-top:4px;">Week {phase_info['week_num']}/28 — {phase['name']} · {phase_info['days_to_race']} days to Melbourne Marathon</div>
+  </div>
+
+  <!-- Stats row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;">
+    <div style="background:#13151c;border:1px solid #252836;border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:10px;color:#5c6480;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Readiness</div>
+      <div style="font-size:22px;font-weight:600;color:{r_color};">{r_score}</div>
+    </div>
+    <div style="background:#13151c;border:1px solid #252836;border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:10px;color:#5c6480;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Achilles</div>
+      <div style="font-size:22px;font-weight:600;color:{a_color};">{a_score}</div>
+    </div>
+    <div style="background:#13151c;border:1px solid #252836;border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:10px;color:#5c6480;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Form (TSB)</div>
+      <div style="font-size:22px;font-weight:600;color:{tsb_color};">{tsb}</div>
+    </div>
+    <div style="background:#13151c;border:1px solid #252836;border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:10px;color:#5c6480;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">BP</div>
+      <div style="font-size:16px;font-weight:600;color:#f0f2f8;padding-top:3px;">{latest_bp.get('systolic','--')}/{latest_bp.get('diastolic','--')}</div>
+    </div>
+  </div>
+
+  <!-- Best run window -->
+  <div style="background:#13151c;border:1px solid #3dd68c;border-left:3px solid #3dd68c;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+    <div style="font-size:10px;color:#5c6480;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px;">Best Run Window Today</div>
+    <div style="font-size:15px;font-weight:600;color:#3dd68c;">{best_window}</div>
+  </div>
+
+  <!-- AI Report -->
+  <div style="background:#13151c;border:1px solid #252836;border-radius:10px;padding:20px;margin-bottom:24px;">
+    {sections_html}
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding-top:16px;border-top:1px solid #252836;">
+    <a href="https://hutcheew.github.io/health-dashboard" style="display:inline-block;background:#1a1d27;color:#4f8ef7;text-decoration:none;padding:10px 24px;border-radius:6px;font-size:12px;border:1px solid #4f8ef7;">View Full Dashboard</a>
+    <div style="font-size:10px;color:#5c6480;margin-top:12px;">Generated {datetime.now().strftime('%Y-%m-%d %H:%M')} AEST</div>
+  </div>
+
+</div>
+</body></html>"""
 
 def check_and_send_alerts(readiness, achilles, bp_readings):
     alerts = []
@@ -582,7 +793,7 @@ def check_and_send_alerts(readiness, achilles, bp_readings):
         alerts.append(f"BP elevated: {latest_bp.get('systolic')}/{latest_bp.get('diastolic')} mmHg — monitor closely.")
     if alerts:
         body = "\n\n".join(alerts) + f"\n\nDashboard: https://hutcheew.github.io/health-dashboard"
-        send_alert_email(f"Health Alert — {date.today()}", body)
+        send_html_email(f"Health Alert — {date.today()}", f"<pre style='font-family:Arial;font-size:14px;color:#f0f2f8;background:#0d0f14;padding:20px'>{chr(10).join(alerts)}<br><br><a href='https://hutcheew.github.io/health-dashboard' style='color:#4f8ef7'>View Dashboard</a></pre>")
 
 def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None):
     runs        = garmin_data.get("runs", [])
@@ -2021,6 +2232,9 @@ def main():
 
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
+
+    print("Generating daily email report...")
+    generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals)
 
     print("Fetching intervals.icu data...")
     intervals = fetch_intervals()
