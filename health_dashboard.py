@@ -133,6 +133,22 @@ def fetch_garmin_data(garmin):
     try:
         sleep = garmin.get_sleep_data(YESTERDAY)
         daily = sleep.get("dailySleepDTO", {})
+
+        # Sleep stage timeline — list of {startGMT, endGMT, activityLevel}
+        # activityLevel: 0=deep, 1=light, 2=awake, 3=rem
+        stage_map = {0: "deep", 1: "light", 2: "awake", 3: "rem"}
+        sleep_levels = []
+        for level in sleep.get("sleepLevels", []):
+            sleep_levels.append({
+                "start": level.get("startGMT"),
+                "end":   level.get("endGMT"),
+                "stage": stage_map.get(level.get("activityLevel"), "unknown"),
+                "level": level.get("activityLevel"),
+            })
+
+        # Sleep start in minutes from midnight for chart alignment
+        sleep_start_ts = daily.get("sleepStartTimestampLocal", 0)
+
         data["sleep"] = {
             "duration_hrs": round(daily.get("sleepTimeSeconds", 0) / 3600, 1),
             "deep_hrs": round(daily.get("deepSleepSeconds", 0) / 3600, 1),
@@ -140,11 +156,12 @@ def fetch_garmin_data(garmin):
             "rem_hrs": round(daily.get("remSleepSeconds", 0) / 3600, 1),
             "awake_hrs": round(daily.get("awakeSleepSeconds", 0) / 3600, 1),
             "score": daily.get("sleepScores", {}).get("overall", {}).get("value"),
-            "start": daily.get("sleepStartTimestampLocal"),
+            "start": sleep_start_ts,
             "end": daily.get("sleepEndTimestampLocal"),
             "avg_spo2": daily.get("averageSpO2Value"),
             "avg_respiration": daily.get("averageRespirationValue"),
             "avg_stress": daily.get("avgSleepStress"),
+            "levels": sleep_levels,
         }
     except:
         data["sleep"] = {}
@@ -1079,6 +1096,34 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 
     tsb_color = "var(--green)" if isinstance(latest_tsb, (int, float)) and latest_tsb >= 0 else "var(--red)"
 
+    # HRV + Sleep stage overlay data
+    # Align HRV times to minutes since sleep start
+    hrv_times_raw = hrv.get("times", [])
+    hrv_vals_raw  = hrv.get("values", [])
+    sleep_levels  = sleep.get("levels", [])
+    sleep_start   = sleep.get("start", 0)
+
+    # Build sleep stage background bands for chart annotation
+    # Convert stage timeline to chart-compatible format
+    stage_colors = {
+        "deep":  "rgba(79,142,247,0.3)",
+        "light": "rgba(92,100,128,0.2)",
+        "rem":   "rgba(124,108,247,0.25)",
+        "awake": "rgba(245,200,66,0.2)",
+    }
+    stage_values = {"deep": 1, "light": 2, "awake": 3, "rem": 1.5}
+
+    # Build a minute-by-minute sleep stage series aligned with HRV times
+    sleep_stage_series = []
+    if sleep_levels and hrv_times_raw:
+        for t in hrv_times_raw:
+            sleep_stage_series.append(None)  # placeholder — will be filled by JS
+
+    sleep_stages_json = json.dumps([
+        {"start": l["start"], "end": l["end"], "stage": l["stage"]}
+        for l in sleep_levels
+    ] if sleep_levels else [])
+
     # Weather prep
     weather_html = ""
     if weather:
@@ -1901,8 +1946,8 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     </div>
     <div class="chart-grid">
       <div class="chart-box" style="grid-column: span 2">
-        <div class="chart-label">HRV readings last night (ms)</div>
-        <canvas id="hrvDetailChart" style="max-height:200px"></canvas>
+        <div class="chart-label">HRV overnight with sleep stages (ms)</div>
+        <canvas id="hrvDetailChart" style="max-height:220px"></canvas>
       </div>
     </div>
   </div>
@@ -2032,15 +2077,80 @@ new Chart(document.getElementById('hrvChart'), {{
   options: {{ ...base }}
 }});
 
-new Chart(document.getElementById('hrvDetailChart'), {{
-  type: 'line',
-  data: {{
-    labels: {hrv_labels},
-    datasets: [{{ data: {hrv_values}, borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
-      tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: C.cyan }}]
-  }},
-  options: {{ ...base }}
-}});
+// HRV + Sleep Stage Overlay
+(function() {{
+  const sleepStages = {sleep_stages_json};
+  const hrvTimes = {hrv_labels};
+  const hrvVals  = {hrv_values};
+
+  // Stage colour map
+  const stageColors = {{
+    deep:  'rgba(79,142,247,0.25)',
+    light: 'rgba(92,100,128,0.15)',
+    rem:   'rgba(124,108,247,0.22)',
+    awake: 'rgba(245,200,66,0.18)',
+  }};
+  const stageLabels = {{ deep:'Deep', light:'Light', rem:'REM', awake:'Awake' }};
+
+  // Build background color per HRV time point
+  function getStageAt(timeStr) {{
+    if (!sleepStages.length) return null;
+    for (const s of sleepStages) {{
+      if (timeStr >= s.start?.slice(11,16) && timeStr <= s.end?.slice(11,16)) {{
+        return s.stage;
+      }}
+    }}
+    return null;
+  }}
+
+  // Build stage background dataset (filled area per stage)
+  const stageDatasets = Object.keys(stageColors).map(stage => ({{
+    label: stageLabels[stage],
+    data: hrvTimes.map((t, i) => getStageAt(t) === stage ? (Math.max(...hrvVals) * 1.1) : null),
+    backgroundColor: stageColors[stage],
+    borderColor: 'transparent',
+    fill: true,
+    pointRadius: 0,
+    tension: 0,
+    order: 2,
+    spanGaps: false,
+  }}));
+
+  new Chart(document.getElementById('hrvDetailChart'), {{
+    type: 'line',
+    data: {{
+      labels: hrvTimes,
+      datasets: [
+        ...stageDatasets,
+        {{
+          label: 'HRV (ms)',
+          data: hrvVals,
+          borderColor: C.cyan,
+          backgroundColor: 'transparent',
+          tension: 0.3,
+          fill: false,
+          pointRadius: 2,
+          pointBackgroundColor: C.cyan,
+          borderWidth: 2,
+          order: 1,
+        }}
+      ]
+    }},
+    options: {{
+      ...base,
+      plugins: {{
+        legend: {{ display: true, labels: {{ color: C.muted, font: {{size:10}},
+          filter: (item) => item.text !== undefined
+        }} }}
+      }},
+      scales: {{
+        x: {{ ...base.scales.x, ticks: {{ ...base.scales.x.ticks, maxTicksLimit: 8 }} }},
+        y: {{ ...base.scales.y, title: {{ display: true, text: 'HRV (ms)', color: C.muted, font: {{size:10}} }} }},
+      }}
+    }}
+  }});
+}})();
+
 
 new Chart(document.getElementById('lapBalanceChart'), {{
   type: 'bar',
