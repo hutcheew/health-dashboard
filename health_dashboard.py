@@ -1107,32 +1107,39 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     tsb_color = "var(--green)" if isinstance(latest_tsb, (int, float)) and latest_tsb >= 0 else "var(--red)"
 
     # HRV + Sleep stage overlay data
-    # Align HRV times to minutes since sleep start
-    hrv_times_raw = hrv.get("times", [])
-    hrv_vals_raw  = hrv.get("values", [])
-    sleep_levels  = sleep.get("levels", [])
-    sleep_start   = sleep.get("start", 0)
+    hrv_times_raw = hrv.get("times", [])  # HH:MM strings in Melbourne local time
+    sleep_levels  = sleep.get("levels", [])  # also HH:MM Melbourne time
 
-    # Build sleep stage background bands for chart annotation
-    # Convert stage timeline to chart-compatible format
-    stage_colors = {
-        "deep":  "rgba(79,142,247,0.3)",
-        "light": "rgba(92,100,128,0.2)",
-        "rem":   "rgba(124,108,247,0.25)",
-        "awake": "rgba(245,200,66,0.2)",
-    }
-    stage_values = {"deep": 1, "light": 2, "awake": 3, "rem": 1.5}
+    # Build per-HRV-point stage series in Python for reliable matching
+    def get_stage_at(t):
+        for l in sleep_levels:
+            s, e = l["start"], l["end"]
+            if s <= e:
+                if s <= t <= e: return l["stage"]
+            else:  # overnight wrap e.g. 22:00 -> 06:00
+                if t >= s or t <= e: return l["stage"]
+        return None
 
-    # Build a minute-by-minute sleep stage series aligned with HRV times
-    sleep_stage_series = []
-    if sleep_levels and hrv_times_raw:
-        for t in hrv_times_raw:
-            sleep_stage_series.append(None)  # placeholder — will be filled by JS
+    stage_series = [get_stage_at(t) for t in hrv_times_raw]
+
+    # Encode as numeric for chart (null = no stage data)
+    stage_numeric = {"deep": 1, "light": 2, "rem": 1.5, "awake": 3, None: None}
+    stage_band_data = json.dumps([stage_numeric.get(s) for s in stage_series])
+
+    # Per-stage boolean datasets for coloured fill
+    deep_data  = json.dumps([hrv.get("values", [None]*i)[i] if s == "deep"  else None for i, s in enumerate(stage_series)])
+    light_data = json.dumps([hrv.get("values", [None]*i)[i] if s == "light" else None for i, s in enumerate(stage_series)])
+    rem_data   = json.dumps([hrv.get("values", [None]*i)[i] if s == "rem"   else None for i, s in enumerate(stage_series)])
+    awake_data = json.dumps([hrv.get("values", [None]*i)[i] if s == "awake" else None for i, s in enumerate(stage_series)])
 
     sleep_stages_json = json.dumps([
         {"start": l["start"], "end": l["end"], "stage": l["stage"]}
         for l in sleep_levels
     ] if sleep_levels else [])
+
+    # Debug
+    matched = sum(1 for s in stage_series if s is not None)
+    print(f"  Sleep stage overlay: {len(sleep_levels)} segments, {matched}/{len(hrv_times_raw)} HRV points matched")
 
     # Weather prep
     weather_html = ""
@@ -2089,67 +2096,37 @@ new Chart(document.getElementById('hrvChart'), {{
 
 // HRV + Sleep Stage Overlay
 (function() {{
-  const sleepStages = {sleep_stages_json};
   const hrvTimes = {hrv_labels};
   const hrvVals  = {hrv_values};
+  const deepData  = {deep_data};
+  const lightData = {light_data};
+  const remData   = {rem_data};
+  const awakeData = {awake_data};
 
-  // Stage colour map
-  const stageColors = {{
-    deep:  'rgba(79,142,247,0.25)',
-    light: 'rgba(92,100,128,0.15)',
-    rem:   'rgba(124,108,247,0.22)',
-    awake: 'rgba(245,200,66,0.18)',
-  }};
-  const stageLabels = {{ deep:'Deep', light:'Light', rem:'REM', awake:'Awake' }};
+  // Max HRV for band height
+  const maxHrv = Math.max(...hrvVals.filter(v => v)) * 1.1;
 
-  // Build background color per HRV time point
-  function getStageAt(timeStr) {{
-    if (!sleepStages.length) return null;
-    for (const s of sleepStages) {{
-      if (!s.start || !s.end) continue;
-      // Both are HH:MM — direct string comparison works for same-night times
-      // Handle overnight wrap (e.g. 22:00 to 06:00)
-      const t = timeStr.slice(0,5);
-      const start = s.start.slice(0,5);
-      const end = s.end.slice(0,5);
-      if (start <= end) {{
-        if (t >= start && t <= end) return s.stage;
-      }} else {{
-        // Overnight wrap
-        if (t >= start || t <= end) return s.stage;
-      }}
-    }}
-    return null;
-  }}
-
-  // Build stage background dataset (filled area per stage)
-  const stageDatasets = Object.keys(stageColors).map(stage => ({{
-    label: stageLabels[stage],
-    data: hrvTimes.map((t, i) => getStageAt(t) === stage ? (Math.max(...hrvVals) * 1.1) : null),
-    backgroundColor: stageColors[stage],
-    borderColor: 'transparent',
-    fill: true,
-    pointRadius: 0,
-    tension: 0,
-    order: 2,
-    spanGaps: false,
-  }}));
+  // Convert stage data to filled bands at maxHrv height
+  const toBand = (data) => data.map(v => v !== null ? maxHrv : null);
 
   new Chart(document.getElementById('hrvDetailChart'), {{
     type: 'line',
     data: {{
       labels: hrvTimes,
       datasets: [
-        ...stageDatasets,
+        {{ label: 'Deep',  data: toBand(deepData),  backgroundColor: 'rgba(79,142,247,0.25)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'REM',   data: toBand(remData),   backgroundColor: 'rgba(124,108,247,0.22)', borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Light', data: toBand(lightData), backgroundColor: 'rgba(92,100,128,0.18)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Awake', data: toBand(awakeData), backgroundColor: 'rgba(245,200,66,0.2)',   borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
         {{
           label: 'HRV (ms)',
           data: hrvVals,
-          borderColor: C.cyan,
+          borderColor: '#38d9f5',
           backgroundColor: 'transparent',
           tension: 0.3,
           fill: false,
           pointRadius: 2,
-          pointBackgroundColor: C.cyan,
+          pointBackgroundColor: '#38d9f5',
           borderWidth: 2,
           order: 1,
         }}
@@ -2158,9 +2135,7 @@ new Chart(document.getElementById('hrvChart'), {{
     options: {{
       ...base,
       plugins: {{
-        legend: {{ display: true, labels: {{ color: C.muted, font: {{size:10}},
-          filter: (item) => item.text !== undefined
-        }} }}
+        legend: {{ display: true, labels: {{ color: C.muted, font: {{size:10}} }} }}
       }},
       scales: {{
         x: {{ ...base.scales.x, ticks: {{ ...base.scales.x.ticks, maxTicksLimit: 8 }} }},
