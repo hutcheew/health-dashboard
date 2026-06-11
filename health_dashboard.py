@@ -134,17 +134,27 @@ def fetch_garmin_data(garmin):
         sleep = garmin.get_sleep_data(YESTERDAY)
         daily = sleep.get("dailySleepDTO", {})
 
-        # Sleep stage timeline — list of {startGMT, endGMT, activityLevel}
-        # activityLevel: 0=deep, 1=light, 2=awake, 3=rem
-        stage_map = {0: "deep", 1: "light", 2: "awake", 3: "rem"}
+        # Sleep stage timeline — convert GMT to Melbourne local HH:MM
+        from zoneinfo import ZoneInfo
+        melb_tz = ZoneInfo("Australia/Melbourne")
+        stage_map = {0.0: "deep", 1.0: "light", 2.0: "awake", 3.0: "rem",
+                     0: "deep", 1: "light", 2: "awake", 3: "rem"}
         sleep_levels = []
         for level in sleep.get("sleepLevels", []):
-            sleep_levels.append({
-                "start": level.get("startGMT"),
-                "end":   level.get("endGMT"),
-                "stage": stage_map.get(level.get("activityLevel"), "unknown"),
-                "level": level.get("activityLevel"),
-            })
+            try:
+                start_gmt = level.get("startGMT", "")
+                end_gmt   = level.get("endGMT", "")
+                # Parse GMT timestamp
+                from datetime import datetime as dt2
+                start_dt = dt2.fromisoformat(start_gmt.replace("Z","")).replace(tzinfo=timezone.utc).astimezone(melb_tz)
+                end_dt   = dt2.fromisoformat(end_gmt.replace("Z","")).replace(tzinfo=timezone.utc).astimezone(melb_tz)
+                sleep_levels.append({
+                    "start": start_dt.strftime("%H:%M"),
+                    "end":   end_dt.strftime("%H:%M"),
+                    "stage": stage_map.get(level.get("activityLevel"), "light"),
+                })
+            except:
+                pass
 
         # Sleep start in minutes from midnight for chart alignment
         sleep_start_ts = daily.get("sleepStartTimestampLocal", 0)
@@ -2096,8 +2106,17 @@ new Chart(document.getElementById('hrvChart'), {{
   function getStageAt(timeStr) {{
     if (!sleepStages.length) return null;
     for (const s of sleepStages) {{
-      if (timeStr >= s.start?.slice(11,16) && timeStr <= s.end?.slice(11,16)) {{
-        return s.stage;
+      if (!s.start || !s.end) continue;
+      // Both are HH:MM — direct string comparison works for same-night times
+      // Handle overnight wrap (e.g. 22:00 to 06:00)
+      const t = timeStr.slice(0,5);
+      const start = s.start.slice(0,5);
+      const end = s.end.slice(0,5);
+      if (start <= end) {{
+        if (t >= start && t <= end) return s.stage;
+      }} else {{
+        // Overnight wrap
+        if (t >= start || t <= end) return s.stage;
       }}
     }}
     return null;
