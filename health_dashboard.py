@@ -103,12 +103,16 @@ def fetch_garmin_data(garmin):
     try:
         hrv = garmin.get_hrv_data(TODAY)
         readings = hrv.get("hrvReadings", [])
+        # Sample every 3rd reading to keep chart readable (Garmin records ~every 5 min)
+        sampled = readings[::3] if len(readings) > 40 else readings
         data["hrv"] = {
-            "values": [r["hrvValue"] for r in readings[-24:]],
-            "times": [r["readingTimeLocal"][11:16] for r in readings[-24:]],
+            "values": [r["hrvValue"] for r in sampled],
+            "times": [r["readingTimeLocal"][11:16] for r in sampled],
             "weekly_avg": data.get("readiness", {}).get("hrv_weekly_avg"),
         }
-    except:
+        print(f"  HRV readings: {len(readings)} total, {len(sampled)} sampled, range {sampled[0]['readingTimeLocal'][11:16] if sampled else '?'} - {sampled[-1]['readingTimeLocal'][11:16] if sampled else '?'}")
+    except Exception as e:
+        print(f"  HRV fetch failed: {e}")
         data["hrv"] = {}
 
     # Resting HR
@@ -2124,10 +2128,10 @@ new Chart(document.getElementById('hrvChart'), {{
     data: {{
       labels: hrvTimes,
       datasets: [
-        {{ label: 'Deep',  data: toBand(deepData),  backgroundColor: 'rgba(79,142,247,0.25)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
-        {{ label: 'REM',   data: toBand(remData),   backgroundColor: 'rgba(124,108,247,0.22)', borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
-        {{ label: 'Light', data: toBand(lightData), backgroundColor: 'rgba(92,100,128,0.18)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
-        {{ label: 'Awake', data: toBand(awakeData), backgroundColor: 'rgba(245,200,66,0.2)',   borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Deep',  data: toBand(deepData),  backgroundColor: 'rgba(79,142,247,0.45)',  borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'REM',   data: toBand(remData),   backgroundColor: 'rgba(124,108,247,0.45)', borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Light', data: toBand(lightData), backgroundColor: 'rgba(150,160,190,0.35)', borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
+        {{ label: 'Awake', data: toBand(awakeData), backgroundColor: 'rgba(245,200,66,0.4)',   borderColor:'transparent', fill:true, pointRadius:0, tension:0, order:2, spanGaps:false }},
         {{
           label: 'HRV (ms)',
           data: hrvVals,
