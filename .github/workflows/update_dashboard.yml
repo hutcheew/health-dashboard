@@ -2,10 +2,11 @@ name: Update Health Dashboard
 
 on:
   schedule:
-    - cron: '30 21 * * *'   # 7:30am AEST (UTC+10) — main morning trigger
-    - cron: '30 22 * * *'   # 8:30am AEST — retry if 7:30 delayed
-    - cron: '0 0 * * *'     # 10am AEST — guaranteed Garmin data ready
-    - cron: '0 7 * * *'     # 5pm AEST — afternoon post-run update
+    - cron: '57 23 * * *'   # 9:57am AEST
+    - cron: '15 0 * * *'    # 10:15am AEST
+    - cron: '20 0 * * *'    # 10:20am AEST
+    - cron: '0 9 * * *'     # 7:00pm AEST
+    - cron: '0 10 * * *'    # 8:00pm AEST
   workflow_dispatch:
 
 jobs:
