@@ -26,8 +26,9 @@ GARMIN_TOKEN_FILE  = os.path.expanduser("~/.garminconnect/garmin_tokens.json")
 WITHINGS_TOKEN_FILE = os.path.expanduser("~/.withings/withings_tokens.json")
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "health_dashboard.html")
 
-TODAY     = date.today().isoformat()
-YESTERDAY = (date.today() - timedelta(days=1)).isoformat()
+_melb_now = datetime.now(MELB_TZ)
+TODAY     = _melb_now.date().isoformat()
+YESTERDAY = (_melb_now.date() - timedelta(days=1)).isoformat()
 
 # ─── GARMIN ──────────────────────────────────────────────────────────────────
 
