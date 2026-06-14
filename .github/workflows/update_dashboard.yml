@@ -41,7 +41,7 @@ jobs:
           WITHINGS_REDIRECT_URI: http://localhost:8080
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+       
           INTERVALS_ATHLETE_ID: i416094
           INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
         run: |
