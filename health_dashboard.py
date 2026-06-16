@@ -1178,6 +1178,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     tl_total = tl_low + tl_high + tl_ana or 1
 
     # Sleep data
+    sleep = {}
     sleep_deep     = sleep.get("deep_hrs", "--")
     sleep_light    = sleep.get("light_hrs", "--")
     sleep_rem      = sleep.get("rem_hrs", "--")
