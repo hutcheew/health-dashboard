@@ -247,6 +247,69 @@
   }
   .btn-purple:hover { background: rgba(124,108,247,0.2); }
 
+  /* ── DECISION ENGINE ── */
+  .decision-card {
+    border-radius: 12px;
+    border: 1px solid var(--border2);
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .decision-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--decision-color, var(--green)) 0%, transparent 60%);
+    opacity: 0.06;
+    pointer-events: none;
+  }
+  .decision-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .decision-sub {
+    font-size: 11px; color: var(--text3);
+    letter-spacing: 0.5px; margin-bottom: 16px;
+  }
+  .decision-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .decision-factors { display: flex; flex-direction: column; gap: 6px; }
+  .factor {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text2);
+  }
+  .factor-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  .decision-rec {
+    background: var(--surface2);
+    border-radius: 8px; padding: 14px;
+  }
+  .rec-label {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 10px;
+  }
+  .rec-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rec-row:last-child { border-bottom: none; }
+  .rec-key { color: var(--text3); }
+  .rec-val { color: var(--text); font-weight: 500; }
+  .avoid-list {
+    margin-top: 10px; font-size: 11px; color: var(--red);
+  }
+  @media(max-width:600px) {
+    .decision-body { grid-template-columns: 1fr; }
+    .decision-status { font-size: 22px; }
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
     .content { padding: 12px; }
@@ -262,7 +325,7 @@
 <div class="topbar">
   <div class="topbar-logo">NAT / HEALTH</div>
   <div class="topbar-date">2026-06-17</div>
-  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 15:12</div>
+  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 18:52</div>
   <div class="topbar-right">
     <div class="status-dot"></div>
     <div class="status-text">LIVE</div>
@@ -285,44 +348,66 @@
 <!-- ═══════════════════════════════════════════════════════ OVERVIEW -->
 <div class="tab-panel active" id="panel-overview">
 
+  <!-- TRAINING DECISION ENGINE -->
+  <div class="decision-card" style="--decision-color:#4f8ef7;border-color:#4f8ef733">
+    <div class="decision-status" style="color:#4f8ef7">🔵 TRAIN EASY</div>
+    <div class="decision-sub">TRAINING DECISION · 2026-06-17 · Week 7/28 — Return to Run</div>
+    <div class="decision-body">
+      <div class="decision-factors">
+        <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Why</div>
+        <div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Sleep good</div><div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Achilles risk low</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Readiness moderate (57/100)</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>HRV moderate (29ms)</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Training load balanced (TSB -6.3)</div>
+        <div class="avoid-list">✗ Avoid today: Tempo runs · Intervals · Long run</div>
+      </div>
+      <div class="decision-rec">
+        <div class="rec-label">Recommended Session</div>
+        <div class="rec-row"><span class="rec-key">Type</span><span class="rec-val">Easy aerobic run</span></div>
+        <div class="rec-row"><span class="rec-key">Distance</span><span class="rec-val">4–8 km</span></div>
+        <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">5:40–6:10/km</span></div>
+        <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val"><145 bpm</span></div>
+        <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">Morning · 17.7°C</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VITALS ROW -->
   <div class="section">
-    <div class="section-header"><div class="section-title">Today's Status</div></div>
+    <div class="section-header"><div class="section-title">Today's Vitals</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Readiness</div>
-        <div class="stat-value">--</div>
-        <div class="stat-unit"></div>
-        <div class="stat-sub"></div>
+        <div class="stat-value">57</div>
+        <div class="stat-unit">Moderate</div>
+        <div class="stat-sub">Listen To Your Body</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Sleep Score</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">73</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV Avg 7d</div>
-        <div class="stat-value">None</div>
+        <div class="stat-value">29</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Resting HR</div>
-        <div class="stat-value">56</div>
+        <div class="stat-value">54</div>
         <div class="stat-unit">bpm</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Body Battery</div>
-        <div class="stat-value">42</div>
+        <div class="stat-value">62</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Recovery</div>
-        <div class="stat-value sm">--</div>
+        <div class="stat-value sm">1</div>
         <div class="stat-unit">min</div>
       </div>
     </div>
@@ -806,7 +891,7 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Total Sleep</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">6.6</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
@@ -864,39 +949,39 @@
     <div class="section-header"><div class="section-title">Recovery Metrics</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Training Readiness</div>
-        <div class="stat-value">--</div>
-        <div class="stat-unit"></div>
+        <div class="stat-value">57</div>
+        <div class="stat-unit">Moderate</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Sleep Score</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">73</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV 7d Avg</div>
-        <div class="stat-value">None</div>
+        <div class="stat-value">29</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Resting HR</div>
-        <div class="stat-value">56</div>
+        <div class="stat-value">54</div>
         <div class="stat-unit">bpm</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Body Battery</div>
-        <div class="stat-value">42</div>
+        <div class="stat-value">62</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Recovery Time</div>
-        <div class="stat-value sm">--</div>
+        <div class="stat-value sm">1</div>
         <div class="stat-unit">min</div>
       </div>
     </div>
@@ -908,25 +993,25 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV 7d Average</div>
-        <div class="stat-value">None</div>
+        <div class="stat-value">29</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Last Reading</div>
-        <div class="stat-value">--</div>
-        <div class="stat-unit">ms · --</div>
+        <div class="stat-value">35</div>
+        <div class="stat-unit">ms · 04:00</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Peak Last Night</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">63</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Low Last Night</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">14</div>
         <div class="stat-unit">ms</div>
       </div>
     </div>
@@ -944,24 +1029,24 @@
 <div class="tab-panel" id="panel-bp">
 
   <div class="section">
-    <div class="section-header"><div class="section-title">Latest Reading — 2026-06-16 04:20</div></div>
+    <div class="section-header"><div class="section-title">Latest Reading — 2026-06-17 04:28</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Systolic</div>
-        <div class="stat-value">124</div>
+        <div class="stat-value">130</div>
         <div class="stat-unit">mmHg</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Diastolic</div>
-        <div class="stat-value">82</div>
+        <div class="stat-value">73</div>
         <div class="stat-unit">mmHg</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Pulse</div>
-        <div class="stat-value">62</div>
+        <div class="stat-value">64</div>
         <div class="stat-unit">bpm</div>
       </div>
     </div>
@@ -983,6 +1068,12 @@
       <table class="tbl">
         <thead><tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th><th>Status</th></tr></thead>
         <tbody>
+          <tr>
+            <td>2026-06-17 04:28</td>
+            <td style="color:var(--red)">130</td>
+            <td style="color:var(--green)">73</td>
+            <td>64</td>
+          </tr>
           <tr>
             <td>2026-06-16 04:20</td>
             <td style="color:var(--yellow)">124</td>
@@ -1036,12 +1127,6 @@
             <td style="color:var(--yellow)">128</td>
             <td style="color:var(--yellow)">88</td>
             <td>56</td>
-          </tr>
-          <tr>
-            <td>2026-06-07 06:42</td>
-            <td style="color:var(--red)">142</td>
-            <td style="color:var(--green)">77</td>
-            <td>60</td>
           </tr></tbody>
       </table>
     </div>
@@ -1058,13 +1143,13 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">VO2 Max</div>
-        <div class="stat-value">None</div>
+        <div class="stat-value">50.7</div>
         <div class="stat-unit">ml/kg/min</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Endurance Score</div>
-        <div class="stat-value">--</div>
+        <div class="stat-value">6542</div>
         <div class="stat-unit">Well Trained 6500+</div>
       </div>
       <div class="stat">
@@ -1125,23 +1210,23 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Aerobic Low</div>
-        <div class="stat-value sm">0</div>
-        <div class="stat-unit">target ?–?</div>
-        <div class="gct-bar-wrap"><div class="gct-bar" style="width:0%;background:var(--blue)"></div></div>
+        <div class="stat-value sm">1554</div>
+        <div class="stat-unit">target 289–690</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:100%;background:var(--blue)"></div></div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--orange)"></div>
         <div class="stat-label">Aerobic High</div>
-        <div class="stat-value sm">0</div>
-        <div class="stat-unit">target ?–?</div>
-        <div class="gct-bar-wrap"><div class="gct-bar" style="width:0%;background:var(--orange)"></div></div>
+        <div class="stat-value sm">213</div>
+        <div class="stat-unit">target 444–845</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:25%;background:var(--orange)"></div></div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Anaerobic</div>
-        <div class="stat-value sm">0</div>
+        <div class="stat-value sm">39</div>
         <div class="stat-unit">this month</div>
-        <div class="gct-bar-wrap"><div class="gct-bar" style="width:0%;background:var(--red)"></div></div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:2%;background:var(--red)"></div></div>
       </div>
     </div>
   </div>
@@ -1166,7 +1251,7 @@
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
-    GENERATED 2026-06-16 15:12 · GARMIN + WITHINGS
+    GENERATED 2026-06-16 18:52 · GARMIN + WITHINGS
   </span>
 </div>
 
@@ -1215,8 +1300,8 @@ new Chart(document.getElementById('weeklyComboChart'), {
 new Chart(document.getElementById('hrvChart'), {
   type: 'line',
   data: {
-    labels: [],
-    datasets: [{ data: [], borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
+    labels: ["21:30", "21:45", "22:00", "22:15", "22:30", "22:45", "23:00", "23:15", "23:30", "23:45", "00:00", "00:15", "00:30", "00:45", "01:00", "01:15", "01:30", "01:45", "02:00", "02:15", "02:30", "02:45", "03:00", "03:15", "03:30", "03:45", "04:00"],
+    datasets: [{ data: [19, 25, 21, 33, 21, 30, 18, 17, 63, 24, 39, 24, 28, 39, 34, 27, 29, 31, 16, 14, 26, 17, 36, 25, 18, 30, 35], borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
       tension: 0.3, fill: true, pointRadius: 2 }]
   },
   options: { ...base }
@@ -1224,12 +1309,12 @@ new Chart(document.getElementById('hrvChart'), {
 
 // HRV + Sleep Stage Overlay
 (function() {
-  const hrvTimes = [];
-  const hrvVals  = [];
-  const deepData  = [];
-  const lightData = [];
-  const remData   = [];
-  const awakeData = [];
+  const hrvTimes = ["21:30", "21:45", "22:00", "22:15", "22:30", "22:45", "23:00", "23:15", "23:30", "23:45", "00:00", "00:15", "00:30", "00:45", "01:00", "01:15", "01:30", "01:45", "02:00", "02:15", "02:30", "02:45", "03:00", "03:15", "03:30", "03:45", "04:00"];
+  const hrvVals  = [19, 25, 21, 33, 21, 30, 18, 17, 63, 24, 39, 24, 28, 39, 34, 27, 29, 31, 16, 14, 26, 17, 36, 25, 18, 30, 35];
+  const deepData  = [19, 25, null, null, null, null, null, null, 63, null, null, null, null, null, null, 27, 29, null, null, null, null, null, null, null, null, null, null];
+  const lightData = [null, null, 21, 33, null, 30, null, 17, null, 24, 39, 24, 28, 39, 34, null, null, null, null, 14, 26, null, null, null, null, 30, 35];
+  const remData   = [null, null, null, null, 21, null, 18, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+  const awakeData = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 31, 16, null, null, 17, 36, 25, 18, null, null];
 
   // Max HRV for band height
   const maxHrv = Math.max(...hrvVals.filter(v => v)) * 1.1;
@@ -1365,11 +1450,11 @@ new Chart(document.getElementById('gctTrendChart'), {
 new Chart(document.getElementById('bpChart'), {
   type: 'line',
   data: {
-    labels: ["2026-06-05", "2026-06-06", "2026-06-07", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14", "2026-06-15", "2026-06-16"],
+    labels: ["2026-06-06", "2026-06-07", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14", "2026-06-15", "2026-06-16", "2026-06-17"],
     datasets: [
-      { label: 'Systolic',  data: [134, 123, 142, 128, 133, 122, 123, 125, 124, 131, 131, 124],  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 },
-      { label: 'Diastolic', data: [76, 77, 77, 88, 83, 82, 78, 88, 88, 83, 81, 82], borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 },
-      { label: 'Pulse',     data: [61, 62, 60, 56, 59, 59, 59, 61, 60, 58, 60, 62],     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] },
+      { label: 'Systolic',  data: [123, 142, 128, 133, 122, 123, 125, 124, 131, 131, 124, 130],  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 },
+      { label: 'Diastolic', data: [77, 77, 88, 83, 82, 78, 88, 88, 83, 81, 82, 73], borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 },
+      { label: 'Pulse',     data: [62, 60, 56, 59, 59, 59, 61, 60, 58, 60, 62, 64],     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] },
     ]
   },
   options: { ...base, plugins: { legend: { display:true, labels: { color:C.muted, font:{size:10} } } } }
@@ -1409,8 +1494,8 @@ new Chart(document.getElementById('sleepStagesChart'), {
 
 // PWA — Body Battery Push Notification
 (function() {
-  const bodyBattery = 42;
-  const readinessScore = null;
+  const bodyBattery = 62;
+  const readinessScore = 57;
 
   // Register service worker for PWA
   if ('serviceWorker' in navigator) {
@@ -1458,7 +1543,7 @@ function checkAlerts(battery, readiness) {
 }
 
 // ── EXPORT ──
-const dashboardData = {"generated": "2026-06-16 15:12", "training": {"week": 7, "phase": "Return to Run", "week_in_phase": 3, "phase_total": 4, "days_to_race": 118, "phase_target_km": "30-40", "this_week_km": 11.2, "last_week_km": 38.5}, "readiness": {"score": null, "level": null, "sleep_score": null, "hrv_weekly_avg": null, "resting_hr": 56, "body_battery": 42, "recovery_time": null, "acwr": null}, "achilles": {"score": 0, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "11 km (within target)", "level": "low"}, {"label": "Mileage change", "value": "-71% vs last week", "level": "low"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-16", "distance_km": 6.0, "avg_pace_min_km": 5.84, "avg_hr": 148.0, "cadence": 180, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 251.0, "laps": [{"km": 1, "pace": 5.37, "hr": 139.0, "gct": 248.9, "gct_balance": 50.6, "cadence": 0}, {"km": 2, "pace": 5.75, "hr": 147.0, "gct": 251.4, "gct_balance": 50.6, "cadence": 0}, {"km": 3, "pace": 5.84, "hr": 149.0, "gct": 251.5, "gct_balance": 50.8, "cadence": 0}, {"km": 4, "pace": 5.94, "hr": 150.0, "gct": 251.3, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 5.95, "hr": 152.0, "gct": 249.6, "gct_balance": 50.5, "cadence": 0}, {"km": 6, "pace": 6.17, "hr": 152.0, "gct": 250.7, "gct_balance": 50.5, "cadence": 0}, {"km": 7, "pace": 6.07, "hr": 150.0, "gct": 253.5, "gct_balance": 50.6, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-16", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-15", "distance_km": 5.2, "avg_pace": 5.68, "avg_hr": 145.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-13", "distance_km": 16.0, "avg_pace": 5.89, "avg_hr": 145.0, "gct_balance_left": 50.7, "gct_balance_right": 49.3}, {"date": "2026-06-11", "distance_km": 6.9, "avg_pace": 5.83, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-09", "distance_km": 8.5, "avg_pace": 5.86, "avg_hr": 147.0, "gct_balance_left": 50.3, "gct_balance_right": 49.7}, {"date": "2026-06-08", "distance_km": 7.1, "avg_pace": 5.67, "avg_hr": 144.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}], "blood_pressure": [{"date": "2026-06-16 04:20", "diastolic": 82, "systolic": 124, "pulse": 62}, {"date": "2026-06-15 04:19", "diastolic": 81, "systolic": 131, "pulse": 60}, {"date": "2026-06-14 07:31", "diastolic": 83, "systolic": 131, "pulse": 58}, {"date": "2026-06-13 05:32", "diastolic": 88, "systolic": 124, "pulse": 60}, {"date": "2026-06-12 05:16", "diastolic": 88, "systolic": 125, "pulse": 61}, {"date": "2026-06-11 05:16", "diastolic": 78, "systolic": 123, "pulse": 59}, {"date": "2026-06-10 05:16", "diastolic": 82, "systolic": 122, "pulse": 59}, {"date": "2026-06-09 05:16", "diastolic": 83, "systolic": 133, "pulse": 59}, {"date": "2026-06-08 05:19", "diastolic": 88, "systolic": 128, "pulse": 56}, {"date": "2026-06-07 06:42", "diastolic": 77, "systolic": 142, "pulse": 60}]};
+const dashboardData = {"generated": "2026-06-16 18:52", "training": {"week": 7, "phase": "Return to Run", "week_in_phase": 3, "phase_total": 4, "days_to_race": 118, "phase_target_km": "30-40", "this_week_km": 11.2, "last_week_km": 38.5}, "readiness": {"score": 57, "level": "MODERATE", "sleep_score": 73, "hrv_weekly_avg": 29, "resting_hr": 54, "body_battery": 62, "recovery_time": 1, "acwr": 0.97}, "achilles": {"score": 0, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "11 km (within target)", "level": "low"}, {"label": "Mileage change", "value": "-71% vs last week", "level": "low"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-16", "distance_km": 6.0, "avg_pace_min_km": 5.84, "avg_hr": 148.0, "cadence": 180, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 251.0, "laps": [{"km": 1, "pace": 5.37, "hr": 139.0, "gct": 248.9, "gct_balance": 50.6, "cadence": 0}, {"km": 2, "pace": 5.75, "hr": 147.0, "gct": 251.4, "gct_balance": 50.6, "cadence": 0}, {"km": 3, "pace": 5.84, "hr": 149.0, "gct": 251.5, "gct_balance": 50.8, "cadence": 0}, {"km": 4, "pace": 5.94, "hr": 150.0, "gct": 251.3, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 5.95, "hr": 152.0, "gct": 249.6, "gct_balance": 50.5, "cadence": 0}, {"km": 6, "pace": 6.17, "hr": 152.0, "gct": 250.7, "gct_balance": 50.5, "cadence": 0}, {"km": 7, "pace": 6.07, "hr": 150.0, "gct": 253.5, "gct_balance": 50.6, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-16", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-15", "distance_km": 5.2, "avg_pace": 5.68, "avg_hr": 145.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-13", "distance_km": 16.0, "avg_pace": 5.89, "avg_hr": 145.0, "gct_balance_left": 50.7, "gct_balance_right": 49.3}, {"date": "2026-06-11", "distance_km": 6.9, "avg_pace": 5.83, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-09", "distance_km": 8.5, "avg_pace": 5.86, "avg_hr": 147.0, "gct_balance_left": 50.3, "gct_balance_right": 49.7}, {"date": "2026-06-08", "distance_km": 7.1, "avg_pace": 5.67, "avg_hr": 144.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}], "blood_pressure": [{"date": "2026-06-17 04:28", "diastolic": 73, "systolic": 130, "pulse": 64}, {"date": "2026-06-16 04:20", "diastolic": 82, "systolic": 124, "pulse": 62}, {"date": "2026-06-15 04:19", "diastolic": 81, "systolic": 131, "pulse": 60}, {"date": "2026-06-14 07:31", "diastolic": 83, "systolic": 131, "pulse": 58}, {"date": "2026-06-13 05:32", "diastolic": 88, "systolic": 124, "pulse": 60}, {"date": "2026-06-12 05:16", "diastolic": 88, "systolic": 125, "pulse": 61}, {"date": "2026-06-11 05:16", "diastolic": 78, "systolic": 123, "pulse": 59}, {"date": "2026-06-10 05:16", "diastolic": 82, "systolic": 122, "pulse": 59}, {"date": "2026-06-09 05:16", "diastolic": 83, "systolic": 133, "pulse": 59}, {"date": "2026-06-08 05:19", "diastolic": 88, "systolic": 128, "pulse": 56}]};
 
 function exportJSON() {
   const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {type:'application/json'});
@@ -1488,4 +1573,4 @@ Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) To
 </script>
 
 </body>
-</html><!-- updated: 2026-06-16 15:12:53 -->
+</html><!-- updated: 2026-06-16 18:52:31 -->
