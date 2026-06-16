@@ -909,6 +909,8 @@ def check_and_send_alerts(readiness, achilles, bp_readings):
         send_html_email(f"Health Alert — {date.today()}", f"<pre style='font-family:Arial;font-size:14px;color:#f0f2f8;background:#0d0f14;padding:20px'>{chr(10).join(alerts)}<br><br><a href='https://hutcheew.github.io/health-dashboard' style='color:#4f8ef7'>View Dashboard</a></pre>")
 
 def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None):
+    sleep = garmin_data.get("sleep", {}) if garmin_data else {}
+    sleep_duration = sleep.get("total_hrs", "--")
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -1178,7 +1180,6 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     tl_total = tl_low + tl_high + tl_ana or 1
 
     # Sleep data
-    sleep = {}
     sleep_deep     = sleep.get("deep_hrs", "--")
     sleep_light    = sleep.get("light_hrs", "--")
     sleep_rem      = sleep.get("rem_hrs", "--")
