@@ -6,6 +6,11 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#0d0f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Health">
+<link rel="manifest" href="manifest.json">
 <title>Nat's Health Dashboard — 2026-06-16</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -257,7 +262,7 @@
 <div class="topbar">
   <div class="topbar-logo">NAT / HEALTH</div>
   <div class="topbar-date">2026-06-16</div>
-  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 07:36</div>
+  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 09:24</div>
   <div class="topbar-right">
     <div class="status-dot"></div>
     <div class="status-text">LIVE</div>
@@ -270,6 +275,7 @@
   <div class="tab" onclick="switchTab('running')"><span class="tab-icon">⟋</span>Running</div>
   <div class="tab" onclick="switchTab('cycling')"><span class="tab-icon">◯</span>Cycling</div>
   <div class="tab" onclick="switchTab('health')"><span class="tab-icon">♡</span>Health</div>
+  <div class="tab" onclick="switchTab('performance')"><span class="tab-icon">◈</span>Performance</div>
   <div class="tab" onclick="switchTab('bp')"><span class="tab-icon">↕</span>Blood Pressure</div>
   <div class="tab" onclick="switchTab('hrcompare')"><span class="tab-icon">⇌</span>HR Compare</div>
 </div>
@@ -368,29 +374,29 @@
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
               <div class="stat-label">Today · 2026-06-16</div>
-              <div class="stat-value sm">🌧️ 16.9°</div>
+              <div class="stat-value sm">🌧️ 17.6°</div>
               <div class="stat-unit">13.4° low · Rain showers</div>
-              <div class="stat-sub">💧93% · 💨19.7 km/h</div>
+              <div class="stat-sub">💧93% · 💨18.3 km/h</div>
             </div>
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
               <div class="stat-label">Tomorrow · 2026-06-17</div>
-              <div class="stat-value sm">🌧️ 16.7°</div>
-              <div class="stat-unit">13.4° low · Light drizzle</div>
-              <div class="stat-sub">💧92% · 💨19.0 km/h</div>
+              <div class="stat-value sm">🌧️ 17.9°</div>
+              <div class="stat-unit">13.5° low · Light drizzle</div>
+              <div class="stat-sub">💧92% · 💨20.7 km/h</div>
             </div>
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
               <div class="stat-label">Day +2 · 2026-06-18</div>
-              <div class="stat-value sm">🌧️ 15.5°</div>
-              <div class="stat-unit">12.0° low · Drizzle</div>
-              <div class="stat-sub">💧93% · 💨24.0 km/h</div>
+              <div class="stat-value sm">🌧️ 16.0°</div>
+              <div class="stat-unit">12.1° low · Drizzle</div>
+              <div class="stat-sub">💧93% · 💨23.7 km/h</div>
             </div></div>
     <div style="padding:8px 12px;background:rgba(242,101,101,0.08);border-left:3px solid var(--red);border-radius:6px;font-size:12px;color:var(--text2);margin-bottom:6px;">Rain 92%</div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;margin-bottom:10px;">
       <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window Tomorrow — 2026-06-17</div>
       <div style="font-size:20px;font-weight:600;color:var(--yellow);margin-bottom:4px;">Morning</div>
-      <div style="font-size:11px;color:var(--text3);">Morning: 14.0°C 6% rain · Afternoon: 15.3°C 29% rain</div>
+      <div style="font-size:11px;color:var(--text3);">Morning: 14.3°C 6% rain · Afternoon: 16.3°C 29% rain</div>
     </div>
     <div class="tbl-wrap">
       <table class="tbl">
@@ -398,58 +404,58 @@
         <tbody>
             <tr>
               <td style="font-weight:500">Tue 06-16</td>
-              <td>🌧️ 16.9° / 13.4°</td>
+              <td>🌧️ 17.6° / 13.4°</td>
               <td>💧93%</td>
               <td style="color:var(--yellow);font-weight:500">Afternoon</td>
-              <td style="color:var(--text3)">15.8°C 27% rain</td>
+              <td style="color:var(--text3)">15.9°C 27% rain</td>
               <td style="color:var(--red)">Rain 93%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Wed 06-17</td>
-              <td>🌧️ 16.7° / 13.4°</td>
+              <td>🌧️ 17.9° / 13.5°</td>
               <td>💧92%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">14.0°C 6% rain</td>
+              <td style="color:var(--text3)">14.3°C 6% rain</td>
               <td style="color:var(--red)">Rain 92%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Thu 06-18</td>
-              <td>🌧️ 15.5° / 12.0°</td>
+              <td>🌧️ 16.0° / 12.1°</td>
               <td>💧93%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">14.3°C 21% rain</td>
+              <td style="color:var(--text3)">14.7°C 21% rain</td>
               <td style="color:var(--red)">Rain 93%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Fri 06-19</td>
-              <td>🌧️ 12.9° / 8.6°</td>
+              <td>🌧️ 11.4° / 9.1°</td>
               <td>💧69%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">9.9°C 32% rain</td>
+              <td style="color:var(--text3)">9.6°C 32% rain</td>
               <td style="color:var(--red)">Rain 69%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Sat 06-20</td>
-              <td>🌧️ 12.2° / 7.7°</td>
+              <td>🌧️ 11.8° / 8.4°</td>
               <td>💧59%</td>
               <td style="color:var(--green);font-weight:500">Afternoon</td>
-              <td style="color:var(--text3)">10.9°C 40% rain</td>
+              <td style="color:var(--text3)">10.1°C 40% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr>
             <tr>
               <td style="font-weight:500">Sun 06-21</td>
-              <td>☁️ 13.2° / 6.3°</td>
+              <td>🌧️ 11.6° / 7.2°</td>
               <td>💧21%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">8.2°C 6% rain</td>
+              <td style="color:var(--text3)">7.7°C 6% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr>
             <tr>
               <td style="font-weight:500">Mon 06-22</td>
-              <td>☁️ 11.2° / 4.9°</td>
+              <td>☁️ 11.2° / 6.0°</td>
               <td>💧10%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">6.6°C 4% rain</td>
+              <td style="color:var(--text3)">7.8°C 4% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr></tbody>
       </table>
@@ -800,7 +806,7 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Total Sleep</div>
-        <div class="stat-value">6.3</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
@@ -1043,6 +1049,105 @@
 
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ PERFORMANCE -->
+<div class="tab-panel" id="panel-performance">
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Fitness Metrics</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">VO2 Max</div>
+        <div class="stat-value">50.7</div>
+        <div class="stat-unit">ml/kg/min</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Endurance Score</div>
+        <div class="stat-value">6546</div>
+        <div class="stat-unit">Well Trained 6500+</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">Run Tolerance</div>
+        <div class="stat-value" style="color:var(--green)">32%</div>
+        <div class="stat-unit">of weekly capacity</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">Intensity Mins</div>
+        <div class="stat-value" style="color:var(--green)">151</div>
+        <div class="stat-unit">/ 150 min goal</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:100%;background:var(--green)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Race Predictions</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">5K</div>
+        <div class="stat-value sm">22:37</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">10K</div>
+        <div class="stat-value sm">47:39</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-label">Half Marathon</div>
+        <div class="stat-value sm">1:43:55</div>
+      </div>
+      <div class="stat" style="grid-column:span 2">
+        <div class="stat-accent" style="background:var(--orange)"></div>
+        <div class="stat-label">Marathon Prediction</div>
+        <div class="stat-value sm" style="color:var(--orange)">3:44:31</div>
+        <div class="stat-unit">+44:31 vs sub-3:00</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;">Progress to Sub-3:00</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;border-radius:4px;background:var(--orange);width:80%"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);white-space:nowrap">PB 3:16 → Goal 3:00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Monthly Training Load</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Aerobic Low</div>
+        <div class="stat-value sm">1554</div>
+        <div class="stat-unit">target 289–690</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:100%;background:var(--blue)"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--orange)"></div>
+        <div class="stat-label">Aerobic High</div>
+        <div class="stat-value sm">213</div>
+        <div class="stat-unit">target 444–845</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:25%;background:var(--orange)"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Anaerobic</div>
+        <div class="stat-value sm">39</div>
+        <div class="stat-unit">this month</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:2%;background:var(--red)"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <!-- ═══════════════════════════════════════════════════════ HR COMPARE -->
 <div class="tab-panel" id="panel-hrcompare">
   <div class="section">
@@ -1061,7 +1166,7 @@
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
-    GENERATED 2026-06-16 07:36 · GARMIN + WITHINGS
+    GENERATED 2026-06-16 09:24 · GARMIN + WITHINGS
   </span>
 </div>
 
@@ -1070,7 +1175,7 @@
 <script>
 // ── TAB SWITCHING ──
 function switchTab(name) {
-  const panels = ['overview','running','cycling','health','bp','hrcompare'];
+  const panels = ['overview','running','cycling','health','performance','bp','hrcompare'];
   document.querySelectorAll('.tab').forEach((t,i) => {
     t.classList.toggle('active', panels[i] === name);
   });
@@ -1302,8 +1407,58 @@ new Chart(document.getElementById('sleepStagesChart'), {
   }
 });
 
+// PWA — Body Battery Push Notification
+(function() {
+  const bodyBattery = 41;
+  const readinessScore = 63;
+
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  // Request notification permission and alert on low body battery
+  if ('Notification' in window && bodyBattery !== null) {
+    if (Notification.permission === 'default') {
+      // Show install prompt
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;background:#13151c;border:1px solid #4f8ef7;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:1000;font-size:12px;';
+      banner.innerHTML = '<span style="color:#f0f2f8">Enable notifications for body battery alerts?</span><button onclick="requestNotificationPermission()" style="background:#4f8ef7;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap">Enable</button><button onclick="this.parentElement.remove()" style="background:transparent;color:#5c6480;border:none;padding:6px;cursor:pointer">✕</button>';
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 10000);
+    } else if (Notification.permission === 'granted') {
+      checkAlerts(bodyBattery, readinessScore);
+    }
+  }
+})();
+
+function requestNotificationPermission() {
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') {
+      new Notification('Health Dashboard', { body: 'Notifications enabled! You will be alerted for low body battery.' });
+      document.querySelector('[onclick="requestNotificationPermission()"]')?.closest('div')?.remove();
+    }
+  });
+}
+
+function checkAlerts(battery, readiness) {
+  const alerts = [];
+  if (battery !== null && battery < 25) alerts.push(`Body Battery critical: ${battery}%`);
+  else if (battery !== null && battery < 40) alerts.push(`Body Battery low: ${battery}%`);
+  if (readiness !== null && readiness < 40) alerts.push(`Low readiness: ${readiness}/100 — consider rest today`);
+
+  if (alerts.length > 0) {
+    const lastAlert = localStorage.getItem('lastHealthAlert');
+    const today = new Date().toDateString();
+    if (lastAlert !== today) {
+      new Notification('Health Alert', { body: alerts.join(' | '), icon: '' });
+      localStorage.setItem('lastHealthAlert', today);
+    }
+  }
+}
+
 // ── EXPORT ──
-const dashboardData = {"generated": "2026-06-16 07:36", "training": {"week": 7, "phase": "Return to Run", "week_in_phase": 3, "phase_total": 4, "days_to_race": 118, "phase_target_km": "30-40", "this_week_km": 11.2, "last_week_km": 38.5}, "readiness": {"score": 63, "level": "MODERATE", "sleep_score": 76, "hrv_weekly_avg": 30, "resting_hr": 53, "body_battery": 41, "recovery_time": 1, "acwr": 0.99}, "achilles": {"score": 0, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "11 km (within target)", "level": "low"}, {"label": "Mileage change", "value": "-71% vs last week", "level": "low"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-16", "distance_km": 6.0, "avg_pace_min_km": 5.84, "avg_hr": 148.0, "cadence": 180, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 251.0, "laps": [{"km": 1, "pace": 5.37, "hr": 139.0, "gct": 248.9, "gct_balance": 50.6, "cadence": 0}, {"km": 2, "pace": 5.75, "hr": 147.0, "gct": 251.4, "gct_balance": 50.6, "cadence": 0}, {"km": 3, "pace": 5.84, "hr": 149.0, "gct": 251.5, "gct_balance": 50.8, "cadence": 0}, {"km": 4, "pace": 5.94, "hr": 150.0, "gct": 251.3, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 5.95, "hr": 152.0, "gct": 249.6, "gct_balance": 50.5, "cadence": 0}, {"km": 6, "pace": 6.17, "hr": 152.0, "gct": 250.7, "gct_balance": 50.5, "cadence": 0}, {"km": 7, "pace": 6.07, "hr": 150.0, "gct": 253.5, "gct_balance": 50.6, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-16", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-15", "distance_km": 5.2, "avg_pace": 5.68, "avg_hr": 145.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-13", "distance_km": 16.0, "avg_pace": 5.89, "avg_hr": 145.0, "gct_balance_left": 50.7, "gct_balance_right": 49.3}, {"date": "2026-06-11", "distance_km": 6.9, "avg_pace": 5.83, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-09", "distance_km": 8.5, "avg_pace": 5.86, "avg_hr": 147.0, "gct_balance_left": 50.3, "gct_balance_right": 49.7}, {"date": "2026-06-08", "distance_km": 7.1, "avg_pace": 5.67, "avg_hr": 144.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}], "blood_pressure": [{"date": "2026-06-16 04:20", "diastolic": 82, "systolic": 124, "pulse": 62}, {"date": "2026-06-15 04:19", "diastolic": 81, "systolic": 131, "pulse": 60}, {"date": "2026-06-14 07:31", "diastolic": 83, "systolic": 131, "pulse": 58}, {"date": "2026-06-13 05:32", "diastolic": 88, "systolic": 124, "pulse": 60}, {"date": "2026-06-12 05:16", "diastolic": 88, "systolic": 125, "pulse": 61}, {"date": "2026-06-11 05:16", "diastolic": 78, "systolic": 123, "pulse": 59}, {"date": "2026-06-10 05:16", "diastolic": 82, "systolic": 122, "pulse": 59}, {"date": "2026-06-09 05:16", "diastolic": 83, "systolic": 133, "pulse": 59}, {"date": "2026-06-08 05:19", "diastolic": 88, "systolic": 128, "pulse": 56}, {"date": "2026-06-07 06:42", "diastolic": 77, "systolic": 142, "pulse": 60}]};
+const dashboardData = {"generated": "2026-06-16 09:24", "training": {"week": 7, "phase": "Return to Run", "week_in_phase": 3, "phase_total": 4, "days_to_race": 118, "phase_target_km": "30-40", "this_week_km": 11.2, "last_week_km": 38.5}, "readiness": {"score": 63, "level": "MODERATE", "sleep_score": 76, "hrv_weekly_avg": 30, "resting_hr": 53, "body_battery": 41, "recovery_time": 1, "acwr": 0.99}, "achilles": {"score": 0, "level": "low", "factors": [{"label": "GCT imbalance", "value": "50.6% left", "level": "low"}, {"label": "Weekly load", "value": "11 km (within target)", "level": "low"}, {"label": "Mileage change", "value": "-71% vs last week", "level": "low"}, {"label": "Consecutive days", "value": "Max 2 in a row", "level": "low"}]}, "last_run": {"date": "2026-06-16", "distance_km": 6.0, "avg_pace_min_km": 5.84, "avg_hr": 148.0, "cadence": 180, "gct_balance_left_pct": 50.6, "gct_balance_right_pct": 49.4, "avg_gct_ms": 251.0, "laps": [{"km": 1, "pace": 5.37, "hr": 139.0, "gct": 248.9, "gct_balance": 50.6, "cadence": 0}, {"km": 2, "pace": 5.75, "hr": 147.0, "gct": 251.4, "gct_balance": 50.6, "cadence": 0}, {"km": 3, "pace": 5.84, "hr": 149.0, "gct": 251.5, "gct_balance": 50.8, "cadence": 0}, {"km": 4, "pace": 5.94, "hr": 150.0, "gct": 251.3, "gct_balance": 50.6, "cadence": 0}, {"km": 5, "pace": 5.95, "hr": 152.0, "gct": 249.6, "gct_balance": 50.5, "cadence": 0}, {"km": 6, "pace": 6.17, "hr": 152.0, "gct": 250.7, "gct_balance": 50.5, "cadence": 0}, {"km": 7, "pace": 6.07, "hr": 150.0, "gct": 253.5, "gct_balance": 50.6, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-16", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-15", "distance_km": 5.2, "avg_pace": 5.68, "avg_hr": 145.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-13", "distance_km": 16.0, "avg_pace": 5.89, "avg_hr": 145.0, "gct_balance_left": 50.7, "gct_balance_right": 49.3}, {"date": "2026-06-11", "distance_km": 6.9, "avg_pace": 5.83, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-09", "distance_km": 8.5, "avg_pace": 5.86, "avg_hr": 147.0, "gct_balance_left": 50.3, "gct_balance_right": 49.7}, {"date": "2026-06-08", "distance_km": 7.1, "avg_pace": 5.67, "avg_hr": 144.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-06", "distance_km": 16.0, "avg_pace": 6.04, "avg_hr": 147.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-04", "distance_km": 5.2, "avg_pace": 5.57, "avg_hr": 149.0, "gct_balance_left": 50.5, "gct_balance_right": 49.5}], "blood_pressure": [{"date": "2026-06-16 04:20", "diastolic": 82, "systolic": 124, "pulse": 62}, {"date": "2026-06-15 04:19", "diastolic": 81, "systolic": 131, "pulse": 60}, {"date": "2026-06-14 07:31", "diastolic": 83, "systolic": 131, "pulse": 58}, {"date": "2026-06-13 05:32", "diastolic": 88, "systolic": 124, "pulse": 60}, {"date": "2026-06-12 05:16", "diastolic": 88, "systolic": 125, "pulse": 61}, {"date": "2026-06-11 05:16", "diastolic": 78, "systolic": 123, "pulse": 59}, {"date": "2026-06-10 05:16", "diastolic": 82, "systolic": 122, "pulse": 59}, {"date": "2026-06-09 05:16", "diastolic": 83, "systolic": 133, "pulse": 59}, {"date": "2026-06-08 05:19", "diastolic": 88, "systolic": 128, "pulse": 56}, {"date": "2026-06-07 06:42", "diastolic": 77, "systolic": 142, "pulse": 60}]};
 
 function exportJSON() {
   const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {type:'application/json'});
@@ -1333,4 +1488,4 @@ Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) To
 </script>
 
 </body>
-</html><!-- updated: 2026-06-16 07:36:48 -->
+</html><!-- updated: 2026-06-16 09:24:17 -->
