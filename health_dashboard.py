@@ -908,6 +908,146 @@ def check_and_send_alerts(readiness, achilles, bp_readings):
         body = "\n\n".join(alerts) + f"\n\nDashboard: https://hutcheew.github.io/health-dashboard"
         send_html_email(f"Health Alert — {date.today()}", f"<pre style='font-family:Arial;font-size:14px;color:#f0f2f8;background:#0d0f14;padding:20px'>{chr(10).join(alerts)}<br><br><a href='https://hutcheew.github.io/health-dashboard' style='color:#4f8ef7'>View Dashboard</a></pre>")
 
+def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_info, intervals):
+    """
+    Compute today's training decision:
+    - Status: TRAIN HARD / TRAIN EASY / MODERATE / REST
+    - Recommended session with pace/HR targets
+    - List of green/yellow/red factors
+    - What to avoid today
+    """
+    r_score  = readiness.get("score") or 0
+    a_level  = achilles.get("level", "low")
+    a_score  = achilles.get("score", 0) or 0
+    sleep_s  = sleep.get("score") or readiness.get("sleep_score") or 0
+    hrv_avg  = hrv.get("weekly_avg") or 0
+    tsb      = (intervals or {}).get("latest", {}).get("tsb")
+    phase    = phase_info["phase"]
+    week_num = phase_info["week_num"]
+
+    # Best run window today
+    best_window = "--"
+    today_temp  = "--"
+    if weather and weather.get("days"):
+        d = weather["days"][0]
+        best_window = d.get("best_window", "--")
+        today_temp  = f"{d.get('max_temp','?')}°C"
+
+    # Decision logic
+    factors_green  = []
+    factors_yellow = []
+    factors_red    = []
+
+    # Readiness
+    if r_score >= 75:
+        factors_green.append("Readiness high")
+    elif r_score >= 50:
+        factors_yellow.append(f"Readiness moderate ({r_score}/100)")
+    else:
+        factors_red.append(f"Readiness low ({r_score}/100)")
+
+    # Sleep
+    if sleep_s >= 75:
+        factors_green.append("Sleep good")
+    elif sleep_s >= 55:
+        factors_yellow.append(f"Sleep fair ({sleep_s}/100)")
+    else:
+        factors_red.append(f"Sleep poor ({sleep_s}/100)")
+
+    # HRV
+    if hrv_avg >= 35:
+        factors_green.append("HRV stable")
+    elif hrv_avg >= 25:
+        factors_yellow.append(f"HRV moderate ({hrv_avg}ms)")
+    elif hrv_avg > 0:
+        factors_red.append(f"HRV low ({hrv_avg}ms)")
+
+    # Achilles
+    if a_level == "low":
+        factors_green.append("Achilles risk low")
+    elif a_level == "medium":
+        factors_yellow.append("Achilles risk moderate")
+    else:
+        factors_red.append("Achilles risk HIGH")
+
+    # Training load (TSB)
+    if tsb is not None:
+        if tsb >= 5:
+            factors_green.append(f"Form positive (TSB +{tsb})")
+        elif tsb >= -10:
+            factors_yellow.append(f"Training load balanced (TSB {tsb})")
+        else:
+            factors_red.append(f"Accumulated fatigue (TSB {tsb})")
+
+    # Determine status
+    red_count    = len(factors_red)
+    yellow_count = len(factors_yellow)
+
+    if red_count == 0 and yellow_count <= 1 and r_score >= 75:
+        status     = "TRAIN HARD"
+        status_color = "#3dd68c"
+        status_emoji = "🟢"
+        avoid      = []
+        if phase["name"] in ["Build", "Marathon Specific"]:
+            rec_type = "Tempo or interval session"
+            rec_dist = f"{round(phase['km_min']*0.2)}–{round(phase['km_max']*0.2)} km"
+            rec_pace = "4:30–5:00/km"
+            rec_hr   = "<160 bpm"
+        else:
+            rec_type = "Progressive run"
+            rec_dist = f"{round(phase['km_min']*0.2)}–{round(phase['km_max']*0.2)} km"
+            rec_pace = "5:00–5:30/km"
+            rec_hr   = "<155 bpm"
+    elif red_count == 0 and r_score >= 50:
+        status     = "TRAIN EASY"
+        status_color = "#4f8ef7"
+        status_emoji = "🔵"
+        avoid      = ["Tempo runs", "Intervals", "Long run"]
+        rec_type   = "Easy aerobic run"
+        rec_dist   = f"{round(phase['km_min']*0.15)}–{round(phase['km_min']*0.25)} km"
+        rec_pace   = "5:40–6:10/km"
+        rec_hr     = "<145 bpm"
+    elif red_count <= 1 and r_score >= 40:
+        status     = "MODERATE"
+        status_color = "#f5c842"
+        status_emoji = "🟡"
+        avoid      = ["Tempo runs", "Intervals", "Racing effort"]
+        rec_type   = "Easy recovery run or cross-train"
+        rec_dist   = f"4–6 km"
+        rec_pace   = "6:00–6:30/km"
+        rec_hr     = "<140 bpm"
+    else:
+        status     = "REST DAY"
+        status_color = "#f26565"
+        status_emoji = "🔴"
+        avoid      = ["Running", "High intensity", "Long sessions"]
+        rec_type   = "Rest, gentle walk, or mobility work"
+        rec_dist   = "--"
+        rec_pace   = "--"
+        rec_hr     = "--"
+
+    # Achilles override
+    if a_level == "high":
+        avoid.extend(["Hill repeats", "Speed work", "Back-to-back run days"])
+        rec_type = "Easy flat run only — monitor Achilles closely"
+
+    return {
+        "status":       status,
+        "status_color": status_color,
+        "status_emoji": status_emoji,
+        "factors_green":  factors_green,
+        "factors_yellow": factors_yellow,
+        "factors_red":    factors_red,
+        "rec_type":     rec_type,
+        "rec_dist":     rec_dist,
+        "rec_pace":     rec_pace,
+        "rec_hr":       rec_hr,
+        "avoid":        avoid,
+        "best_window":  best_window,
+        "today_temp":   today_temp,
+    }
+
+
 def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None):
     sleep = garmin_data.get("sleep", {}) if garmin_data else {}
     sleep_duration = sleep.get("total_hrs", "--")
@@ -1151,6 +1291,27 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <td>{c['calories'] or '--'}</td>
         </tr>"""
 
+    # Training Decision Engine
+    decision = compute_training_decision(
+        readiness, achilles, hrv, sleep, weather, phase_info, intervals
+    )
+    dec_status = decision["status"]
+    dec_color  = decision["status_color"]
+    dec_emoji  = decision["status_emoji"]
+
+    def factor_html(factors, color):
+        return "".join(f'<div class="factor"><div class="factor-dot" style="background:{color}"></div>{f}</div>' for f in factors)
+
+    factors_html = (
+        factor_html(decision["factors_green"],  "#3dd68c") +
+        factor_html(decision["factors_yellow"], "#f5c842") +
+        factor_html(decision["factors_red"],    "#f26565")
+    )
+
+    avoid_html = ""
+    if decision["avoid"]:
+        avoid_html = f'<div class="avoid-list">✗ Avoid today: {" · ".join(decision["avoid"])}</div>'
+
     # New metrics
     vo2max           = garmin_data.get("vo2max", "--")
     training_load    = garmin_data.get("training_load", {})
@@ -1180,6 +1341,8 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     tl_total = tl_low + tl_high + tl_ana or 1
 
     # Sleep data
+    sleep          = garmin_data.get("sleep", {})
+    sleep_duration = sleep.get("duration_hrs", "--")
     sleep_deep     = sleep.get("deep_hrs", "--")
     sleep_light    = sleep.get("light_hrs", "--")
     sleep_rem      = sleep.get("rem_hrs", "--")
@@ -1595,6 +1758,69 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   }}
   .btn-purple:hover {{ background: rgba(124,108,247,0.2); }}
 
+  /* ── DECISION ENGINE ── */
+  .decision-card {{
+    border-radius: 12px;
+    border: 1px solid var(--border2);
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }}
+  .decision-card::before {{
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--decision-color, var(--green)) 0%, transparent 60%);
+    opacity: 0.06;
+    pointer-events: none;
+  }}
+  .decision-status {{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }}
+  .decision-sub {{
+    font-size: 11px; color: var(--text3);
+    letter-spacing: 0.5px; margin-bottom: 16px;
+  }}
+  .decision-body {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }}
+  .decision-factors {{ display: flex; flex-direction: column; gap: 6px; }}
+  .factor {{
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text2);
+  }}
+  .factor-dot {{
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }}
+  .decision-rec {{
+    background: var(--surface2);
+    border-radius: 8px; padding: 14px;
+  }}
+  .rec-label {{
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 10px;
+  }}
+  .rec-row {{
+    display: flex; justify-content: space-between;
+    font-size: 12px; padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+  }}
+  .rec-row:last-child {{ border-bottom: none; }}
+  .rec-key {{ color: var(--text3); }}
+  .rec-val {{ color: var(--text); font-weight: 500; }}
+  .avoid-list {{
+    margin-top: 10px; font-size: 11px; color: var(--red);
+  }}
+  @media(max-width:600px) {{
+    .decision-body {{ grid-template-columns: 1fr; }}
+    .decision-status {{ font-size: 22px; }}
+  }}
+
   /* ── RESPONSIVE ── */
   @media (max-width: 600px) {{
     .content {{ padding: 12px; }}
@@ -1633,8 +1859,30 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <!-- ═══════════════════════════════════════════════════════ OVERVIEW -->
 <div class="tab-panel active" id="panel-overview">
 
+  <!-- TRAINING DECISION ENGINE -->
+  <div class="decision-card" style="--decision-color:{dec_color};border-color:{dec_color}33">
+    <div class="decision-status" style="color:{dec_color}">{dec_emoji} {dec_status}</div>
+    <div class="decision-sub">TRAINING DECISION · {TODAY} · Week {week_num}/28 — {phase["name"]}</div>
+    <div class="decision-body">
+      <div class="decision-factors">
+        <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Why</div>
+        {factors_html}
+        {avoid_html}
+      </div>
+      <div class="decision-rec">
+        <div class="rec-label">Recommended Session</div>
+        <div class="rec-row"><span class="rec-key">Type</span><span class="rec-val">{decision["rec_type"]}</span></div>
+        <div class="rec-row"><span class="rec-key">Distance</span><span class="rec-val">{decision["rec_dist"]}</span></div>
+        <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">{decision["rec_pace"]}</span></div>
+        <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val">{decision["rec_hr"]}</span></div>
+        <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">{decision["best_window"]} · {decision["today_temp"]}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VITALS ROW -->
   <div class="section">
-    <div class="section-header"><div class="section-title">Today's Status</div></div>
+    <div class="section-header"><div class="section-title">Today's Vitals</div></div>
     <div class="stat-grid">
       <div class="stat">
         <div class="stat-accent" style="background:{'var(--green)' if isinstance(readiness_score, int) and readiness_score >= 70 else 'var(--yellow)' if isinstance(readiness_score, int) and readiness_score >= 50 else 'var(--red)'}"></div>
