@@ -136,6 +136,88 @@ def fetch_garmin_data(garmin):
     except:
         data["body_battery"] = None
 
+    # VO2 Max + Race predictions
+    try:
+        status = garmin.get_training_status(TODAY)
+        vo2 = status.get("mostRecentVO2Max", {}).get("generic", {})
+        data["vo2max"] = round(vo2.get("vo2MaxPreciseValue", 0), 1) if vo2.get("vo2MaxPreciseValue") else None
+        load = status.get("mostRecentTrainingLoadBalance", {}).get("metricsTrainingLoadBalanceDTOMap", {})
+        if load:
+            first = list(load.values())[0]
+            data["training_load"] = {
+                "aerobic_low":  round(first.get("monthlyLoadAerobicLow", 0)),
+                "aerobic_high": round(first.get("monthlyLoadAerobicHigh", 0)),
+                "anaerobic":    round(first.get("monthlyLoadAnaerobic", 0)),
+                "target_low_min": first.get("monthlyLoadAerobicLowTargetMin"),
+                "target_low_max": first.get("monthlyLoadAerobicLowTargetMax"),
+                "target_high_min": first.get("monthlyLoadAerobicHighTargetMin"),
+                "target_high_max": first.get("monthlyLoadAerobicHighTargetMax"),
+            }
+        else:
+            data["training_load"] = {}
+    except Exception as e:
+        print(f"  Training status failed: {e}")
+        data["vo2max"] = None
+        data["training_load"] = {}
+
+    # Race predictions
+    try:
+        preds = garmin.get_race_predictions()
+        def secs_to_time(s):
+            if not s: return "--"
+            h, m, sec = s//3600, (s%3600)//60, s%60
+            return f"{h}:{m:02d}:{sec:02d}" if h else f"{m}:{sec:02d}"
+        data["race_predictions"] = {
+            "5k":      secs_to_time(preds.get("time5K")),
+            "10k":     secs_to_time(preds.get("time10K")),
+            "half":    secs_to_time(preds.get("timeHalfMarathon")),
+            "marathon": secs_to_time(preds.get("timeMarathon")),
+            "marathon_secs": preds.get("timeMarathon"),
+        }
+    except:
+        data["race_predictions"] = {}
+
+    # Endurance score
+    try:
+        end = garmin.get_endurance_score(TODAY, TODAY)
+        score_dto = end.get("enduranceScoreDTO", {})
+        data["endurance_score"] = {
+            "score": score_dto.get("overallScore"),
+            "classification": score_dto.get("classification"),
+            "lower_well_trained": score_dto.get("classificationLowerLimitWellTrained"),
+            "lower_expert": score_dto.get("classificationLowerLimitExpert"),
+        }
+    except:
+        data["endurance_score"] = {}
+
+    # Running tolerance (injury prevention — load vs capacity)
+    try:
+        tol = garmin.get_running_tolerance(TODAY, TODAY)
+        if tol:
+            t = tol[0]
+            data["running_tolerance"] = {
+                "load": t.get("totalImpactLoad"),
+                "tolerance": t.get("tolerance"),
+                "pct": round(t.get("totalImpactLoad", 0) / t.get("tolerance", 1) * 100) if t.get("tolerance") else None,
+            }
+        else:
+            data["running_tolerance"] = {}
+    except:
+        data["running_tolerance"] = {}
+
+    # Intensity minutes
+    try:
+        im = garmin.get_intensity_minutes_data(TODAY)
+        data["intensity_minutes"] = {
+            "weekly_total": im.get("weeklyTotal"),
+            "weekly_moderate": im.get("weeklyModerate"),
+            "weekly_vigorous": im.get("weeklyVigorous"),
+            "goal": im.get("weekGoal", 150),
+            "goal_met_day": im.get("dayOfGoalMet"),
+        }
+    except:
+        data["intensity_minutes"] = {}
+
     # Sleep data
     try:
         sleep = garmin.get_sleep_data(YESTERDAY)
@@ -1067,9 +1149,35 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <td>{c['calories'] or '--'}</td>
         </tr>"""
 
+    # New metrics
+    vo2max           = garmin_data.get("vo2max", "--")
+    training_load    = garmin_data.get("training_load", {})
+    race_preds       = garmin_data.get("race_predictions", {})
+    endurance        = garmin_data.get("endurance_score", {})
+    run_tolerance    = garmin_data.get("running_tolerance", {})
+    intensity_mins   = garmin_data.get("intensity_minutes", {})
+
+    marathon_secs = race_preds.get("marathon_secs")
+    sub3_secs = 3 * 3600
+    marathon_gap = None
+    if marathon_secs:
+        gap = marathon_secs - sub3_secs
+        sign = "+" if gap > 0 else "-"
+        gap = abs(gap)
+        marathon_gap = f"{sign}{gap//60}:{gap%60:02d} vs sub-3:00"
+
+    tol_pct = run_tolerance.get("pct")
+    tol_color = "var(--green)" if tol_pct and tol_pct < 60 else "var(--yellow)" if tol_pct and tol_pct < 80 else "var(--red)"
+    im_total = intensity_mins.get("weekly_total", 0) or 0
+    im_goal  = intensity_mins.get("goal", 150) or 150
+    im_pct   = min(round(im_total / im_goal * 100), 100) if im_goal else 0
+    im_color = "var(--green)" if im_pct >= 100 else "var(--yellow)" if im_pct >= 60 else "var(--red)"
+    tl_low   = training_load.get("aerobic_low", 0) or 0
+    tl_high  = training_load.get("aerobic_high", 0) or 0
+    tl_ana   = training_load.get("anaerobic", 0) or 0
+    tl_total = tl_low + tl_high + tl_ana or 1
+
     # Sleep data
-    sleep = garmin_data.get("sleep", {})
-    sleep_duration = sleep.get("duration_hrs", "--")
     sleep_deep     = sleep.get("deep_hrs", "--")
     sleep_light    = sleep.get("light_hrs", "--")
     sleep_rem      = sleep.get("rem_hrs", "--")
@@ -1244,6 +1352,11 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#0d0f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Health">
+<link rel="manifest" href="manifest.json">
 <title>Nat's Health Dashboard — {TODAY}</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1508,6 +1621,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   <div class="tab" onclick="switchTab('running')"><span class="tab-icon">⟋</span>Running</div>
   <div class="tab" onclick="switchTab('cycling')"><span class="tab-icon">◯</span>Cycling</div>
   <div class="tab" onclick="switchTab('health')"><span class="tab-icon">♡</span>Health</div>
+  <div class="tab" onclick="switchTab('performance')"><span class="tab-icon">◈</span>Performance</div>
   <div class="tab" onclick="switchTab('bp')"><span class="tab-icon">↕</span>Blood Pressure</div>
   <div class="tab" onclick="switchTab('hrcompare')"><span class="tab-icon">⇌</span>HR Compare</div>
 </div>
@@ -2035,6 +2149,105 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ PERFORMANCE -->
+<div class="tab-panel" id="panel-performance">
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Fitness Metrics</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">VO2 Max</div>
+        <div class="stat-value">{vo2max}</div>
+        <div class="stat-unit">ml/kg/min</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--purple)"></div>
+        <div class="stat-label">Endurance Score</div>
+        <div class="stat-value">{endurance.get('score','--')}</div>
+        <div class="stat-unit">Well Trained 6500+</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{tol_color}"></div>
+        <div class="stat-label">Run Tolerance</div>
+        <div class="stat-value" style="color:{tol_color}">{tol_pct if tol_pct else '--'}%</div>
+        <div class="stat-unit">of weekly capacity</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{im_color}"></div>
+        <div class="stat-label">Intensity Mins</div>
+        <div class="stat-value" style="color:{im_color}">{im_total}</div>
+        <div class="stat-unit">/ {im_goal} min goal</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:{im_pct}%;background:{im_color}"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Race Predictions</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">5K</div>
+        <div class="stat-value sm">{race_preds.get('5k','--')}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-label">10K</div>
+        <div class="stat-value sm">{race_preds.get('10k','--')}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-label">Half Marathon</div>
+        <div class="stat-value sm">{race_preds.get('half','--')}</div>
+      </div>
+      <div class="stat" style="grid-column:span 2">
+        <div class="stat-accent" style="background:{'var(--green)' if marathon_secs and marathon_secs <= sub3_secs else 'var(--orange)'}"></div>
+        <div class="stat-label">Marathon Prediction</div>
+        <div class="stat-value sm" style="color:{'var(--green)' if marathon_secs and marathon_secs <= sub3_secs else 'var(--orange)'}">{race_preds.get('marathon','--')}</div>
+        <div class="stat-unit">{marathon_gap if marathon_gap else ''}</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;">Progress to Sub-3:00</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;border-radius:4px;background:{'var(--green)' if marathon_secs and marathon_secs<=sub3_secs else 'var(--orange)'};width:{min(100, round(sub3_secs/(marathon_secs or sub3_secs)*100))}%"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);white-space:nowrap">PB 3:16 → Goal 3:00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Monthly Training Load</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Aerobic Low</div>
+        <div class="stat-value sm">{tl_low}</div>
+        <div class="stat-unit">target {training_load.get('target_low_min','?')}–{training_load.get('target_low_max','?')}</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:{min(100,round(tl_low/(training_load.get('target_low_max',1) or 1)*100))}%;background:var(--blue)"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--orange)"></div>
+        <div class="stat-label">Aerobic High</div>
+        <div class="stat-value sm">{tl_high}</div>
+        <div class="stat-unit">target {training_load.get('target_high_min','?')}–{training_load.get('target_high_max','?')}</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:{min(100,round(tl_high/(training_load.get('target_high_max',1) or 1)*100))}%;background:var(--orange)"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--red)"></div>
+        <div class="stat-label">Anaerobic</div>
+        <div class="stat-value sm">{tl_ana}</div>
+        <div class="stat-unit">this month</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:{min(100,round(tl_ana/tl_total*100))}%;background:var(--red)"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <!-- ═══════════════════════════════════════════════════════ HR COMPARE -->
 <div class="tab-panel" id="panel-hrcompare">
   <div class="section">
@@ -2062,7 +2275,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <script>
 // ── TAB SWITCHING ──
 function switchTab(name) {{
-  const panels = ['overview','running','cycling','health','bp','hrcompare'];
+  const panels = ['overview','running','cycling','health','performance','bp','hrcompare'];
   document.querySelectorAll('.tab').forEach((t,i) => {{
     t.classList.toggle('active', panels[i] === name);
   }});
@@ -2293,6 +2506,56 @@ new Chart(document.getElementById('sleepStagesChart'), {{
     plugins: {{ legend: {{ display:true, position:'right', labels: {{ color:C.muted, font:{{size:10}}, boxWidth:10 }} }} }},
   }}
 }});
+
+// PWA — Body Battery Push Notification
+(function() {{
+  const bodyBattery = {body_battery if isinstance(body_battery, int) else 'null'};
+  const readinessScore = {readiness_score if isinstance(readiness_score, int) else 'null'};
+
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {{
+    navigator.serviceWorker.register('sw.js').catch(() => {{}});
+  }}
+
+  // Request notification permission and alert on low body battery
+  if ('Notification' in window && bodyBattery !== null) {{
+    if (Notification.permission === 'default') {{
+      // Show install prompt
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;background:#13151c;border:1px solid #4f8ef7;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:1000;font-size:12px;';
+      banner.innerHTML = '<span style="color:#f0f2f8">Enable notifications for body battery alerts?</span><button onclick="requestNotificationPermission()" style="background:#4f8ef7;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap">Enable</button><button onclick="this.parentElement.remove()" style="background:transparent;color:#5c6480;border:none;padding:6px;cursor:pointer">✕</button>';
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 10000);
+    }} else if (Notification.permission === 'granted') {{
+      checkAlerts(bodyBattery, readinessScore);
+    }}
+  }}
+}})();
+
+function requestNotificationPermission() {{
+  Notification.requestPermission().then(p => {{
+    if (p === 'granted') {{
+      new Notification('Health Dashboard', {{ body: 'Notifications enabled! You will be alerted for low body battery.' }});
+      document.querySelector('[onclick="requestNotificationPermission()"]')?.closest('div')?.remove();
+    }}
+  }});
+}}
+
+function checkAlerts(battery, readiness) {{
+  const alerts = [];
+  if (battery !== null && battery < 25) alerts.push(`Body Battery critical: ${{battery}}%`);
+  else if (battery !== null && battery < 40) alerts.push(`Body Battery low: ${{battery}}%`);
+  if (readiness !== null && readiness < 40) alerts.push(`Low readiness: ${{readiness}}/100 — consider rest today`);
+
+  if (alerts.length > 0) {{
+    const lastAlert = localStorage.getItem('lastHealthAlert');
+    const today = new Date().toDateString();
+    if (lastAlert !== today) {{
+      new Notification('Health Alert', {{ body: alerts.join(' | '), icon: '' }});
+      localStorage.setItem('lastHealthAlert', today);
+    }}
+  }}
+}}
 
 // ── EXPORT ──
 const dashboardData = {export_data};
