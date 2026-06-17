@@ -503,21 +503,24 @@ def get_training_phase():
 
 def compute_achilles_score(runs, phase_info):
     """
-    Score 0-100 (higher = more risk).
-    Factors:
-      - GCT imbalance (left bias > 50.5% = yellow, > 51.5% = red)
-      - Weekly mileage vs phase target
-      - Week-on-week mileage change > 10% rule
-      - Readiness score (low readiness + high load = risk)
+    Rebuilt Achilles Risk Score 0-100 (higher = more risk).
+    Based on load vs tissue capacity model:
+      - Long run as % of weekly volume (>30% = risk)
+      - Hard session density last 7 days
+      - GCT imbalance trend (getting worse = risk)
+      - Cadence drop at same pace (compensation signal)
+      - Week-on-week mileage change
+      - Consecutive run days
+      - HR drift trend (aerobic fatigue accumulation)
     """
     if not runs:
-        return {"score": None, "factors": []}
+        return {"score": None, "factors": [], "this_week_km": 0, "last_week_km": 0}
 
+    from collections import defaultdict
     phase = phase_info["phase"]
     km_target_mid = (phase["km_min"] + phase["km_max"]) / 2
 
-    # Weekly mileage last 2 weeks
-    from collections import defaultdict
+    # ── Weekly mileage ────────────────────────────────────────────────────────
     weekly = defaultdict(float)
     for r in runs:
         d = datetime.strptime(r["date"], "%Y-%m-%d")
@@ -527,50 +530,97 @@ def compute_achilles_score(runs, phase_info):
     this_week_km = weekly[weeks_sorted[-1]] if weeks_sorted else 0
     last_week_km = weekly[weeks_sorted[-2]] if len(weeks_sorted) >= 2 else this_week_km
 
-    # GCT balance — last run avg
-    last_run = runs[0]
-    avg_gct_l = round(sum(l["gct_balance"] for l in last_run["laps"]) / len(last_run["laps"]), 1) if last_run["laps"] else 50.0
+    # ── Last 7 days runs ──────────────────────────────────────────────────────
+    today = datetime.now(MELB_TZ).date()
+    recent_runs = [r for r in runs if (today - datetime.strptime(r["date"], "%Y-%m-%d").date()).days <= 7]
+    recent_km   = sum(r["distance"] for r in recent_runs)
 
-    # Score components
     factors = []
-    score = 0
+    score   = 0
 
-    # 1. GCT imbalance
-    gct_diff = abs(avg_gct_l - 50)
-    if gct_diff >= 2:
-        score += 35
-        factors.append({"label": "GCT imbalance", "value": f"{avg_gct_l}% left", "level": "high"})
-    elif gct_diff >= 1:
-        score += 15
-        factors.append({"label": "GCT imbalance", "value": f"{avg_gct_l}% left", "level": "medium"})
-    else:
-        factors.append({"label": "GCT imbalance", "value": f"{avg_gct_l}% left", "level": "low"})
-
-    # 2. Weekly mileage vs target
-    if km_target_mid > 0:
-        load_ratio = this_week_km / km_target_mid
-        if load_ratio > 1.2:
-            score += 25
-            factors.append({"label": "Weekly load", "value": f"{this_week_km:.0f} km (>{phase['km_max']} target)", "level": "high"})
-        elif load_ratio > 1.0:
-            score += 10
-            factors.append({"label": "Weekly load", "value": f"{this_week_km:.0f} km (on target)", "level": "medium"})
+    # ── 1. Long run as % of weekly volume ─────────────────────────────────────
+    # Most important Achilles risk factor
+    if recent_runs and recent_km > 0:
+        longest_run = max(r["distance"] for r in recent_runs)
+        long_run_pct = round(longest_run / recent_km * 100, 1)
+        if long_run_pct > 40:
+            score += 30
+            factors.append({"label": "Long run ratio", "value": f"{long_run_pct}% of weekly vol ({longest_run:.1f}km)", "level": "high"})
+        elif long_run_pct > 30:
+            score += 15
+            factors.append({"label": "Long run ratio", "value": f"{long_run_pct}% of weekly vol", "level": "medium"})
         else:
-            factors.append({"label": "Weekly load", "value": f"{this_week_km:.0f} km (within target)", "level": "low"})
+            factors.append({"label": "Long run ratio", "value": f"{long_run_pct}% of weekly vol ✓", "level": "low"})
+    
+    # ── 2. Hard session density (quality sessions last 7 days) ────────────────
+    # A "hard" run = avg pace < 5:30/km or avg HR > 155
+    hard_sessions = sum(1 for r in recent_runs 
+                        if (r.get("avg_pace") and r["avg_pace"] < 5.5) 
+                        or (r.get("avg_hr") and r["avg_hr"] > 155))
+    if hard_sessions >= 3:
+        score += 25
+        factors.append({"label": "Hard session density", "value": f"{hard_sessions} quality sessions in 7 days", "level": "high"})
+    elif hard_sessions == 2:
+        score += 12
+        factors.append({"label": "Hard session density", "value": f"{hard_sessions} quality sessions in 7 days", "level": "medium"})
+    else:
+        factors.append({"label": "Hard session density", "value": f"{hard_sessions} quality sessions in 7 days ✓", "level": "low"})
 
-    # 3. Week-on-week change > 10%
+    # ── 3. GCT imbalance trend (last 3 runs) ──────────────────────────────────
+    # Worsening imbalance = compensation pattern
+    gct_trend = []
+    for r in runs[:3]:
+        if r["laps"]:
+            avg_l = sum(l["gct_balance"] for l in r["laps"]) / len(r["laps"])
+            gct_trend.append(round(avg_l, 2))
+    
+    last_gct_l = gct_trend[0] if gct_trend else 50.0
+    gct_diff   = abs(last_gct_l - 50)
+    
+    if len(gct_trend) >= 2:
+        gct_worsening = gct_trend[0] > gct_trend[1] and gct_trend[0] > 50.5  # left bias increasing
+    else:
+        gct_worsening = False
+
+    if gct_diff >= 2:
+        score += 20
+        factors.append({"label": "GCT imbalance", "value": f"L{last_gct_l}% {'↑ worsening' if gct_worsening else ''}", "level": "high"})
+    elif gct_diff >= 1 or gct_worsening:
+        score += 10
+        factors.append({"label": "GCT imbalance", "value": f"L{last_gct_l}% {'↑ worsening' if gct_worsening else ''}", "level": "medium"})
+    else:
+        factors.append({"label": "GCT imbalance", "value": f"L{last_gct_l}% balanced ✓", "level": "low"})
+
+    # ── 4. Cadence drop at similar pace (compensation signal) ─────────────────
+    if len(runs) >= 3:
+        recent_cadence = [r.get("cadence", 0) for r in runs[:3] if r.get("cadence")]
+        older_cadence  = [r.get("cadence", 0) for r in runs[3:6] if r.get("cadence")]
+        if recent_cadence and older_cadence:
+            avg_recent = sum(recent_cadence) / len(recent_cadence)
+            avg_older  = sum(older_cadence) / len(older_cadence)
+            cadence_drop = avg_older - avg_recent
+            if cadence_drop > 5:
+                score += 15
+                factors.append({"label": "Cadence trend", "value": f"↓ {cadence_drop:.0f} spm vs recent avg — compensation?", "level": "high"})
+            elif cadence_drop > 2:
+                score += 7
+                factors.append({"label": "Cadence trend", "value": f"↓ {cadence_drop:.0f} spm slight drop", "level": "medium"})
+            else:
+                factors.append({"label": "Cadence trend", "value": f"Stable {avg_recent:.0f} spm ✓", "level": "low"})
+
+    # ── 5. Week-on-week mileage change ────────────────────────────────────────
     if last_week_km > 0:
         wow_change = (this_week_km - last_week_km) / last_week_km * 100
         if wow_change > 20:
-            score += 25
+            score += 15
             factors.append({"label": "Mileage spike", "value": f"+{wow_change:.0f}% vs last week", "level": "high"})
         elif wow_change > 10:
-            score += 10
+            score += 7
             factors.append({"label": "Mileage spike", "value": f"+{wow_change:.0f}% vs last week", "level": "medium"})
         else:
-            factors.append({"label": "Mileage change", "value": f"{wow_change:+.0f}% vs last week", "level": "low"})
+            factors.append({"label": "Mileage change", "value": f"{wow_change:+.0f}% vs last week ✓", "level": "low"})
 
-    # 4. Consecutive run days
+    # ── 6. Consecutive run days ───────────────────────────────────────────────
     run_dates = sorted(set(r["date"] for r in runs[:7]))
     max_consec = 1
     consec = 1
@@ -582,15 +632,29 @@ def compute_achilles_score(runs, phase_info):
             max_consec = max(max_consec, consec)
         else:
             consec = 1
-    if max_consec >= 3:
+    if max_consec >= 4:
         score += 15
         factors.append({"label": "Consecutive days", "value": f"{max_consec} days in a row", "level": "high"})
+    elif max_consec >= 3:
+        score += 7
+        factors.append({"label": "Consecutive days", "value": f"{max_consec} days in a row", "level": "medium"})
     else:
-        factors.append({"label": "Consecutive days", "value": f"Max {max_consec} in a row", "level": "low"})
+        factors.append({"label": "Consecutive days", "value": f"Max {max_consec} in a row ✓", "level": "low"})
 
     score = min(score, 100)
     level = "high" if score >= 60 else "medium" if score >= 30 else "low"
-    return {"score": score, "level": level, "factors": factors, "this_week_km": round(this_week_km, 1), "last_week_km": round(last_week_km, 1)}
+
+    return {
+        "score":         score,
+        "level":         level,
+        "factors":       factors,
+        "this_week_km":  round(this_week_km, 1),
+        "last_week_km":  round(last_week_km, 1),
+        "recent_km":     round(recent_km, 1),
+        "hard_sessions": hard_sessions,
+        "gct_trend":     gct_trend,
+    }
+
 
 # ─── AI COMMENTARY ───────────────────────────────────────────────────────────
 
@@ -1049,8 +1113,6 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
 
 
 def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None):
-    sleep = garmin_data.get("sleep", {}) if garmin_data else {}
-    sleep_duration = sleep.get("total_hrs", "--")
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -1209,6 +1271,124 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         "recent_runs": recent_runs_export,
         "blood_pressure": bp_readings[:10],
     }, default=str)
+
+    # ── COACH PANEL DATA ─────────────────────────────────────────────────────
+
+    # Aerobic decoupling — compare HR vs pace first half vs second half of last run
+    decoupling_pct  = None
+    decoupling_status = "N/A"
+    decoupling_color = "var(--text3)"
+    if laps and len(laps) >= 4:
+        half = len(laps) // 2
+        first_half = laps[:half]
+        second_half = laps[half:]
+        def avg_efficiency(lap_list):
+            valid = [(l["pace"], l["hr"]) for l in lap_list if l.get("pace") and l.get("hr") and l["hr"] > 0]
+            if not valid: return None
+            return sum(p / h for p, h in valid) / len(valid)
+        eff1 = avg_efficiency(first_half)
+        eff2 = avg_efficiency(second_half)
+        if eff1 and eff2 and eff1 > 0:
+            decoupling_pct = round(abs(eff2 - eff1) / eff1 * 100, 1)
+            if decoupling_pct < 3:
+                decoupling_status = "Excellent"
+                decoupling_color = "var(--green)"
+            elif decoupling_pct < 5:
+                decoupling_status = "Good"
+                decoupling_color = "var(--green)"
+            elif decoupling_pct < 8:
+                decoupling_status = "Moderate — more Zone 2"
+                decoupling_color = "var(--yellow)"
+            else:
+                decoupling_status = "High — aerobic base needed"
+                decoupling_color = "var(--red)"
+
+    # HR Efficiency trend — pace/HR ratio per recent run (higher = better)
+    hr_eff_labels = json.dumps([r["date"] for r in reversed(runs[:8])])
+    hr_eff_values = json.dumps([
+        round(r["avg_pace"] / r["avg_hr"] * 1000, 2)
+        if r.get("avg_pace") and r.get("avg_hr") and r["avg_hr"] > 0 else None
+        for r in reversed(runs[:8])
+    ])
+
+    # Running Form Score (0-100)
+    form_score = None
+    form_factors = []
+    if laps:
+        avg_cadence = last_run.get("cadence", 0)
+        avg_gct_val = last_gct_avg if isinstance(last_gct_avg, (int, float)) else 0
+        gct_diff = abs(last_gct_balance - 50) if last_gct_balance else 0
+
+        cadence_score = min(100, max(0, int((avg_cadence - 155) / (185 - 155) * 100))) if avg_cadence else 0
+        gct_score     = max(0, 100 - int(avg_gct_val - 220) * 2) if avg_gct_val > 220 else 100
+        balance_score = max(0, 100 - int(gct_diff * 20))
+        form_score    = round((cadence_score * 0.35 + gct_score * 0.35 + balance_score * 0.3))
+
+        form_factors = [
+            {"label": "Cadence", "value": f"{avg_cadence} spm", "score": cadence_score,
+             "status": "✓" if avg_cadence >= 170 else "↑"},
+            {"label": "GCT", "value": f"{last_gct_avg} ms", "score": gct_score,
+             "status": "✓" if avg_gct_val <= 260 else "↑"},
+            {"label": "Balance", "value": f"L{last_gct_balance}%/R{last_gct_balance_r}%", "score": balance_score,
+             "status": "✓" if gct_diff < 1 else "⚠" if gct_diff < 2 else "✗"},
+        ]
+
+    form_color = "var(--green)" if form_score and form_score >= 80 else "var(--yellow)" if form_score and form_score >= 60 else "var(--red)"
+
+    # Coach note
+    coach_insights = []
+    if avg_cadence := last_run.get("cadence", 0):
+        if avg_cadence >= 175:
+            coach_insights.append("Cadence is excellent — maintain this.")
+        elif avg_cadence >= 165:
+            coach_insights.append("Cadence is good — aim for 175+ on easy runs.")
+        else:
+            coach_insights.append("Cadence is low — focus on quick light steps.")
+
+    if decoupling_pct is not None:
+        if decoupling_pct < 5:
+            coach_insights.append("Aerobic efficiency is strong — ready to build mileage.")
+        else:
+            coach_insights.append(f"Aerobic drift {decoupling_pct}% — prioritise Zone 2 this week.")
+
+    latest_ctl_val = latest_ctl.get("ctl", 0) or 0
+    latest_tsb_val = latest_ctl.get("tsb", 0) or 0
+    if latest_tsb_val < -10:
+        coach_insights.append("Form is negative — fatigue accumulating, consider easy days.")
+    elif latest_tsb_val > 10:
+        coach_insights.append("Form is positive — well rested, good time for a quality session.")
+    else:
+        coach_insights.append("Form is neutral — consistent training is working.")
+
+    if not coach_insights:
+        coach_insights.append("Keep building your aerobic base consistently.")
+
+    coach_note_html = "".join(f'<div style="margin-bottom:8px;padding-left:12px;border-left:2px solid var(--purple);font-size:13px;color:var(--text2);line-height:1.5">{c}</div>' for c in coach_insights)
+
+    # Form factors HTML
+    form_factors_html = ""
+    for f in form_factors:
+        bar_w = f["score"]
+        bar_col = "var(--green)" if f["score"] >= 80 else "var(--yellow)" if f["score"] >= 60 else "var(--red)"
+        form_factors_html += f"""
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;color:var(--text2)">{f['status']} {f['label']}</span>
+            <span style="font-size:12px;color:{bar_col};font-family:'JetBrains Mono',monospace">{f['value']}</span>
+          </div>
+          <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:{bar_w}%;background:{bar_col};border-radius:2px"></div>
+          </div>
+        </div>"""
+
+    # CTL/ATL/TSB bar display
+    ctl_val  = latest_ctl.get("ctl", 0) or 0
+    atl_val  = latest_ctl.get("atl", 0) or 0
+    tsb_val  = latest_ctl.get("tsb", 0) or 0
+    ctl_pct  = min(100, round(ctl_val / 100 * 100))  # assume 100 CTL = elite
+    atl_pct  = min(100, round(atl_val / 100 * 100))
+    tsb_col  = "var(--green)" if tsb_val >= 0 else "var(--red)"
+    tsb_abs  = min(100, round(abs(tsb_val) / 30 * 100))
 
     # Pre-build table rows (avoids nested f-string issues in Python < 3.12)
     run_table_rows = ""
@@ -2020,6 +2200,87 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <!-- ═══════════════════════════════════════════════════════ RUNNING -->
 <div class="tab-panel" id="panel-running">
 
+  <!-- COACH PANEL -->
+  <div class="section">
+    <div class="section-header"><div class="section-title">Running Coach Panel</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+
+      <!-- CTL/ATL/TSB -->
+      <div class="chart-box">
+        <div class="chart-label">Fitness / Fatigue / Form</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;color:var(--text2)">Fitness (CTL)</span>
+            <span style="font-size:12px;color:var(--blue);font-family:'JetBrains Mono',monospace">{round(ctl_val,1)}</span>
+          </div>
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:{ctl_pct}%;background:var(--blue);border-radius:3px"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;color:var(--text2)">Fatigue (ATL)</span>
+            <span style="font-size:12px;color:var(--red);font-family:'JetBrains Mono',monospace">{round(atl_val,1)}</span>
+          </div>
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:{atl_pct}%;background:var(--red);border-radius:3px"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;color:var(--text2)">Form (TSB)</span>
+            <span style="font-size:12px;color:{tsb_col};font-family:'JetBrains Mono',monospace">{round(tsb_val,1):+.1f}</span>
+          </div>
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:{tsb_abs}%;background:{tsb_col};border-radius:3px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Running Form Score -->
+      <div class="chart-box">
+        <div class="chart-label">Running Form Score</div>
+        <div style="text-align:center;margin-bottom:12px">
+          <div style="font-size:42px;font-weight:700;color:{form_color};font-family:'JetBrains Mono',monospace">{form_score if form_score else '--'}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">/ 100</div>
+        </div>
+        {form_factors_html}
+      </div>
+
+      <!-- Aerobic Decoupling -->
+      <div class="chart-box">
+        <div class="chart-label">Aerobic Decoupling</div>
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:36px;font-weight:700;color:{decoupling_color};font-family:'JetBrains Mono',monospace">{f'{decoupling_pct}%' if decoupling_pct is not None else '--'}</div>
+          <div style="font-size:12px;color:{decoupling_color};margin-top:4px">{decoupling_status}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">Target: &lt;5%</div>
+        </div>
+        <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:12px">
+          <div style="height:100%;width:{min(100, round(decoupling_pct/10*100)) if decoupling_pct else 0}%;background:{decoupling_color};border-radius:3px"></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3)">HR vs pace efficiency comparing first vs second half of run. &lt;5% = aerobically efficient.</div>
+      </div>
+
+    </div>
+
+    <!-- Coach Note -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">Coach Note</div>
+      {coach_note_html}
+    </div>
+  </div>
+
+  <!-- HR Efficiency Trend -->
+  <div class="section">
+    <div class="section-header"><div class="section-title">HR Efficiency Trend</div></div>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-label">Pace/HR ratio — higher = more efficient (fitness improving)</div>
+        <canvas id="hrEffChart"></canvas>
+      </div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-header"><div class="section-title">Last Run — {last_run.get('date','--')} · {last_run.get('distance','--')} km</div></div>
     <div class="stat-grid">
@@ -2694,6 +2955,32 @@ new Chart(document.getElementById('mileageChangeChart'), {{
       }} }}
     }},
     scales: {{ ...base.scales, y: {{ ...base.scales.y, ticks: {{ ...base.scales.y.ticks, callback: v => v + '%' }} }} }}
+  }}
+}});
+
+// HR Efficiency Trend
+new Chart(document.getElementById('hrEffChart'), {{
+  type: 'line',
+  data: {{
+    labels: {hr_eff_labels},
+    datasets: [{{
+      label: 'HR Efficiency (pace/HR)',
+      data: {hr_eff_values},
+      borderColor: C.purple,
+      backgroundColor: 'rgba(124,108,247,0.1)',
+      tension: 0.3, fill: true, pointRadius: 4,
+      pointBackgroundColor: {hr_eff_values}.map(v => v ? C.purple : 'transparent'),
+      spanGaps: true,
+    }}]
+  }},
+  options: {{ ...base,
+    plugins: {{ legend: {{ display: false }} }},
+    scales: {{ ...base.scales,
+      y: {{ ...base.scales.y,
+        ticks: {{ ...base.scales.y.ticks, callback: v => v.toFixed(2) }},
+        title: {{ display: true, text: 'Higher = better', color: C.muted, font: {{size:9}} }}
+      }}
+    }}
   }}
 }});
 
