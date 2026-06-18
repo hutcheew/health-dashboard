@@ -1529,7 +1529,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     recovery_html = ""
     for f in recovery_factors:
         col = "var(--green)" if f["status"] == "good" else "var(--yellow)" if f["status"] == "moderate" else "var(--red)"
-        recovery_html += f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">{f["label"]}</span><span style="color:{col};font-family:JetBrains Mono,monospace">{f.get("value", "--")}</span></div>'
+        recovery_html += f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">{f["label"]}</span><span style="color:{col};font-family:JetBrains Mono,monospace">{f["value"]}</span></div>'
 
     # Workout HTML
     avoid_items = "".join(f'<span style="background:rgba(242,101,101,0.1);color:var(--red);padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">{a}</span>' for a in workout.get("avoid", []))
