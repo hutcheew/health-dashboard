@@ -1421,7 +1421,10 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     body_battery= garmin_data.get("body_battery", "--")
     last_run    = runs[0] if runs else {}
     laps        = last_run.get("laps", [])
-
+# Safety defaults to prevent UnboundLocalErrors
+    sleep = garmin_data.get("sleep", {}) if garmin_data else {}
+    sleep_duration = sleep.get("total_hrs", "--")
+    latest_ctl = intervals if intervals else {}
     # GCT trend across recent runs (avg balance per run)
     gct_trend_labels = json.dumps([r["date"] for r in reversed(runs[:8])])
     gct_trend_values = json.dumps([
