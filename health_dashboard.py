@@ -41,11 +41,11 @@ def get_garmin():
 def fetch_garmin_data(garmin):
     data = {}
 
-    # Recent activities
-    activities = garmin.get_activities(0, 10)
+    # Recent activities — fetch 20 to get enough history for load calculations
+    activities = garmin.get_activities(0, 20)
     runs = [a for a in activities if a.get("activityType", {}).get("typeKey") == "running"]
     data["runs"] = []
-    for r in runs[:8]:
+    for r in runs[:10]:
         aid = r["activityId"]
         splits = garmin.get_activity_splits(aid)
         laps = splits.get("lapDTOs", [])
@@ -67,6 +67,7 @@ def fetch_garmin_data(garmin):
             "avg_pace": round(1000 / r.get("averageSpeed", 1) / 60, 2) if r.get("averageSpeed") else None,
             "cadence": round(r.get("averageRunningCadenceInStepsPerMinute", 0)),
             "calories": r.get("calories"),
+            "elevation": round(r.get("elevationGain", 0) or 0),
             "laps": lap_data,
         })
 
@@ -501,24 +502,326 @@ def get_training_phase():
 
 # ─── ACHILLES LOAD SCORE ─────────────────────────────────────────────────────
 
+# ─── COACHING ENGINE ─────────────────────────────────────────────────────────
+
+def compute_training_load(run):
+    """
+    Training Load = Distance x Intensity Factor x HR Factor
+    Returns 0-100+ stress score for a single run.
+    """
+    dist = run.get("distance", 0)
+    hr   = run.get("avg_hr", 0) or 0
+    pace = run.get("avg_pace", 6.0) or 6.0
+    elev = run.get("elevation", 0) or 0
+
+    # HR intensity factor
+    if hr < 130:      hr_factor = 0.7
+    elif hr < 140:    hr_factor = 0.85
+    elif hr < 150:    hr_factor = 1.0   # easy/moderate
+    elif hr < 160:    hr_factor = 1.3   # moderate/hard
+    else:             hr_factor = 1.6   # hard
+
+    # Pace intensity factor (faster = more stress)
+    if pace < 4.5:    pace_factor = 1.5
+    elif pace < 5.0:  pace_factor = 1.3
+    elif pace < 5.5:  pace_factor = 1.1
+    elif pace < 6.0:  pace_factor = 1.0
+    else:             pace_factor = 0.9
+
+    # Elevation factor
+    elev_factor = 1.0 + (elev / 1000) * 0.2  # +20% per 1000m gain
+
+    load = dist * hr_factor * pace_factor * elev_factor
+    return round(load, 1)
+
+def classify_session(run):
+    """Classify run as easy/moderate/hard based on HR."""
+    hr = run.get("avg_hr", 0) or 0
+    if hr < 140:   return "easy"
+    elif hr < 155: return "moderate"
+    else:          return "hard"
+
+def compute_weekly_loads(runs):
+    """Compute per-run loads and weekly acute/chronic totals."""
+    from collections import defaultdict
+    today   = datetime.now(MELB_TZ).date()
+    loads   = {}
+    weekly  = defaultdict(float)
+    session_types = []
+
+    for r in runs:
+        load = compute_training_load(r)
+        loads[r["date"]] = load
+        d  = datetime.strptime(r["date"], "%Y-%m-%d").date()
+        wk = datetime.strptime(r["date"], "%Y-%m-%d").strftime("%Y-W%W")
+        weekly[wk] += load
+        days_ago = (today - d).days
+        session_types.append({
+            "date": r["date"],
+            "days_ago": days_ago,
+            "load": load,
+            "type": classify_session(r),
+            "distance": r["distance"],
+            "hr": r.get("avg_hr", 0),
+        })
+
+    # Acute load = last 7 days
+    acute  = sum(s["load"] for s in session_types if s["days_ago"] <= 7)
+    # Chronic load = last 28 days / 4 (weekly avg)
+    chronic_total = sum(s["load"] for s in session_types if s["days_ago"] <= 28)
+    chronic = chronic_total / 4 if chronic_total > 0 else 1
+
+    acr = round(acute / chronic, 2) if chronic > 0 else 1.0
+
+    # Intensity distribution last 7 days
+    recent = [s for s in session_types if s["days_ago"] <= 7]
+    total_recent = len(recent) or 1
+    easy_pct = round(sum(1 for s in recent if s["type"] == "easy") / total_recent * 100)
+    mod_pct  = round(sum(1 for s in recent if s["type"] == "moderate") / total_recent * 100)
+    hard_pct = round(sum(1 for s in recent if s["type"] == "hard") / total_recent * 100)
+
+    # Back-to-back stress — hard/long runs within 4 days
+    hard_long = [s for s in session_types if s["days_ago"] <= 7 and (s["type"] == "hard" or s["distance"] >= 14)]
+    btb_risk = False
+    if len(hard_long) >= 2:
+        dates = sorted([datetime.strptime(s["date"], "%Y-%m-%d") for s in hard_long])
+        for i in range(1, len(dates)):
+            if (dates[i] - dates[i-1]).days <= 4:
+                btb_risk = True
+                break
+
+    return {
+        "acute": round(acute, 1),
+        "chronic": round(chronic, 1),
+        "acr": acr,
+        "acr_status": "optimal" if 0.8 <= acr <= 1.3 else "high" if acr > 1.3 else "low",
+        "easy_pct": easy_pct,
+        "mod_pct": mod_pct,
+        "hard_pct": hard_pct,
+        "btb_risk": btb_risk,
+        "session_types": session_types,
+        "weekly": dict(weekly),
+    }
+
+def compute_recovery_score(readiness, hrv, sleep, resting_hr):
+    """
+    Recovery Score v3 — weighted composite 0-100.
+    Weights: HRV 35%, Sleep 30%, Resting HR 20%, Training load 15%
+    Each input normalised to 0-100 against reasonable baselines.
+    Bands: 80-100 = Green · 50-79 = Yellow · <50 = Red
+    """
+    components = []
+
+    # HRV — 35% weight
+    # Normalise vs typical recreational runner range 25-65ms
+    hrv_avg = hrv.get("weekly_avg", 0) or 0
+    if hrv_avg > 0:
+        hrv_norm = min(100, max(0, (hrv_avg - 25) / (65 - 25) * 100))
+        hrv_score = round(hrv_norm * 0.35)
+        status = "good" if hrv_avg >= 45 else "moderate" if hrv_avg >= 30 else "low"
+        components.append({"label": f"HRV ({hrv_avg}ms)", "score": hrv_score, "weight": "35%", "status": status})
+    else:
+        hrv_score = 17  # neutral when no data
+        components.append({"label": "HRV (no data)", "score": hrv_score, "weight": "35%", "status": "unknown"})
+
+    # Sleep — 30% weight
+    sleep_score_val = readiness.get("sleep_score", 0) or 0
+    sleep_dur = sleep.get("duration_hrs", 0) or 0
+    if sleep_score_val > 0:
+        sleep_norm = min(100, sleep_score_val)
+        sleep_contrib = round(sleep_norm * 0.30)
+        status = "good" if sleep_score_val >= 80 else "moderate" if sleep_score_val >= 60 else "low"
+        components.append({"label": f"Sleep ({sleep_score_val}/100, {sleep_dur}h)", "score": sleep_contrib, "weight": "30%", "status": status})
+    else:
+        sleep_contrib = 15
+        components.append({"label": "Sleep (no data)", "score": sleep_contrib, "weight": "30%", "status": "unknown"})
+
+    # Resting HR — 20% weight
+    # Normalise: 40bpm = excellent (100), 80bpm = poor (0)
+    rhr = resting_hr if isinstance(resting_hr, (int, float)) and resting_hr > 0 else 0
+    if rhr > 0:
+        rhr_norm = min(100, max(0, (80 - rhr) / (80 - 40) * 100))
+        rhr_contrib = round(rhr_norm * 0.20)
+        status = "good" if rhr <= 50 else "moderate" if rhr <= 60 else "low"
+        components.append({"label": f"Resting HR ({rhr} bpm)", "score": rhr_contrib, "weight": "20%", "status": status})
+    else:
+        rhr_contrib = 10
+        components.append({"label": "Resting HR (no data)", "score": rhr_contrib, "weight": "20%", "status": "unknown"})
+
+    # Training load (ACR) — 15% weight
+    # Optimal ACR 0.8-1.3 = 100, >1.5 = 0
+    r_score = readiness.get("score", 0) or 0
+    if r_score > 0:
+        load_norm = min(100, r_score)
+        load_contrib = round(load_norm * 0.15)
+        status = "good" if r_score >= 70 else "moderate" if r_score >= 50 else "low"
+        components.append({"label": f"Readiness ({r_score}/100)", "score": load_contrib, "weight": "15%", "status": status})
+    else:
+        load_contrib = 7
+        components.append({"label": "Readiness (no data)", "score": load_contrib, "weight": "15%", "status": "unknown"})
+
+    total = hrv_score + sleep_contrib + rhr_contrib + load_contrib
+    total = min(total, 100)
+
+    return {
+        "score":  total,
+        "level":  "good" if total >= 80 else "moderate" if total >= 50 else "poor",
+        "factors": components,
+    }
+
+def injury_detective(runs, achilles_score):
+    """
+    Look back 21 days and rank contributors to current injury risk.
+    """
+    today = datetime.now(MELB_TZ).date()
+    recent = [r for r in runs if (today - datetime.strptime(r["date"], "%Y-%m-%d").date()).days <= 21]
+    if not recent or achilles_score < 30:
+        return []
+
+    contributors = []
+    for r in recent:
+        load = compute_training_load(r)
+        risk_pct = 0
+        reasons = []
+        dist = r.get("distance", 0)
+        hr   = r.get("avg_hr", 0) or 0
+
+        if dist >= 19:
+            risk_pct += 42
+            reasons.append(f"{dist}km long run")
+        elif dist >= 16:
+            risk_pct += 20
+            reasons.append(f"{dist}km long run")
+
+        if hr > 148 and dist >= 14:
+            risk_pct += 15
+            reasons.append(f"HR {hr} on long run")
+
+        if load > 20:
+            risk_pct += 10
+            reasons.append(f"High load session ({load})")
+
+        if risk_pct > 0:
+            contributors.append({
+                "date": r["date"],
+                "distance": dist,
+                "hr": hr,
+                "load": load,
+                "risk_pct": risk_pct,
+                "reasons": reasons,
+            })
+
+    contributors.sort(key=lambda x: x["risk_pct"], reverse=True)
+    return contributors[:4]
+
+def generate_workout(decision, phase_info, achilles):
+    """
+    Generate specific workout recommendation based on current state.
+    Goal: Sub-3:00 marathon.
+    """
+    phase = phase_info["phase"]
+    level = decision.get("level", "easy")
+    a_level = achilles.get("level", "low")
+    week = phase_info["week_num"]
+
+    if level == "rest":
+        return {
+            "type": "Rest",
+            "description": "Complete rest or gentle walk only.",
+            "distance": "0 km",
+            "pace": "--",
+            "hr": "--",
+            "avoid": ["Running", "High impact"],
+        }
+
+    if a_level == "high":
+        return {
+            "type": "Easy Recovery Run",
+            "description": "Short easy run only — Achilles risk is elevated.",
+            "distance": "4-6 km",
+            "pace": "6:00-6:30/km",
+            "hr": "<135 bpm",
+            "avoid": ["Tempo", "Intervals", "Hills", "Long run"],
+        }
+
+    if level == "easy":
+        if week <= 8:
+            return {
+                "type": "Easy Base Run",
+                "description": "Easy aerobic run. Focus on relaxed form and cadence.",
+                "distance": "6-8 km",
+                "pace": "5:45-6:15/km",
+                "hr": "<145 bpm",
+                "avoid": ["Tempo", "Intervals"],
+            }
+        else:
+            return {
+                "type": "Easy Run + Strides",
+                "description": "Easy run with 4x20s strides at the end.",
+                "distance": "8-10 km",
+                "pace": "5:30-6:00/km",
+                "hr": "<148 bpm",
+                "avoid": ["Tempo", "Hills"],
+            }
+
+    if level == "moderate":
+        if week <= 8:
+            return {
+                "type": "Moderate Easy Run",
+                "description": "Comfortable effort — should be able to hold a conversation.",
+                "distance": "8-10 km",
+                "pace": "5:30-5:50/km",
+                "hr": "<150 bpm",
+                "avoid": ["Hard intervals", "Long run"],
+            }
+        else:
+            return {
+                "type": "Tempo Run",
+                "description": "Warm up 2km, 4km at tempo effort, cool down 2km.",
+                "distance": "8 km",
+                "pace": "4:50-5:10/km (tempo portion)",
+                "hr": "155-165 bpm",
+                "avoid": ["Back-to-back hard sessions"],
+            }
+
+    # Hard day
+    if week >= 17:
+        return {
+            "type": "Marathon Pace Run",
+            "description": "Warm up 2km, 8-10km at marathon goal pace (4:15-4:20/km), cool down 2km.",
+            "distance": "12-14 km",
+            "pace": "4:15-4:20/km (race portion)",
+            "hr": "158-168 bpm",
+            "avoid": ["Skipping warm-up"],
+        }
+    return {
+        "type": "Quality Session",
+        "description": "Interval or tempo work based on phase focus.",
+        "distance": "10 km",
+        "pace": "5:00-5:20/km",
+        "hr": "155-165 bpm",
+        "avoid": ["Too much volume same week"],
+    }
+
 def compute_achilles_score(runs, phase_info):
     """
-    Rebuilt Achilles Risk Score 0-100 (higher = more risk).
-    Based on load vs tissue capacity model:
-      - Long run as % of weekly volume (>30% = risk)
-      - Hard session density last 7 days
-      - GCT imbalance trend (getting worse = risk)
-      - Cadence drop at same pace (compensation signal)
-      - Week-on-week mileage change
-      - Consecutive run days
-      - HR drift trend (aerobic fatigue accumulation)
+    Achilles Watch-List v3 — flag system, not a risk prediction.
+    Based on patterns associated with Achilles overload in literature.
+    High score = "worth paying attention to", not a probability of injury.
+    Weights are unvalidated starting guesses — adjust based on personal outcome log.
+
+    Bands:
+      0-20:  Nothing notable
+      21-45: Watch — keep an eye on load and form
+      46-70: Several flags — consider easing back, check with physio
+      71+:   Many flags stacked — consider rest and professional assessment
     """
     if not runs:
-        return {"score": None, "factors": [], "this_week_km": 0, "last_week_km": 0}
+        return {"score": None, "level": "low", "factors": [], "this_week_km": 0, "last_week_km": 0,
+                "disclaimer": "No recent run data available."}
 
     from collections import defaultdict
     phase = phase_info["phase"]
-    km_target_mid = (phase["km_min"] + phase["km_max"]) / 2
 
     # ── Weekly mileage ────────────────────────────────────────────────────────
     weekly = defaultdict(float)
@@ -530,129 +833,127 @@ def compute_achilles_score(runs, phase_info):
     this_week_km = weekly[weeks_sorted[-1]] if weeks_sorted else 0
     last_week_km = weekly[weeks_sorted[-2]] if len(weeks_sorted) >= 2 else this_week_km
 
-    # ── Last 7 days runs ──────────────────────────────────────────────────────
+    # ── Last 7 days ───────────────────────────────────────────────────────────
     today = datetime.now(MELB_TZ).date()
     recent_runs = [r for r in runs if (today - datetime.strptime(r["date"], "%Y-%m-%d").date()).days <= 7]
     recent_km   = sum(r["distance"] for r in recent_runs)
 
+    # ── Last 5 days ───────────────────────────────────────────────────────────
+    last5_runs  = [r for r in runs if (today - datetime.strptime(r["date"], "%Y-%m-%d").date()).days <= 5]
+
+    # ── Baseline cadence (avg of runs 4-8 for comparison) ────────────────────
+    baseline_cadence = None
+    older_cadence_runs = [r for r in runs[3:8] if r.get("cadence") and r["cadence"] > 0]
+    if older_cadence_runs:
+        baseline_cadence = sum(r["cadence"] for r in older_cadence_runs) / len(older_cadence_runs)
+
+    # ── Baseline GCT (avg of runs 4-8) ───────────────────────────────────────
+    baseline_gct = None
+    older_gct_runs = [r for r in runs[3:8] if r.get("laps")]
+    if older_gct_runs:
+        all_gcts = [l["gct"] for r in older_gct_runs for l in r["laps"] if l.get("gct")]
+        if all_gcts:
+            baseline_gct = sum(all_gcts) / len(all_gcts)
+
     factors = []
     score   = 0
 
-    # ── 1. Long run as % of weekly volume ─────────────────────────────────────
-    # Most important Achilles risk factor
-    if recent_runs and recent_km > 0:
+    # ── Flag 1: Long run > 16km (+10) or > 20km (+20) ─────────────────────────
+    if recent_runs:
         longest_run = max(r["distance"] for r in recent_runs)
-        long_run_pct = round(longest_run / recent_km * 100, 1)
-        if long_run_pct > 40:
-            score += 30
-            factors.append({"label": "Long run ratio", "value": f"{long_run_pct}% of weekly vol ({longest_run:.1f}km)", "level": "high"})
-        elif long_run_pct > 30:
-            score += 15
-            factors.append({"label": "Long run ratio", "value": f"{long_run_pct}% of weekly vol", "level": "medium"})
+        longest_hr  = next((r.get("avg_hr", 0) for r in recent_runs if r["distance"] == longest_run), 0) or 0
+        if longest_run >= 20:
+            score += 20
+            factors.append({"label": "Long run >20km", "value": f"{longest_run:.1f}km", "level": "high", "points": 20})
+        elif longest_run >= 16:
+            score += 10
+            factors.append({"label": "Long run >16km", "value": f"{longest_run:.1f}km", "level": "medium", "points": 10})
         else:
-            factors.append({"label": "Long run ratio", "value": f"{long_run_pct}% of weekly vol ✓", "level": "low"})
-    
-    # ── 2. Hard session density (quality sessions last 7 days) ────────────────
-    # A "hard" run = avg pace < 5:30/km or avg HR > 155
-    hard_sessions = sum(1 for r in recent_runs 
-                        if (r.get("avg_pace") and r["avg_pace"] < 5.5) 
-                        or (r.get("avg_hr") and r["avg_hr"] > 155))
-    if hard_sessions >= 3:
-        score += 25
-        factors.append({"label": "Hard session density", "value": f"{hard_sessions} quality sessions in 7 days", "level": "high"})
-    elif hard_sessions == 2:
-        score += 12
-        factors.append({"label": "Hard session density", "value": f"{hard_sessions} quality sessions in 7 days", "level": "medium"})
-    else:
-        factors.append({"label": "Hard session density", "value": f"{hard_sessions} quality sessions in 7 days ✓", "level": "low"})
+            factors.append({"label": "Long run distance", "value": f"{longest_run:.1f}km ✓", "level": "low", "points": 0})
 
-    # ── 3. GCT imbalance trend (last 3 runs) ──────────────────────────────────
-    # Worsening imbalance = compensation pattern
-    gct_trend = []
-    for r in runs[:3]:
-        if r["laps"]:
-            avg_l = sum(l["gct_balance"] for l in r["laps"]) / len(r["laps"])
-            gct_trend.append(round(avg_l, 2))
-    
-    last_gct_l = gct_trend[0] if gct_trend else 50.0
-    gct_diff   = abs(last_gct_l - 50)
-    
-    if len(gct_trend) >= 2:
-        gct_worsening = gct_trend[0] > gct_trend[1] and gct_trend[0] > 50.5  # left bias increasing
-    else:
-        gct_worsening = False
+        # ── Flag 2: Long run with HR > 145 (+15) ──────────────────────────────
+        if longest_run >= 14 and longest_hr > 145:
+            score += 15
+            factors.append({"label": "Long run HR >145", "value": f"HR {longest_hr} on {longest_run:.1f}km", "level": "high", "points": 15})
+        elif longest_run >= 14:
+            factors.append({"label": "Long run HR", "value": f"HR {longest_hr} ✓", "level": "low", "points": 0})
 
-    if gct_diff >= 2:
+    # ── Flag 3: 3+ big sessions in 5 days (+20) ───────────────────────────────
+    big_sessions_5d = sum(1 for r in last5_runs
+                          if r["distance"] >= 12 or (r.get("avg_hr", 0) or 0) > 145)
+    if big_sessions_5d >= 3:
         score += 20
-        factors.append({"label": "GCT imbalance", "value": f"L{last_gct_l}% {'↑ worsening' if gct_worsening else ''}", "level": "high"})
-    elif gct_diff >= 1 or gct_worsening:
-        score += 10
-        factors.append({"label": "GCT imbalance", "value": f"L{last_gct_l}% {'↑ worsening' if gct_worsening else ''}", "level": "medium"})
+        factors.append({"label": "3+ big sessions in 5 days", "value": f"{big_sessions_5d} sessions", "level": "high", "points": 20})
+    elif big_sessions_5d == 2:
+        factors.append({"label": "Sessions in 5 days", "value": f"{big_sessions_5d} big sessions", "level": "medium", "points": 0})
     else:
-        factors.append({"label": "GCT imbalance", "value": f"L{last_gct_l}% balanced ✓", "level": "low"})
+        factors.append({"label": "Session density", "value": f"{big_sessions_5d} big sessions in 5 days ✓", "level": "low", "points": 0})
 
-    # ── 4. Cadence drop at similar pace (compensation signal) ─────────────────
-    if len(runs) >= 3:
-        recent_cadence = [r.get("cadence", 0) for r in runs[:3] if r.get("cadence")]
-        older_cadence  = [r.get("cadence", 0) for r in runs[3:6] if r.get("cadence")]
-        if recent_cadence and older_cadence:
-            avg_recent = sum(recent_cadence) / len(recent_cadence)
-            avg_older  = sum(older_cadence) / len(older_cadence)
-            cadence_drop = avg_older - avg_recent
-            if cadence_drop > 5:
-                score += 15
-                factors.append({"label": "Cadence trend", "value": f"↓ {cadence_drop:.0f} spm vs recent avg — compensation?", "level": "high"})
-            elif cadence_drop > 2:
-                score += 7
-                factors.append({"label": "Cadence trend", "value": f"↓ {cadence_drop:.0f} spm slight drop", "level": "medium"})
+    # ── Flag 4: Cadence drop >5% vs baseline (+10) ────────────────────────────
+    if baseline_cadence and recent_runs:
+        recent_cadence_vals = [r["cadence"] for r in recent_runs[:3] if r.get("cadence") and r["cadence"] > 0]
+        if recent_cadence_vals:
+            recent_cadence_avg = sum(recent_cadence_vals) / len(recent_cadence_vals)
+            cadence_drop_pct = (baseline_cadence - recent_cadence_avg) / baseline_cadence * 100
+            if cadence_drop_pct > 5:
+                score += 10
+                factors.append({"label": "Cadence drop >5%", "value": f"↓{cadence_drop_pct:.1f}% vs baseline ({baseline_cadence:.0f}→{recent_cadence_avg:.0f} spm)", "level": "high", "points": 10})
+            elif cadence_drop_pct > 2:
+                factors.append({"label": "Cadence trend", "value": f"↓{cadence_drop_pct:.1f}% slight drop", "level": "medium", "points": 0})
             else:
-                factors.append({"label": "Cadence trend", "value": f"Stable {avg_recent:.0f} spm ✓", "level": "low"})
+                factors.append({"label": "Cadence", "value": f"Stable {recent_cadence_avg:.0f} spm ✓", "level": "low", "points": 0})
 
-    # ── 5. Week-on-week mileage change ────────────────────────────────────────
+    # ── Flag 5: GCT increase >5% vs baseline (+10) ────────────────────────────
+    if baseline_gct and runs[0].get("laps"):
+        recent_gct_vals = [l["gct"] for l in runs[0]["laps"] if l.get("gct")]
+        if recent_gct_vals:
+            recent_gct_avg = sum(recent_gct_vals) / len(recent_gct_vals)
+            gct_increase_pct = (recent_gct_avg - baseline_gct) / baseline_gct * 100
+            if gct_increase_pct > 5:
+                score += 10
+                factors.append({"label": "GCT increase >5%", "value": f"↑{gct_increase_pct:.1f}% vs baseline ({baseline_gct:.0f}→{recent_gct_avg:.0f}ms)", "level": "high", "points": 10})
+            else:
+                factors.append({"label": "GCT", "value": f"{recent_gct_avg:.0f}ms (baseline {baseline_gct:.0f}ms) ✓", "level": "low", "points": 0})
+
+    # ── Flag 6: Previous Achilles injury within 12 months (+15) ───────────────
+    # Always add this for Nat — known left insertional Achilles tendinopathy
+    score += 15
+    factors.append({"label": "Previous Achilles injury", "value": "Left insertional (within 12 months)", "level": "high", "points": 15})
+
+    # ── Week-on-week mileage ──────────────────────────────────────────────────
     if last_week_km > 0:
         wow_change = (this_week_km - last_week_km) / last_week_km * 100
         if wow_change > 20:
-            score += 15
-            factors.append({"label": "Mileage spike", "value": f"+{wow_change:.0f}% vs last week", "level": "high"})
+            score += 10
+            factors.append({"label": "Mileage spike", "value": f"+{wow_change:.0f}% vs last week", "level": "high", "points": 10})
         elif wow_change > 10:
-            score += 7
-            factors.append({"label": "Mileage spike", "value": f"+{wow_change:.0f}% vs last week", "level": "medium"})
+            factors.append({"label": "Mileage change", "value": f"+{wow_change:.0f}% vs last week", "level": "medium", "points": 0})
         else:
-            factors.append({"label": "Mileage change", "value": f"{wow_change:+.0f}% vs last week ✓", "level": "low"})
-
-    # ── 6. Consecutive run days ───────────────────────────────────────────────
-    run_dates = sorted(set(r["date"] for r in runs[:7]))
-    max_consec = 1
-    consec = 1
-    for i in range(1, len(run_dates)):
-        d1 = datetime.strptime(run_dates[i-1], "%Y-%m-%d")
-        d2 = datetime.strptime(run_dates[i], "%Y-%m-%d")
-        if (d2 - d1).days == 1:
-            consec += 1
-            max_consec = max(max_consec, consec)
-        else:
-            consec = 1
-    if max_consec >= 4:
-        score += 15
-        factors.append({"label": "Consecutive days", "value": f"{max_consec} days in a row", "level": "high"})
-    elif max_consec >= 3:
-        score += 7
-        factors.append({"label": "Consecutive days", "value": f"{max_consec} days in a row", "level": "medium"})
-    else:
-        factors.append({"label": "Consecutive days", "value": f"Max {max_consec} in a row ✓", "level": "low"})
+            factors.append({"label": "Mileage change", "value": f"{wow_change:+.0f}% vs last week ✓", "level": "low", "points": 0})
 
     score = min(score, 100)
-    level = "high" if score >= 60 else "medium" if score >= 30 else "low"
+    if score <= 20:
+        level = "low"
+        tier  = "Nothing notable"
+    elif score <= 45:
+        level = "medium"
+        tier  = "Watch — monitor load and form"
+    elif score <= 70:
+        level = "high"
+        tier  = "Several flags — ease back, consider physio"
+    else:
+        level = "high"
+        tier  = "Many flags stacked — rest and professional assessment"
 
     return {
         "score":         score,
         "level":         level,
+        "tier":          tier,
         "factors":       factors,
         "this_week_km":  round(this_week_km, 1),
         "last_week_km":  round(last_week_km, 1),
         "recent_km":     round(recent_km, 1),
-        "hard_sessions": hard_sessions,
-        "gct_trend":     gct_trend,
+        "disclaimer":    "This is a flag checklist, not a validated injury prediction. High score = worth paying attention to.",
     }
 
 
@@ -1112,7 +1413,7 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
     }
 
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -1187,6 +1488,53 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     last_gct_avg     = round(sum(l["gct"] for l in laps) / len(laps), 1) if laps else "--"
     gct_bal_color    = gct_color(last_gct_balance)
     gct_bal_color_r  = gct_color(last_gct_balance_r)
+
+    # New coaching engine data
+    load_data           = load_data or {}
+    recovery            = recovery or {}
+    injury_contributors = injury_contributors or []
+
+    acr         = load_data.get("acr", 1.0)
+    acr_status  = load_data.get("acr_status", "optimal")
+    acute_load  = load_data.get("acute", "--")
+    chronic_load = load_data.get("chronic", "--")
+    easy_pct    = load_data.get("easy_pct", 0)
+    mod_pct     = load_data.get("mod_pct", 0)
+    hard_pct    = load_data.get("hard_pct", 0)
+    btb_risk    = load_data.get("btb_risk", False)
+    acr_color   = "var(--green)" if acr_status == "optimal" else "var(--red)" if acr_status == "high" else "var(--yellow)"
+
+    recovery_score = recovery.get("score", "--")
+    recovery_level = recovery.get("level", "--")
+    recovery_color = "var(--green)" if recovery_level == "good" else "var(--yellow)" if recovery_level == "moderate" else "var(--red)"
+    recovery_factors = recovery.get("factors", [])
+
+    # Generate specific workout
+    decision_data = compute_training_decision(
+        garmin_data.get("readiness", {}), achilles,
+        garmin_data.get("hrv", {}), garmin_data.get("sleep", {}),
+        weather, phase_info, intervals
+    ) if phase_info else {}
+    workout = generate_workout(decision_data, phase_info or get_training_phase(), achilles or {})
+
+    # Injury detective HTML
+    injury_html = ""
+    if injury_contributors:
+        for c in injury_contributors[:3]:
+            injury_html += f"""
+            <div style="padding:10px 14px;background:var(--surface2);border-left:3px solid var(--red);border-radius:6px;margin-bottom:8px;font-size:12px">
+              <div style="color:var(--text2);font-weight:500">{c['date']} — {c['distance']}km @ HR{c['hr']}</div>
+              <div style="color:var(--text3);margin-top:2px">{' · '.join(c['reasons'])} — <span style="color:var(--red)">{c['risk_pct']}% contribution</span></div>
+            </div>"""
+
+    # Recovery factors HTML
+    recovery_html = ""
+    for f in recovery_factors:
+        col = "var(--green)" if f["status"] == "good" else "var(--yellow)" if f["status"] == "moderate" else "var(--red)"
+        recovery_html += f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">{f["label"]}</span><span style="color:{col};font-family:JetBrains Mono,monospace">{f["value"]}</span></div>'
+
+    # Workout HTML
+    avoid_items = "".join(f'<span style="background:rgba(242,101,101,0.1);color:var(--red);padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">{a}</span>' for a in workout.get("avoid", []))
 
     # Phase info
     if phase_info is None:
@@ -2146,6 +2494,100 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   </div>
 
 {weather_html}
+
+  <div class="section">
+    <div class="section-header"><div class="section-title">Training Load vs Capacity</div></div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-accent" style="background:{acr_color}"></div>
+        <div class="stat-label">Load Ratio (ACR)</div>
+        <div class="stat-value" style="color:{acr_color}">{acr}</div>
+        <div class="stat-unit">{'🟢 Optimal 0.8-1.3' if acr_status=='optimal' else '🔴 Too high >1.3' if acr_status=='high' else '🟡 Low <0.8'}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--blue)"></div>
+        <div class="stat-label">Acute Load (7d)</div>
+        <div class="stat-value sm">{acute_load}</div>
+        <div class="stat-unit">stress units</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:var(--text3)"></div>
+        <div class="stat-label">Chronic Load (28d avg)</div>
+        <div class="stat-value sm">{chronic_load}</div>
+        <div class="stat-unit">stress units</div>
+      </div>
+      <div class="stat">
+        <div class="stat-accent" style="background:{'var(--green)' if easy_pct>=70 else 'var(--yellow)' if easy_pct>=50 else 'var(--red)'}"></div>
+        <div class="stat-label">Intensity Mix (7d)</div>
+        <div class="stat-value sm" style="font-size:14px;padding-top:4px">{easy_pct}% easy</div>
+        <div class="stat-unit">{mod_pct}% mod · {hard_pct}% hard {'⚠ grey zone' if mod_pct>40 else '✓ 80/20'}</div>
+      </div>
+      {'<div class="stat"><div class="stat-accent" style="background:var(--red)"></div><div class="stat-label">Back-to-Back Risk</div><div class="stat-value sm" style="color:var(--red);font-size:14px;padding-top:4px">⚠ Detected</div><div class="stat-unit">2+ hard/long runs in 4 days</div></div>' if btb_risk else ''}
+    </div>
+    <!-- ACR gauge -->
+    <div class="chart-box" style="padding:12px 16px;margin-top:10px">
+      <div class="chart-label">Acute:Chronic Load Ratio — safe zone 0.8 to 1.3</div>
+      <div style="position:relative;height:12px;background:var(--surface2);border-radius:6px;margin:8px 0">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:40%;background:rgba(245,200,66,0.3);border-radius:6px 0 0 6px"></div>
+        <div style="position:absolute;left:40%;top:0;bottom:0;width:25%;background:rgba(61,214,140,0.3)"></div>
+        <div style="position:absolute;left:65%;top:0;bottom:0;right:0;background:rgba(242,101,101,0.3);border-radius:0 6px 6px 0"></div>
+        <div style="position:absolute;top:-2px;bottom:-2px;width:4px;border-radius:2px;background:{acr_color};left:{min(95,round(acr/2.0*100))}%;transform:translateX(-50%)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3)">
+        <span>0 — Low</span><span>0.8</span><span>1.0 Optimal</span><span>1.3</span><span>2.0+ Danger</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recovery Score -->
+  <div class="section">
+    <div class="section-header"><div class="section-title">Recovery Score</div></div>
+    <div style="display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:start">
+      <div class="stat" style="text-align:center">
+        <div class="stat-accent" style="background:{recovery_color}"></div>
+        <div class="stat-label">Recovery</div>
+        <div class="stat-value" style="font-size:42px;color:{recovery_color}">{recovery_score}</div>
+        <div class="stat-unit" style="color:{recovery_color}">{recovery_level}</div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Factors</div>
+        {recovery_html}
+      </div>
+    </div>
+  </div>
+
+  <!-- Workout Generator -->
+  <div class="section">
+    <div class="section-header"><div class="section-title">Today's Recommended Session</div></div>
+    <div class="chart-box">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">{workout.get('type','--')}</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">{workout.get('description','')}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div style="text-align:center;background:var(--surface2);border-radius:8px;padding:10px">
+              <div style="font-size:9px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">Distance</div>
+              <div style="font-size:14px;font-weight:600;color:var(--blue)">{workout.get('distance','--')}</div>
+            </div>
+            <div style="text-align:center;background:var(--surface2);border-radius:8px;padding:10px">
+              <div style="font-size:9px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">Pace</div>
+              <div style="font-size:12px;font-weight:600;color:var(--green)">{workout.get('pace','--')}</div>
+            </div>
+            <div style="text-align:center;background:var(--surface2);border-radius:8px;padding:10px">
+              <div style="font-size:9px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">HR Target</div>
+              <div style="font-size:12px;font-weight:600;color:var(--red)">{workout.get('hr','--')}</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px">Avoid Today</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">{avoid_items}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {'<div class="section"><div class="section-header"><div class="section-title">Injury Detective — Last 21 Days</div></div>' + injury_html + '</div>' if injury_contributors else ''}
 
   <div class="section">
     <div class="section-header"><div class="section-title">Fitness / Fatigue / Form — intervals.icu</div></div>
@@ -3147,9 +3589,30 @@ def main():
     phase_info = get_training_phase()
     print(f"  Week {phase_info['week_num']} — {phase_info['phase']['name']}")
 
+    print("Computing training load engine...")
+    load_data = compute_weekly_loads(garmin_data["runs"])
+    print(f"  Acute: {load_data['acute']} | Chronic: {load_data['chronic']} | ACR: {load_data['acr']} ({load_data['acr_status']})")
+    print(f"  Intensity: {load_data['easy_pct']}% easy / {load_data['mod_pct']}% moderate / {load_data['hard_pct']}% hard")
+    if load_data['btb_risk']:
+        print("  ⚠ Back-to-back stress detected")
+
     print("Computing Achilles load score...")
     achilles = compute_achilles_score(garmin_data["runs"], phase_info)
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
+
+    print("Computing recovery score...")
+    recovery = compute_recovery_score(
+        garmin_data.get("readiness", {}),
+        garmin_data.get("hrv", {}),
+        garmin_data.get("sleep", {}),
+        garmin_data.get("resting_hr", 0),
+    )
+    print(f"  Recovery: {recovery['score']}/100 ({recovery['level']})")
+
+    print("Running injury detective...")
+    injury_contributors = injury_detective(garmin_data["runs"], achilles.get("score", 0))
+    if injury_contributors:
+        print(f"  Top contributor: {injury_contributors[0]['date']} — {injury_contributors[0]['risk_pct']}% risk")
 
     print("Fetching intervals.icu data...")
     intervals = fetch_intervals()
@@ -3166,7 +3629,8 @@ def main():
     generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals)
 
     print("Generating dashboard...")
-    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals)
+    html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,
+                         load_data=load_data, recovery=recovery, injury_contributors=injury_contributors)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
