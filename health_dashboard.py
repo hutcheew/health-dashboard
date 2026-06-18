@@ -1421,9 +1421,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     body_battery= garmin_data.get("body_battery", "--")
     last_run    = runs[0] if runs else {}
     laps        = last_run.get("laps", [])
-    sleep          = garmin_data.get("sleep", {}) if garmin_data else {}
-    sleep_duration = sleep.get("total_hrs", "--")
-    latest_ctl     = {}
+
     # GCT trend across recent runs (avg balance per run)
     gct_trend_labels = json.dumps([r["date"] for r in reversed(runs[:8])])
     gct_trend_values = json.dumps([
@@ -3542,11 +3540,24 @@ function checkAlerts(battery, readiness) {{
 const dashboardData = {export_data};
 
 function exportJSON() {{
-  const blob = new Blob([JSON.stringify(dashboardData, null, 2)], {{type:'application/json'}});
+  const json = JSON.stringify(dashboardData, null, 2);
+  const filename = `health_${{dashboardData.generated.replace(/[: ]/g,'-')}}.json`;
+
+  // Use data URI — works on iOS Safari and all mobile browsers
+  const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `health_${{dashboardData.generated.replace(/[: ]/g,'-')}}.json`;
+  a.href = dataUri;
+  a.download = filename;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+
+  // iOS Safari fallback — open in new tab if download didn't trigger
+  setTimeout(() => {{
+    if (navigator.userAgent.match(/iP(hone|ad)/i)) {{
+      window.open(dataUri, '_blank');
+    }}
+  }}, 500);
 }}
 
 function openClaude() {{
@@ -3564,7 +3575,15 @@ LAST RUN (${{lr.date}}): ${{lr.distance_km}}km @ ${{lr.avg_pace_min_km ? (Math.f
 BP: ${{bp.systolic}}/${{bp.diastolic}} mmHg pulse ${{bp.pulse}}
 
 Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) Today's training recommendation 4) Any concerns`;
-  window.open("https://claude.ai/new?q=" + encodeURIComponent(prompt), '_blank');
+  // Use location.href for mobile compatibility (window.open blocked on some mobile browsers)
+  const url = "https://claude.ai/new?q=" + encodeURIComponent(prompt);
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }}
 </script>
 
