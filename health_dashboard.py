@@ -1701,8 +1701,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             coach_insights.append("Aerobic efficiency is strong — ready to build mileage.")
         else:
             coach_insights.append(f"Aerobic drift {decoupling_pct}% — prioritise Zone 2 this week.")
-    if 'latest_ctl' not in locals():
-        latest_ctl = {}
+
     latest_ctl_val = latest_ctl.get("ctl", 0) or 0
     latest_tsb_val = latest_ctl.get("tsb", 0) or 0
     if latest_tsb_val < -10:
@@ -1822,12 +1821,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <td>{c['elevation']} m</td>
           <td>{c['calories'] or '--'}</td>
         </tr>"""
-# Ensure variables are anchored locally right before this block runs
-    if 'sleep' not in locals() or sleep is None:
-        sleep = garmin_data.get("sleep", {}) if ( 'garmin_data' in locals() and garmin_data ) else {}
-        
-    if 'latest_ctl' not in locals():
-        latest_ctl = intervals if ('intervals' in locals() and intervals) else {}
+
     # Training Decision Engine
     decision = compute_training_decision(
         readiness, achilles, hrv, sleep, weather, phase_info, intervals
