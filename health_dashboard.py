@@ -1698,7 +1698,8 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             coach_insights.append("Aerobic efficiency is strong — ready to build mileage.")
         else:
             coach_insights.append(f"Aerobic drift {decoupling_pct}% — prioritise Zone 2 this week.")
-
+    if 'latest_ctl' not in locals():
+        latest_ctl = {}
     latest_ctl_val = latest_ctl.get("ctl", 0) or 0
     latest_tsb_val = latest_ctl.get("tsb", 0) or 0
     if latest_tsb_val < -10:
