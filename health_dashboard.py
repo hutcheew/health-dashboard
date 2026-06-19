@@ -3891,13 +3891,6 @@ def main():
     if injury_contributors:
         print(f"  Top contributor: {injury_contributors[0]['date']} — {injury_contributors[0]['risk_pct']}% risk")
 
-    print("Generating why-today explanation...")
-    why_today = generate_why_today(
-        garmin_data.get("readiness", {}), achilles, tissue_capacity,
-        load_data, recovery, monotony, weather
-    )
-    print(f"  Decision: {why_today['decision'][:60]}...")
-
     print("Fetching intervals.icu data...")
     intervals = fetch_intervals()
 
@@ -3905,6 +3898,13 @@ def main():
     weather = fetch_weather()
     if weather:
         print(f"  Tomorrow: {weather['days'][1]['max_temp']}°C, {weather['days'][1]['rain_pct']}% rain — best window: {weather['best_window']}")
+
+    print("Generating why-today explanation...")
+    why_today = generate_why_today(
+        garmin_data.get("readiness", {}), achilles, tissue_capacity,
+        load_data, recovery, monotony, weather
+    )
+    print(f"  Decision: {why_today['decision'][:60]}...")
 
     print("Checking alerts...")
     check_and_send_alerts(garmin_data.get("readiness", {}), achilles, bp_readings)
