@@ -603,6 +603,248 @@ def compute_weekly_loads(runs):
         "weekly": dict(weekly),
     }
 
+    return {
+        "acute": round(acute, 1),
+        "chronic": round(chronic, 1),
+        "acr": acr,
+        "acr_status": "optimal" if 0.8 <= acr <= 1.3 else "high" if acr > 1.3 else "low",
+        "easy_pct": easy_pct,
+        "mod_pct": mod_pct,
+        "hard_pct": hard_pct,
+        "btb_risk": btb_risk,
+        "session_types": session_types,
+        "weekly": dict(weekly),
+    }
+
+
+def compute_tissue_capacity(runs):
+    """
+    Tissue Capacity Score 0-100.
+    Answers: "What is your tendon currently prepared to handle?"
+
+    This is the missing piece. Same 20km run = very different risk depending on
+    what the tendon has been consistently exposed to recently.
+
+    High capacity = tendon has been progressively loaded and is adapted.
+    Low capacity  = sudden exposure to stress without preparation.
+
+    Inputs:
+      - 28-day running volume (primary — Achilles adapts to consistent load)
+      - Longest recent run (longest single exposure)
+      - Number of runs >60 min (repeated long exposures build capacity)
+      - Run frequency (consistent stimulus = adaptation)
+      - Previous Achilles history (permanent -15 penalty — never fully resets)
+    """
+    if not runs:
+        return {"score": 0, "level": "low", "summary": "No run data — capacity unknown",
+                "limiting_factor": "Insufficient data"}
+
+    today = datetime.now(MELB_TZ).date()
+    score = 0
+
+    # ── Factor 1: 28-day running volume (50% of score) ────────────────────────
+    # A runner doing 40km/week for 4 weeks has well-adapted tendons
+    # A runner doing 10km/week does not
+    runs_28d = [r for r in runs if (today - datetime.strptime(r["date"], "%Y-%m-%d").date()).days <= 28]
+    vol_28d  = sum(r["distance"] for r in runs_28d)
+
+    if vol_28d >= 160:     vol_score = 50   # 40+ km/week for 4 weeks — well adapted
+    elif vol_28d >= 120:   vol_score = 42   # 30+ km/week — moderate adaptation
+    elif vol_28d >= 80:    vol_score = 32   # 20+ km/week — some adaptation
+    elif vol_28d >= 40:    vol_score = 20   # 10+ km/week — limited adaptation
+    else:                  vol_score = 8    # very low — minimal adaptation
+    score += vol_score
+
+    # ── Factor 2: Longest run in last 28 days (20% of score) ──────────────────
+    # Tendon needs to have been exposed to long runs to handle long runs
+    longest_28d = max((r["distance"] for r in runs_28d), default=0)
+    if longest_28d >= 18:   long_score = 20
+    elif longest_28d >= 14: long_score = 15
+    elif longest_28d >= 10: long_score = 10
+    elif longest_28d >= 6:  long_score = 5
+    else:                   long_score = 0
+    score += long_score
+
+    # ── Factor 3: Number of runs >60 min in last 28 days (15% of score) ───────
+    # Repeated long exposure builds tendon resilience
+    long_runs = sum(1 for r in runs_28d if r.get("duration", 0) >= 60)
+    if long_runs >= 6:     expo_score = 15
+    elif long_runs >= 4:   expo_score = 11
+    elif long_runs >= 2:   expo_score = 7
+    elif long_runs >= 1:   expo_score = 3
+    else:                  expo_score = 0
+    score += expo_score
+
+    # ── Factor 4: Run frequency (15% of score) ────────────────────────────────
+    # Consistent stimulus = adaptation. Gaps disrupt adaptation.
+    run_count_28d = len(runs_28d)
+    if run_count_28d >= 16:   freq_score = 15  # ~4x/week
+    elif run_count_28d >= 12: freq_score = 12  # ~3x/week
+    elif run_count_28d >= 8:  freq_score = 8   # ~2x/week
+    elif run_count_28d >= 4:  freq_score = 4   # ~1x/week
+    else:                     freq_score = 0
+    score += freq_score
+
+    # ── Permanent penalty: Previous Achilles injury ────────────────────────────
+    # Scar tissue = permanently lower capacity ceiling
+    score -= 15
+
+    score = max(0, min(score, 100))
+
+    # Determine limiting factor
+    if vol_score < 20:
+        limiting = "28-day volume too low to have well-adapted tendons"
+    elif long_score < 10:
+        limiting = "No recent long run exposure — tendon not prepared for distance"
+    elif expo_score < 7:
+        limiting = "Few long run exposures — limited repeated-bout adaptation"
+    elif freq_score < 8:
+        limiting = "Inconsistent training frequency — gaps disrupt adaptation"
+    else:
+        limiting = "Previous injury history limits maximum capacity"
+
+    if score >= 70:
+        level = "high"
+        summary = "Tendon well-adapted — consistent training base"
+    elif score >= 45:
+        level = "medium"
+        summary = "Moderate capacity — proceed carefully with load increases"
+    else:
+        level = "low"
+        summary = "Low capacity — tendon not yet prepared for high loads"
+
+    return {
+        "score":           score,
+        "level":           level,
+        "summary":         summary,
+        "limiting_factor": limiting,
+        "vol_28d":         round(vol_28d, 1),
+        "longest_28d":     round(longest_28d, 1),
+        "long_run_count":  long_runs,
+        "run_count_28d":   run_count_28d,
+    }
+
+
+def compute_training_monotony(runs):
+    """
+    Training Monotony Score — how repetitive is the training stimulus?
+    High monotony = same pace, same distance, same effort = repetitive loading.
+    For Achilles: repetitive loading without variation = overuse pattern.
+
+    Low monotony = good (varied stimulus, adaptation)
+    High monotony = warning (repetitive tissue loading)
+    """
+    if len(runs) < 4:
+        return {"score": 0, "level": "unknown", "detail": "Need 4+ runs for monotony analysis"}
+
+    recent = runs[:7]  # last 7 runs
+    distances = [r["distance"] for r in recent if r.get("distance")]
+    paces     = [r["avg_pace"] for r in recent if r.get("avg_pace")]
+    hrs       = [r["avg_hr"] for r in recent if r.get("avg_hr")]
+
+    def coefficient_of_variation(vals):
+        if len(vals) < 2: return 0
+        mean = sum(vals) / len(vals)
+        if mean == 0: return 0
+        std  = (sum((v - mean)**2 for v in vals) / len(vals)) ** 0.5
+        return round(std / mean * 100, 1)
+
+    dist_cv = coefficient_of_variation(distances)
+    pace_cv = coefficient_of_variation(paces)
+    hr_cv   = coefficient_of_variation(hrs)
+
+    # Low CV = high monotony (little variation)
+    # Monotony score: 0 = varied, 100 = identical runs
+    dist_mono = max(0, 30 - dist_cv)   # >30% distance variation = no monotony
+    pace_mono = max(0, 15 - pace_cv)   # >15% pace variation = no monotony
+    hr_mono   = max(0, 10 - hr_cv)     # >10% HR variation = no monotony
+
+    # Normalise to 0-100
+    monotony = min(100, round((dist_mono/30 * 40) + (pace_mono/15 * 35) + (hr_mono/10 * 25)))
+
+    flags = []
+    if dist_cv < 15: flags.append(f"Distance varies only {dist_cv:.0f}% — similar run lengths")
+    if pace_cv < 8:  flags.append(f"Pace varies only {pace_cv:.0f}% — similar effort level")
+    if hr_cv < 5:    flags.append(f"HR varies only {hr_cv:.0f}% — no intensity variation")
+
+    return {
+        "score":    monotony,
+        "level":    "high" if monotony >= 65 else "medium" if monotony >= 35 else "low",
+        "dist_cv":  dist_cv,
+        "pace_cv":  pace_cv,
+        "hr_cv":    hr_cv,
+        "flags":    flags,
+        "detail":   f"Distance CV: {dist_cv}% | Pace CV: {pace_cv}% | HR CV: {hr_cv}%",
+    }
+
+
+def generate_why_today(readiness, achilles, tissue_capacity, load_data, recovery, monotony, weather):
+    """
+    "Why today?" explanation engine.
+    Generates a plain-English explanation of today's status.
+    Returns positive factors, negative factors, and a decision sentence.
+    """
+    positives = []
+    negatives = []
+    decision  = ""
+
+    r_score = readiness.get("score", 0) or 0
+    a_score = achilles.get("score", 0) or 0
+    tc_score = tissue_capacity.get("score", 0) or 0
+    rec_score = recovery.get("score", 0) or 0
+    acr = load_data.get("acr", 1.0)
+    mono = monotony.get("score", 0)
+
+    # Positives
+    if r_score >= 70:  positives.append(f"Readiness {r_score}/100 — body ready to train")
+    if rec_score >= 70: positives.append(f"Recovery {rec_score}/100 — well recovered")
+    if acr <= 1.1:     positives.append(f"Load ratio {acr} — within safe zone")
+    if a_score <= 20:  positives.append("Achilles watch-list clear")
+    if tc_score >= 60: positives.append(f"Tissue capacity {tc_score}/100 — tendon well adapted")
+
+    # Negatives
+    if r_score < 50 and r_score > 0:  negatives.append(f"Readiness {r_score}/100 — body under-recovered")
+    if rec_score < 50 and rec_score > 0: negatives.append(f"Recovery score low ({rec_score}/100)")
+    if acr > 1.3:      negatives.append(f"Load ratio {acr} — acute load too high vs chronic")
+    if a_score >= 46:  negatives.append(f"Achilles watch-list elevated ({a_score}/100)")
+    if tc_score < 45:  negatives.append(f"Tissue capacity low ({tc_score}/100) — tendon not fully adapted")
+    if mono >= 65:     negatives.append(f"Training monotony high — repetitive loading pattern")
+    if load_data.get("btb_risk"): negatives.append("Back-to-back hard sessions detected")
+
+    # Check today's weather
+    if weather and weather.get("days"):
+        today_w = weather["days"][0]
+        if today_w.get("max_temp", 0) >= 28:
+            negatives.append(f"Heat {today_w['max_temp']}°C — add 15-20s/km to pace targets")
+        if today_w.get("rain_pct", 0) >= 60:
+            negatives.append(f"Rain {today_w['rain_pct']}% — surface may be slippery")
+
+    # Fitness ceiling vs injury ceiling
+    cardio_ceiling = r_score
+    tendon_ceiling = tc_score
+    limiter = None
+    if tendon_ceiling < cardio_ceiling - 20:
+        limiter = f"⚠ Workout limited by tendon ({tendon_ceiling}/100), not cardio ({cardio_ceiling}/100)"
+
+    # Decision sentence
+    red_count = len([n for n in negatives if any(x in n for x in ["Achilles", "ratio", "capacity", "back-to-back"])])
+    if red_count >= 2 or a_score >= 60:
+        decision = "Swap today's planned session for easy running or rest. Several load flags are stacked."
+    elif red_count == 1 or r_score < 50:
+        decision = "Reduce today's session by 20-30%. One key flag — don't push through."
+    elif not negatives:
+        decision = "All clear — proceed with planned session."
+    else:
+        decision = "Mostly clear — proceed but stay within HR target."
+
+    return {
+        "positives": positives,
+        "negatives": negatives,
+        "decision":  decision,
+        "limiter":   limiter,
+    }
+
+
 def compute_recovery_score(readiness, hrv, sleep, resting_hr):
     """
     Recovery Score v3 — weighted composite 0-100.
@@ -1413,7 +1655,7 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
     }
 
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -1473,6 +1715,10 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     sleep_score     = readiness.get("sleep_score", "--")
     hrv_avg         = hrv.get("weekly_avg", "--")
 
+    # Sleep and intervals — needed throughout generate_html
+    sleep      = garmin_data.get("sleep", {})
+    latest_ctl = intervals.get("latest", {}) if intervals else {}
+
     # GCT balance colour indicator
     def gct_color(val):
         if not val: return "#888"
@@ -1528,8 +1774,11 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     # Recovery factors HTML
     recovery_html = ""
     for f in recovery_factors:
-        col = "var(--green)" if f["status"] == "good" else "var(--yellow)" if f["status"] == "moderate" else "var(--red)"
-        recovery_html += f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">{f["label"]}</span><span style="color:{col};font-family:JetBrains Mono,monospace">{f["value"]}</span></div>'
+        col = "var(--green)" if f.get("status") == "good" else "var(--yellow)" if f.get("status") == "moderate" else "var(--red)"
+        label = f.get("label", "")
+        score_val = f.get("score", "")
+        weight = f.get("weight", "")
+        recovery_html += f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">{label} <span style="color:var(--text3);font-size:10px">{weight}</span></span><span style="color:{col};font-family:JetBrains Mono,monospace">{score_val} pts</span></div>'
 
     # Workout HTML
     avoid_items = "".join(f'<span style="background:rgba(242,101,101,0.1);color:var(--red);padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">{a}</span>' for a in workout.get("avoid", []))
@@ -3228,9 +3477,10 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <script>
 // ── TAB SWITCHING ──
 function switchTab(name) {{
-  const panels = ['overview','running','cycling','health','performance','bp','hrcompare'];
-  document.querySelectorAll('.tab').forEach((t,i) => {{
-    t.classList.toggle('active', panels[i] === name);
+  document.querySelectorAll('.tab').forEach(t => {{
+    const onclick = t.getAttribute('onclick') || '';
+    const match = onclick.match(/switchTab\(['"](\w+)['"]\)/);
+    t.classList.toggle('active', match && match[1] === name);
   }});
   document.querySelectorAll('.tab-panel').forEach(p => {{
     p.classList.toggle('active', p.id === 'panel-' + name);
@@ -3611,6 +3861,14 @@ def main():
     print("Computing training load engine...")
     load_data = compute_weekly_loads(garmin_data["runs"])
     print(f"  Acute: {load_data['acute']} | Chronic: {load_data['chronic']} | ACR: {load_data['acr']} ({load_data['acr_status']})")
+
+    print("Computing tissue capacity score...")
+    tissue_capacity = compute_tissue_capacity(garmin_data["runs"])
+    print(f"  Tissue capacity: {tissue_capacity['score']}/100 ({tissue_capacity['level']}) — {tissue_capacity['limiting_factor']}")
+
+    print("Computing training monotony...")
+    monotony = compute_training_monotony(garmin_data["runs"])
+    print(f"  Monotony: {monotony['score']}/100 ({monotony['level']})")
     print(f"  Intensity: {load_data['easy_pct']}% easy / {load_data['mod_pct']}% moderate / {load_data['hard_pct']}% hard")
     if load_data['btb_risk']:
         print("  ⚠ Back-to-back stress detected")
@@ -3633,6 +3891,13 @@ def main():
     if injury_contributors:
         print(f"  Top contributor: {injury_contributors[0]['date']} — {injury_contributors[0]['risk_pct']}% risk")
 
+    print("Generating why-today explanation...")
+    why_today = generate_why_today(
+        garmin_data.get("readiness", {}), achilles, tissue_capacity,
+        load_data, recovery, monotony, weather
+    )
+    print(f"  Decision: {why_today['decision'][:60]}...")
+
     print("Fetching intervals.icu data...")
     intervals = fetch_intervals()
 
@@ -3649,7 +3914,8 @@ def main():
 
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,
-                         load_data=load_data, recovery=recovery, injury_contributors=injury_contributors)
+                         load_data=load_data, recovery=recovery, injury_contributors=injury_contributors,
+                         tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
