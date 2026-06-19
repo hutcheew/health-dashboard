@@ -3813,27 +3813,27 @@ function exportJSON() {{
 function openClaude() {{
   const d = dashboardData;
   const r = d.readiness; const lr = d.last_run;
-  const t = d.training; const a = d.achilles;
+  const t = d.training; const achilles = d.achilles;
   const bp = d.blood_pressure[0] || {{}};
   const prompt = `Analyse my health data for ${{d.generated}} and give specific, actionable insights.
 
 TRAINING: Week ${{t.week}}/28 — ${{t.phase}} | Target ${{t.phase_target_km}} km/wk | This week: ${{t.this_week_km}} km | Days to race: ${{t.days_to_race}}
 ATHLETE: Melbourne Marathon 12 Oct 2026, sub-3:00 goal (PB 3:16). Left insertional Achilles tendinopathy.
 READINESS: ${{r.score}}/100 (${{r.level}}) | Sleep: ${{r.sleep_score}} | HRV: ${{r.hrv_weekly_avg}}ms | RHR: ${{r.resting_hr}} | Battery: ${{r.body_battery}}
-ACHILLES: ${{a.score}}/100 (${{a.level}}) | ${{a.factors.map(f=>f.label+': '+f.value).join(', ')}}
+ACHILLES: ${{achilles.score}}/100 (${{achilles.level}}) | ${{achilles.factors.map(f=>f.label+': '+f.value).join(', ')}}
 LAST RUN (${{lr.date}}): ${{lr.distance_km}}km @ ${{lr.avg_pace_min_km ? (Math.floor(lr.avg_pace_min_km)+':'+(Math.round((lr.avg_pace_min_km%1)*60)+'').padStart(2,'0')) : '--'}} | HR ${{lr.avg_hr}} | GCT L${{lr.gct_balance_left_pct}}%/R${{lr.gct_balance_right_pct}}%
 BP: ${{bp.systolic}}/${{bp.diastolic}} mmHg pulse ${{bp.pulse}}
 
 Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) Today's training recommendation 4) Any concerns`;
   // Use location.href for mobile compatibility (window.open blocked on some mobile browsers)
   const url = "https://claude.ai/new?q=" + encodeURIComponent(prompt);
-  const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }}
 </script>
 
