@@ -1,10 +1,7 @@
 on:
   schedule:
-    - cron: '57 23 * * *'   # 9:57am AEST
-    - cron: '15 0 * * *'    # 10:15am AEST
-    - cron: '20 0 * * *'    # 10:20am AEST
-    - cron: '0 9 * * *'     # 7:00pm AEST
-    - cron: '0 10 * * *'    # 8:00pm AEST
+    - cron: '15 0 * * *'    # ~10:15am AEST -- gives Garmin time to sync overnight sleep/HRV first
+    - cron: '0 10 * * *'    # 8:00pm AEST -- evening check
   workflow_dispatch:
 jobs:
   build:
@@ -51,6 +48,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           cp health_dashboard.html index.html
           echo "<!-- updated: $(date +'%Y-%m-%d %H:%M:%S') -->" >> index.html
-          git add index.html
-          git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')"
+          git add index.html score_history.json
+          git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
+          git pull --rebase
           git push
