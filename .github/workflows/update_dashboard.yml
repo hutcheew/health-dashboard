@@ -43,14 +43,20 @@ jobs:
         run: |
           python health_dashboard.py
       - name: Commit and push
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          cp health_dashboard.html index.html
-          echo "<!-- updated: $(date +'%Y-%m-%d %H:%M:%S') -->" >> index.html
-          git add index.html score_history.json
-	  git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
-	  git pull --rebase --autostash
-	  git push
+  run: |
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    cp health_dashboard.html index.html
+
+    git add index.html score_history.json
+
+    git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
+
+    git pull --rebase --autostash
+
+    git push
+
+
 
 
