@@ -42,20 +42,25 @@ jobs:
           INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
         run: |
           python health_dashboard.py
-      - name: Commit and push
-  run: |
-    git config user.name "github-actions[bot]"
-    git config user.email "github-actions[bot]@users.noreply.github.com"
+    
+	- name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    cp health_dashboard.html index.html
+          cp health_dashboard.html index.html
 
-    git add index.html score_history.json
+          git add index.html
 
-    git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
+          if [ -f score_history.json ]; then
+            git add score_history.json
+          fi
 
-    git pull --rebase --autostash
+          git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
 
-    git push
+          git pull --rebase --autostash
+
+          git push
 
 
 
