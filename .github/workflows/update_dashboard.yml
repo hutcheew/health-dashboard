@@ -40,7 +40,7 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           INTERVALS_ATHLETE_ID: i416094
           INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
-         run: |
+        run: |
           python health_dashboard.py
 
       - name: Commit and push
