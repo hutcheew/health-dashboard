@@ -49,6 +49,8 @@ jobs:
           cp health_dashboard.html index.html
           echo "<!-- updated: $(date +'%Y-%m-%d %H:%M:%S') -->" >> index.html
           git add index.html score_history.json
-          git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
-          git pull --rebase
-          git push
+	  git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
+	  git pull --rebase --autostash
+	  git push
+
+
