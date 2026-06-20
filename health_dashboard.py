@@ -500,7 +500,106 @@ def get_training_phase():
         "phase_pct": round(week_in_phase / phase_total * 100),
     }
 
-# ─── ACHILLES LOAD SCORE ─────────────────────────────────────────────────────
+# ─── DAILY CHECK-IN ──────────────────────────────────────────────────────────
+
+CHECKINS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "checkins.json")
+
+def load_checkins():
+    """Load committed check-in history (synced from browser export)."""
+    try:
+        if os.path.exists(CHECKINS_FILE):
+            with open(CHECKINS_FILE, encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                return sorted(data, key=lambda x: x.get("date", ""), reverse=True)
+    except Exception as e:
+        print(f"  Check-ins load failed: {e}")
+    return []
+
+def get_latest_checkin(checkins):
+    """Return today's check-in, or yesterday's if within 24h relevance window."""
+    if not checkins:
+        return None
+    today = date.today()
+    for c in checkins:
+        if c.get("date") == today.isoformat():
+            return c
+    for c in checkins:
+        d = c.get("date", "")
+        if not d:
+            continue
+        try:
+            if (today - datetime.strptime(d, "%Y-%m-%d").date()).days <= 1:
+                return c
+        except ValueError:
+            continue
+    return None
+
+def apply_checkin_factors(achilles, checkin):
+    """Blend subjective morning check-in into Achilles watch-list score."""
+    if not checkin or achilles.get("score") is None:
+        return achilles
+
+    result = {
+        **achilles,
+        "factors": list(achilles.get("factors", [])),
+        "score": achilles.get("score", 0),
+    }
+    subjective = []
+
+    stiffness = int(checkin.get("stiffness", 0) or 0)
+    first_steps = int(checkin.get("first_steps_pain", 0) or 0)
+    post_run = int(checkin.get("post_run_pain", 0) or 0)
+    calf_raises = bool(checkin.get("calf_raises"))
+
+    if stiffness >= 7:
+        result["score"] = min(100, result["score"] + 15)
+        subjective.append({"label": "Morning stiffness", "value": f"{stiffness}/10 — elevated", "level": "high", "points": 15})
+    elif stiffness >= 4:
+        result["score"] = min(100, result["score"] + 8)
+        subjective.append({"label": "Morning stiffness", "value": f"{stiffness}/10 — moderate", "level": "medium", "points": 8})
+    else:
+        subjective.append({"label": "Morning stiffness", "value": f"{stiffness}/10 ✓", "level": "low", "points": 0})
+
+    if first_steps >= 5:
+        result["score"] = min(100, result["score"] + 12)
+        subjective.append({"label": "First-steps pain", "value": f"{first_steps}/10", "level": "high", "points": 12})
+    elif first_steps >= 3:
+        result["score"] = min(100, result["score"] + 6)
+        subjective.append({"label": "First-steps pain", "value": f"{first_steps}/10", "level": "medium", "points": 6})
+    else:
+        subjective.append({"label": "First-steps pain", "value": f"{first_steps}/10 ✓", "level": "low", "points": 0})
+
+    if post_run >= 5:
+        result["score"] = min(100, result["score"] + 10)
+        subjective.append({"label": "Post-run pain", "value": f"{post_run}/10", "level": "high", "points": 10})
+    elif post_run >= 3:
+        subjective.append({"label": "Post-run pain", "value": f"{post_run}/10", "level": "medium", "points": 0})
+    else:
+        subjective.append({"label": "Post-run pain", "value": f"{post_run}/10 ✓", "level": "low", "points": 0})
+
+    subjective.append({
+        "label": "Seated calf raises",
+        "value": "Done ✓" if calf_raises else "Not logged today",
+        "level": "low" if calf_raises else "medium",
+        "points": 0,
+    })
+
+    result["factors"] = subjective + result["factors"]
+    score = result["score"]
+    if score <= 20:
+        result["level"] = "low"
+        result["tier"] = "Nothing notable"
+    elif score <= 45:
+        result["level"] = "medium"
+        result["tier"] = "Watch — monitor load and form"
+    elif score <= 70:
+        result["level"] = "high"
+        result["tier"] = "Several flags — ease back, consider physio"
+    else:
+        result["level"] = "high"
+        result["tier"] = "Many flags stacked — rest and professional assessment"
+    return result
 
 # ─── COACHING ENGINE ─────────────────────────────────────────────────────────
 
@@ -778,7 +877,7 @@ def compute_training_monotony(runs):
     }
 
 
-def generate_why_today(readiness, achilles, tissue_capacity, load_data, recovery, monotony, weather):
+def generate_why_today(readiness, achilles, tissue_capacity, load_data, recovery, monotony, weather, checkin=None):
     """
     "Why today?" explanation engine.
     Generates a plain-English explanation of today's status.
@@ -810,6 +909,21 @@ def generate_why_today(readiness, achilles, tissue_capacity, load_data, recovery
     if tc_score < 45:  negatives.append(f"Tissue capacity low ({tc_score}/100) — tendon not fully adapted")
     if mono >= 65:     negatives.append(f"Training monotony high — repetitive loading pattern")
     if load_data.get("btb_risk"): negatives.append("Back-to-back hard sessions detected")
+
+    if checkin:
+        stiffness = int(checkin.get("stiffness", 0) or 0)
+        first_steps = int(checkin.get("first_steps_pain", 0) or 0)
+        post_run = int(checkin.get("post_run_pain", 0) or 0)
+        if stiffness >= 7:
+            negatives.append(f"Morning stiffness {stiffness}/10 — tendon likely irritated")
+        elif stiffness <= 2 and first_steps <= 2 and post_run <= 2:
+            positives.append(f"Subjective check-in clear (stiffness {stiffness}/10)")
+        if first_steps >= 5:
+            negatives.append(f"First-steps pain {first_steps}/10")
+        if post_run >= 5:
+            negatives.append(f"Post-run pain {post_run}/10 — reduce load")
+        if not checkin.get("calf_raises"):
+            negatives.append("Seated calf raises not logged today")
 
     # Check today's weather
     if weather and weather.get("days"):
@@ -1655,7 +1769,7 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
     }
 
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -1737,6 +1851,10 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     load_data           = load_data or {}
     recovery            = recovery or {}
     injury_contributors = injury_contributors or []
+    checkins            = checkins or []
+    latest_checkin      = get_latest_checkin(checkins)
+    checkin_history_json = json.dumps(list(reversed(checkins[-14:])))
+    today_iso           = date.today().isoformat()
 
     acr         = load_data.get("acr", 1.0)
     acr_status  = load_data.get("acr_status", "optimal")
@@ -1867,6 +1985,8 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         },
         "recent_runs": recent_runs_export,
         "blood_pressure": bp_readings[:10],
+        "checkins": checkins[:14],
+        "latest_checkin": latest_checkin,
     }, default=str)
 
     # ── COACH PANEL DATA ─────────────────────────────────────────────────────
@@ -2535,6 +2655,48 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   }}
   .btn-purple:hover {{ background: rgba(124,108,247,0.2); }}
 
+  /* ── CHECK-IN ── */
+  .checkin-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }}
+  .checkin-field {{ margin-bottom: 14px; }}
+  .checkin-label {{
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }}
+  .checkin-val {{
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--blue);
+    font-size: 11px;
+  }}
+  .checkin-slider {{ width: 100%; accent-color: var(--blue); }}
+  .checkin-toggle {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+  }}
+  .checkin-toggle input {{ width: 16px; height: 16px; accent-color: var(--green); }}
+  .checkin-trend {{ font-size: 11px; color: var(--text3); }}
+  .checkin-trend table {{ width: 100%; border-collapse: collapse; }}
+  .checkin-trend td {{
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }}
+  .checkin-trend td:first-child {{ text-align: left; color: var(--text2); }}
+  .pain-low {{ color: var(--green); }}
+  .pain-med {{ color: var(--yellow); }}
+  .pain-high {{ color: var(--red); }}
+
   /* ── DECISION ENGINE ── */
   .decision-card {{
     border-radius: 12px;
@@ -2653,6 +2815,48 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">{decision["rec_pace"]}</span></div>
         <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val">{decision["rec_hr"]}</span></div>
         <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">{decision["best_window"]} · {decision["today_temp"]}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY ACHILLES CHECK-IN -->
+  <div class="section" id="checkin-section">
+    <div class="section-header">
+      <div class="section-title">Morning Check-in</div>
+      <div style="font-size:10px;color:var(--text3)">30 sec · subjective tendon feedback</div>
+    </div>
+    <div class="chart-box">
+      <div class="checkin-grid">
+        <div>
+          <div class="checkin-field">
+            <div class="checkin-label"><span>Morning stiffness</span><span class="checkin-val" id="stiffness-val">0</span></div>
+            <input type="range" class="checkin-slider" id="stiffness" min="0" max="10" value="0" oninput="updateCheckinPreview()">
+          </div>
+          <div class="checkin-field">
+            <div class="checkin-label"><span>Pain — first steps</span><span class="checkin-val" id="first-steps-val">0</span></div>
+            <input type="range" class="checkin-slider" id="first-steps" min="0" max="10" value="0" oninput="updateCheckinPreview()">
+          </div>
+          <div class="checkin-field">
+            <div class="checkin-label"><span>Pain — after yesterday's run</span><span class="checkin-val" id="post-run-val">0</span></div>
+            <input type="range" class="checkin-slider" id="post-run" min="0" max="10" value="0" oninput="updateCheckinPreview()">
+          </div>
+          <label class="checkin-toggle">
+            <input type="checkbox" id="calf-raises">
+            Seated calf raises done today
+          </label>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="saveCheckin()">Save today</button>
+            <button class="btn btn-outline" onclick="exportCheckins()">Export history</button>
+          </div>
+          <div id="checkin-status" style="font-size:11px;color:var(--text3);margin-top:8px"></div>
+        </div>
+        <div>
+          <div class="chart-label">Last 7 days</div>
+          <div class="checkin-trend" id="checkin-trend">Loading…</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:10px;line-height:1.5">
+            Saved on this device. Export → paste into <code style="background:var(--surface2);padding:1px 5px;border-radius:3px">checkins.json</code> and commit to sync with daily scores.
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -3786,6 +3990,110 @@ function checkAlerts(battery, readiness) {{
   }}
 }}
 
+// ── DAILY CHECK-IN ──
+const CHECKIN_KEY = 'health_dashboard_checkins';
+const checkInServerHistory = {checkin_history_json};
+const checkInToday = '{today_iso}';
+
+function painClass(v) {{
+  if (v >= 5) return 'pain-high';
+  if (v >= 3) return 'pain-med';
+  return 'pain-low';
+}}
+
+function getLocalCheckins() {{
+  try {{
+    return JSON.parse(localStorage.getItem(CHECKIN_KEY) || '[]');
+  }} catch (e) {{
+    return [];
+  }}
+}}
+
+function getMergedCheckins() {{
+  const byDate = {{}};
+  checkInServerHistory.forEach(c => {{ if (c.date) byDate[c.date] = c; }});
+  getLocalCheckins().forEach(c => {{ if (c.date) byDate[c.date] = c; }});
+  return Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+}}
+
+function updateCheckinPreview() {{
+  ['stiffness', 'first-steps', 'post-run'].forEach(id => {{
+    const el = document.getElementById(id);
+    const val = document.getElementById(id + '-val');
+    if (el && val) val.textContent = el.value;
+  }});
+}}
+
+function loadTodayCheckin() {{
+  const merged = getMergedCheckins();
+  const today = merged.find(c => c.date === checkInToday);
+  if (!today) return;
+  document.getElementById('stiffness').value = today.stiffness ?? 0;
+  document.getElementById('first-steps').value = today.first_steps_pain ?? 0;
+  document.getElementById('post-run').value = today.post_run_pain ?? 0;
+  document.getElementById('calf-raises').checked = !!today.calf_raises;
+  updateCheckinPreview();
+  const status = document.getElementById('checkin-status');
+  if (status) status.textContent = 'Loaded today\\'s entry (' + (today.source || 'saved') + ')';
+}}
+
+function renderCheckinTrend() {{
+  const el = document.getElementById('checkin-trend');
+  if (!el) return;
+  const rows = getMergedCheckins().slice(-7);
+  if (!rows.length) {{
+    el.textContent = 'No check-ins yet — log your first one above.';
+    return;
+  }}
+  let html = '<table><tr><td>Date</td><td>Stiff</td><td>Steps</td><td>Post</td><td>Raises</td></tr>';
+  rows.forEach(c => {{
+    const s = c.stiffness ?? 0;
+    const f = c.first_steps_pain ?? 0;
+    const p = c.post_run_pain ?? 0;
+    html += `<tr>
+      <td>${{c.date === checkInToday ? 'Today' : c.date.slice(5)}}</td>
+      <td class="${{painClass(s)}}">${{s}}</td>
+      <td class="${{painClass(f)}}">${{f}}</td>
+      <td class="${{painClass(p)}}">${{p}}</td>
+      <td>${{c.calf_raises ? '✓' : '—'}}</td>
+    </tr>`;
+  }});
+  html += '</table>';
+  el.innerHTML = html;
+}}
+
+function saveCheckin() {{
+  const entry = {{
+    date: checkInToday,
+    stiffness: parseInt(document.getElementById('stiffness').value, 10),
+    first_steps_pain: parseInt(document.getElementById('first-steps').value, 10),
+    post_run_pain: parseInt(document.getElementById('post-run').value, 10),
+    calf_raises: document.getElementById('calf-raises').checked,
+    source: 'browser',
+    saved_at: new Date().toISOString(),
+  }};
+  const local = getLocalCheckins().filter(c => c.date !== checkInToday);
+  local.push(entry);
+  localStorage.setItem(CHECKIN_KEY, JSON.stringify(local));
+  const status = document.getElementById('checkin-status');
+  if (status) status.textContent = 'Saved locally for ' + checkInToday + ' — export & commit to update server scores.';
+  renderCheckinTrend();
+}}
+
+function exportCheckins() {{
+  const json = JSON.stringify(getMergedCheckins(), null, 2);
+  const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  const link = document.createElement('a');
+  link.href = dataUri;
+  link.download = 'checkins.json';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}}
+
+loadTodayCheckin();
+renderCheckinTrend();
+
 // ── EXPORT ──
 const dashboardData = {export_data};
 
@@ -3815,12 +4123,17 @@ function openClaude() {{
   const r = d.readiness; const lr = d.last_run;
   const t = d.training; const achilles = d.achilles;
   const bp = d.blood_pressure[0] || {{}};
+  const ci = getMergedCheckins().slice(-1)[0] || d.latest_checkin || null;
+  const checkinLine = ci
+    ? `MORNING CHECK-IN (${{ci.date}}): Stiffness ${{ci.stiffness}}/10 | First-steps pain ${{ci.first_steps_pain}}/10 | Post-run pain ${{ci.post_run_pain}}/10 | Calf raises: ${{ci.calf_raises ? 'yes' : 'no'}}`
+    : 'MORNING CHECK-IN: not logged today';
   const prompt = `Analyse my health data for ${{d.generated}} and give specific, actionable insights.
 
 TRAINING: Week ${{t.week}}/28 — ${{t.phase}} | Target ${{t.phase_target_km}} km/wk | This week: ${{t.this_week_km}} km | Days to race: ${{t.days_to_race}}
 ATHLETE: Melbourne Marathon 12 Oct 2026, sub-3:00 goal (PB 3:16). Left insertional Achilles tendinopathy.
 READINESS: ${{r.score}}/100 (${{r.level}}) | Sleep: ${{r.sleep_score}} | HRV: ${{r.hrv_weekly_avg}}ms | RHR: ${{r.resting_hr}} | Battery: ${{r.body_battery}}
 ACHILLES: ${{achilles.score}}/100 (${{achilles.level}}) | ${{achilles.factors.map(f=>f.label+': '+f.value).join(', ')}}
+${{checkinLine}}
 LAST RUN (${{lr.date}}): ${{lr.distance_km}}km @ ${{lr.avg_pace_min_km ? (Math.floor(lr.avg_pace_min_km)+':'+(Math.round((lr.avg_pace_min_km%1)*60)+'').padStart(2,'0')) : '--'}} | HR ${{lr.avg_hr}} | GCT L${{lr.gct_balance_left_pct}}%/R${{lr.gct_balance_right_pct}}%
 BP: ${{bp.systolic}}/${{bp.diastolic}} mmHg pulse ${{bp.pulse}}
 
@@ -3874,7 +4187,12 @@ def main():
         print("  ⚠ Back-to-back stress detected")
 
     print("Computing Achilles load score...")
+    checkins = load_checkins()
+    latest_checkin = get_latest_checkin(checkins)
+    if latest_checkin:
+        print(f"  Check-in: {latest_checkin['date']} — stiffness {latest_checkin.get('stiffness', '?')}/10")
     achilles = compute_achilles_score(garmin_data["runs"], phase_info)
+    achilles = apply_checkin_factors(achilles, latest_checkin)
     print(f"  Load score: {achilles.get('score')}/100 ({achilles.get('level')} risk)")
 
     print("Computing recovery score...")
@@ -3902,7 +4220,7 @@ def main():
     print("Generating why-today explanation...")
     why_today = generate_why_today(
         garmin_data.get("readiness", {}), achilles, tissue_capacity,
-        load_data, recovery, monotony, weather
+        load_data, recovery, monotony, weather, latest_checkin
     )
     print(f"  Decision: {why_today['decision'][:60]}...")
 
@@ -3915,7 +4233,8 @@ def main():
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,
                          load_data=load_data, recovery=recovery, injury_contributors=injury_contributors,
-                         tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today)
+                         tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today,
+                         checkins=checkins)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
