@@ -1,0 +1,8282 @@
+[
+  {
+    "date": "2025-06-25",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-25",
+        "distance": 6.0,
+        "pace": 5.17,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 18
+    }
+  },
+  {
+    "date": "2025-06-26",
+    "inputs": {
+      "resting_hr": 47,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-26",
+        "distance": 6.0,
+        "pace": 5.15,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 74
+    }
+  },
+  {
+    "date": "2025-06-27",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-27",
+        "distance": 6.0,
+        "pace": 5.29,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 82
+    }
+  },
+  {
+    "date": "2025-06-28",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-28",
+        "distance": 3.0,
+        "pace": 5.3,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2025-06-29",
+    "inputs": {
+      "resting_hr": 59,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-29",
+        "distance": 3.0,
+        "pace": 5.27,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 49,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 56
+    }
+  },
+  {
+    "date": "2025-06-30",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-30",
+        "distance": 6.0,
+        "pace": 5.09,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 58
+    }
+  },
+  {
+    "date": "2025-07-01",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-01",
+        "distance": 6.0,
+        "pace": 5.1,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 54
+    }
+  },
+  {
+    "date": "2025-07-02",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-02",
+        "distance": 6.0,
+        "pace": 5.18,
+        "avg_hr": 134.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 54
+    }
+  },
+  {
+    "date": "2025-07-03",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-03",
+        "distance": 6.1,
+        "pace": 5.21,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 63
+    }
+  },
+  {
+    "date": "2025-07-04",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-04",
+        "distance": 6.1,
+        "pace": 5.37,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 67
+    }
+  },
+  {
+    "date": "2025-07-05",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-05",
+        "distance": 3.0,
+        "pace": 5.41,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 61
+    }
+  },
+  {
+    "date": "2025-07-06",
+    "inputs": {
+      "resting_hr": 60,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-06",
+        "distance": 3.0,
+        "pace": 5.29,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 49,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 56
+    }
+  },
+  {
+    "date": "2025-07-07",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-07",
+        "distance": 4.0,
+        "pace": 5.47,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 58
+    }
+  },
+  {
+    "date": "2025-07-08",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-08",
+        "distance": 7.0,
+        "pace": 5.37,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2025-07-09",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-09",
+        "distance": 7.1,
+        "pace": 5.4,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 56
+    }
+  },
+  {
+    "date": "2025-07-10",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-10",
+        "distance": 12.2,
+        "pace": 5.24,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2025-07-11",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-11",
+        "distance": 7.1,
+        "pace": 5.31,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2025-07-12",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-12",
+        "distance": 3.0,
+        "pace": 5.43,
+        "avg_hr": 133.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-13",
+    "inputs": {
+      "resting_hr": 58,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-13",
+        "distance": 3.0,
+        "pace": 5.25,
+        "avg_hr": 134.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 50,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-14",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-14",
+        "distance": 7.0,
+        "pace": 5.53,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 52
+    }
+  },
+  {
+    "date": "2025-07-15",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-15",
+        "distance": 7.2,
+        "pace": 5.44,
+        "avg_hr": 134.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2025-07-16",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-16",
+        "distance": 7.1,
+        "pace": 5.46,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 51
+    }
+  },
+  {
+    "date": "2025-07-17",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-17",
+        "distance": 7.1,
+        "pace": 5.37,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 59
+    }
+  },
+  {
+    "date": "2025-07-18",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-18",
+        "distance": 7.1,
+        "pace": 5.41,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 73
+    }
+  },
+  {
+    "date": "2025-07-19",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-19",
+        "distance": 3.0,
+        "pace": 5.47,
+        "avg_hr": 134.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 63
+    }
+  },
+  {
+    "date": "2025-07-20",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-21",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-22",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-23",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-24",
+    "inputs": {
+      "resting_hr": 57,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-25",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-26",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-27",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-20",
+        "distance": 3.0,
+        "pace": 5.6,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-28",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-28",
+        "distance": 3.0,
+        "pace": 5.52,
+        "avg_hr": 133.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 63,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-07-29",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-29",
+        "distance": 7.1,
+        "pace": 5.64,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 67,
+      "monotony": 51
+    }
+  },
+  {
+    "date": "2025-07-30",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-07-30",
+        "distance": 7.2,
+        "pace": 5.49,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 67,
+      "monotony": 44
+    }
+  },
+  {
+    "date": "2025-07-31",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-07-30",
+        "distance": 7.2,
+        "pace": 5.49,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 67,
+      "monotony": 44
+    }
+  },
+  {
+    "date": "2025-08-01",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-01",
+        "distance": 8.0,
+        "pace": 5.29,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 67,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2025-08-02",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-02",
+        "distance": 4.0,
+        "pace": 5.2,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 67,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-08-03",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-02",
+        "distance": 4.0,
+        "pace": 5.2,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 67,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-08-04",
+    "inputs": {
+      "resting_hr": 57,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-04",
+        "distance": 4.0,
+        "pace": 5.32,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 0,
+      "tissue_capacity": 17,
+      "monotony": 40
+    }
+  },
+  {
+    "date": "2025-08-05",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-05",
+        "distance": 6.3,
+        "pace": 5.46,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 0,
+      "tissue_capacity": 17,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-08-06",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-06",
+        "distance": 8.2,
+        "pace": 5.32,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 52,
+      "achilles": 10,
+      "tissue_capacity": 33,
+      "monotony": 45
+    }
+  },
+  {
+    "date": "2025-08-07",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-07",
+        "distance": 7.2,
+        "pace": 5.26,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 10,
+      "tissue_capacity": 33,
+      "monotony": 58
+    }
+  },
+  {
+    "date": "2025-08-08",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 511,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-07",
+        "distance": 7.2,
+        "pace": 5.26,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 10,
+      "tissue_capacity": 33,
+      "monotony": 58
+    }
+  },
+  {
+    "date": "2025-08-09",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 511,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-09",
+        "distance": 5.3,
+        "pace": 5.29,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 57,
+      "achilles": 10,
+      "tissue_capacity": 33,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2025-08-10",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": 511,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-10",
+        "distance": 5.3,
+        "pace": 5.3,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 56,
+      "achilles": 10,
+      "tissue_capacity": 37,
+      "monotony": 63
+    }
+  },
+  {
+    "date": "2025-08-11",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 511,
+      "sleep_score": 62,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-11",
+        "distance": 7.1,
+        "pace": 5.34,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 37,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2025-08-12",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 33,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-12",
+        "distance": 7.1,
+        "pace": 5.3,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 50,
+      "achilles": 0,
+      "tissue_capacity": 49,
+      "monotony": 74
+    }
+  },
+  {
+    "date": "2025-08-13",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-13",
+        "distance": 10.5,
+        "pace": 5.35,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 48,
+      "recovery": 53,
+      "achilles": 0,
+      "tissue_capacity": 57,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2025-08-14",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 83,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-13",
+        "distance": 10.5,
+        "pace": 5.35,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 46,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 57,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2025-08-15",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-15",
+        "distance": 7.1,
+        "pace": 5.34,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 53,
+      "achilles": 0,
+      "tissue_capacity": 57,
+      "monotony": 66
+    }
+  },
+  {
+    "date": "2025-08-16",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 37,
+      "sleep_score": 78,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-16",
+        "distance": 5.3,
+        "pace": 5.33,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 37,
+      "recovery": 53,
+      "achilles": 0,
+      "tissue_capacity": 57,
+      "monotony": 66
+    }
+  },
+  {
+    "date": "2025-08-17",
+    "inputs": {
+      "resting_hr": 58,
+      "hrv": 36,
+      "sleep_score": 40,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-16",
+        "distance": 5.3,
+        "pace": 5.33,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 13,
+      "recovery": 35,
+      "achilles": 0,
+      "tissue_capacity": 57,
+      "monotony": 66
+    }
+  },
+  {
+    "date": "2025-08-18",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 35,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-18",
+        "distance": 7.1,
+        "pace": 5.35,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 43,
+      "recovery": 49,
+      "achilles": 0,
+      "tissue_capacity": 67,
+      "monotony": 71
+    }
+  },
+  {
+    "date": "2025-08-19",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 36,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-19",
+        "distance": 10.5,
+        "pace": 5.49,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 45,
+      "recovery": 53,
+      "achilles": 0,
+      "tissue_capacity": 67,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2025-08-20",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 36,
+      "sleep_score": 86,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-20",
+        "distance": 5.3,
+        "pace": 5.37,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 54,
+      "recovery": 58,
+      "achilles": 10,
+      "tissue_capacity": 75,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-08-21",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 35,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-20",
+        "distance": 5.3,
+        "pace": 5.37,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 15,
+      "recovery": 45,
+      "achilles": 10,
+      "tissue_capacity": 75,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2025-08-22",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 35,
+      "sleep_score": 64,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-22",
+        "distance": 10.1,
+        "pace": 6.76,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 35,
+      "recovery": 46,
+      "achilles": 10,
+      "tissue_capacity": 87,
+      "monotony": 37
+    }
+  },
+  {
+    "date": "2025-08-23",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": 34,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-22",
+        "distance": 10.1,
+        "pace": 6.76,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 30,
+      "recovery": 46,
+      "achilles": 10,
+      "tissue_capacity": 87,
+      "monotony": 37
+    }
+  },
+  {
+    "date": "2025-08-24",
+    "inputs": {
+      "resting_hr": 58,
+      "hrv": 34,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-22",
+        "distance": 10.1,
+        "pace": 6.76,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 42,
+      "recovery": 46,
+      "achilles": 10,
+      "tissue_capacity": 87,
+      "monotony": 37
+    }
+  },
+  {
+    "date": "2025-08-25",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-25",
+        "distance": 7.1,
+        "pace": 5.29,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 55,
+      "achilles": 10,
+      "tissue_capacity": 87,
+      "monotony": 36
+    }
+  },
+  {
+    "date": "2025-08-26",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 36,
+      "sleep_score": 91,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-26",
+        "distance": 7.1,
+        "pace": 4.63,
+        "avg_hr": 161.0
+      }
+    },
+    "scores": {
+      "readiness": 80,
+      "recovery": 63,
+      "achilles": 10,
+      "tissue_capacity": 87,
+      "monotony": 22
+    }
+  },
+  {
+    "date": "2025-08-27",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 35,
+      "sleep_score": 78,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-26",
+        "distance": 7.1,
+        "pace": 4.63,
+        "avg_hr": 161.0
+      }
+    },
+    "scores": {
+      "readiness": 47,
+      "recovery": 53,
+      "achilles": 10,
+      "tissue_capacity": 87,
+      "monotony": 22
+    }
+  },
+  {
+    "date": "2025-08-28",
+    "inputs": {
+      "resting_hr": 58,
+      "hrv": 34,
+      "sleep_score": 66,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-26",
+        "distance": 7.1,
+        "pace": 4.63,
+        "avg_hr": 161.0
+      }
+    },
+    "scores": {
+      "readiness": 61,
+      "recovery": 48,
+      "achilles": 0,
+      "tissue_capacity": 87,
+      "monotony": 22
+    }
+  },
+  {
+    "date": "2025-08-29",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-29",
+        "distance": 7.1,
+        "pace": 5.23,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 53,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 21
+    }
+  },
+  {
+    "date": "2025-08-30",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-29",
+        "distance": 7.1,
+        "pace": 5.23,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 16,
+      "recovery": 47,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 21
+    }
+  },
+  {
+    "date": "2025-08-31",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 35,
+      "sleep_score": 62,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-08-31",
+        "distance": 5.1,
+        "pace": 5.23,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": 48,
+      "recovery": 47,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 20
+    }
+  },
+  {
+    "date": "2025-09-01",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-08-31",
+        "distance": 5.1,
+        "pace": 5.23,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": 58,
+      "recovery": 54,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 20
+    }
+  },
+  {
+    "date": "2025-09-02",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-02",
+        "distance": 7.1,
+        "pace": 5.38,
+        "avg_hr": 135.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 59,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 19
+    }
+  },
+  {
+    "date": "2025-09-03",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-03",
+        "distance": 8.3,
+        "pace": 4.82,
+        "avg_hr": 154.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 59,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 31
+    }
+  },
+  {
+    "date": "2025-09-04",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 37,
+      "sleep_score": 52,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-04",
+        "distance": 10.5,
+        "pace": 5.29,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 40,
+      "recovery": 48,
+      "achilles": 20,
+      "tissue_capacity": 92,
+      "monotony": 31
+    }
+  },
+  {
+    "date": "2025-09-05",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 37,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-05",
+        "distance": 27.3,
+        "pace": 5.23,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 54,
+      "recovery": 55,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-06",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 38,
+      "sleep_score": 65,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-05",
+        "distance": 27.3,
+        "pace": 5.23,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 4,
+      "recovery": 46,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-07",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 39,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-05",
+        "distance": 27.3,
+        "pace": 5.23,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 28,
+      "recovery": 53,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-08",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 40,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-08",
+        "distance": 7.1,
+        "pace": 5.32,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 58,
+      "achilles": 55,
+      "tissue_capacity": 96,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-09",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 38,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-08",
+        "distance": 7.1,
+        "pace": 5.32,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 30,
+      "recovery": 49,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-10",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-08",
+        "distance": 7.1,
+        "pace": 5.32,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 60,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-11",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 37,
+      "sleep_score": 55,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-11",
+        "distance": 25.7,
+        "pace": 5.22,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 49,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2025-09-12",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 37,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-11",
+        "distance": 25.7,
+        "pace": 5.22,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 17,
+      "recovery": 47,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2025-09-13",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 36,
+      "sleep_score": 64,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-11",
+        "distance": 25.7,
+        "pace": 5.22,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 44,
+      "recovery": 48,
+      "achilles": 20,
+      "tissue_capacity": 100,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2025-09-14",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 66,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-14",
+        "distance": 34.0,
+        "pace": 5.31,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 51,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-09-15",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 33,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-14",
+        "distance": 34.0,
+        "pace": 5.31,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 1,
+      "recovery": 44,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-09-16",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-14",
+        "distance": 34.0,
+        "pace": 5.31,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 22,
+      "recovery": 46,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-09-17",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-17",
+        "distance": 14.0,
+        "pace": 5.27,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 58,
+      "recovery": 55,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2025-09-18",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-18",
+        "distance": 18.0,
+        "pace": 4.82,
+        "avg_hr": 160.0
+      }
+    },
+    "scores": {
+      "readiness": 61,
+      "recovery": 53,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-19",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 34,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-18",
+        "distance": 18.0,
+        "pace": 4.82,
+        "avg_hr": 160.0
+      }
+    },
+    "scores": {
+      "readiness": 10,
+      "recovery": 43,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-09-20",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-20",
+        "distance": 4.0,
+        "pace": 5.35,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": 50,
+      "recovery": 55,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 39
+    }
+  },
+  {
+    "date": "2025-09-21",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-21",
+        "distance": 36.3,
+        "pace": 4.97,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 73,
+      "recovery": 57,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 37
+    }
+  },
+  {
+    "date": "2025-09-22",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 36,
+      "sleep_score": 82,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-21",
+        "distance": 36.3,
+        "pace": 4.97,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 14,
+      "recovery": 51,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 37
+    }
+  },
+  {
+    "date": "2025-09-23",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 37,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-23",
+        "distance": 3.5,
+        "pace": 4.81,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 36,
+      "recovery": 52,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 36
+    }
+  },
+  {
+    "date": "2025-09-24",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 36,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-23",
+        "distance": 3.5,
+        "pace": 4.81,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 56,
+      "recovery": 52,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 36
+    }
+  },
+  {
+    "date": "2025-09-25",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-25",
+        "distance": 8.0,
+        "pace": 4.71,
+        "avg_hr": 154.0
+      }
+    },
+    "scores": {
+      "readiness": 72,
+      "recovery": 58,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2025-09-26",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 37,
+      "sleep_score": 57,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-26",
+        "distance": 15.0,
+        "pace": 5.32,
+        "avg_hr": 153.0
+      }
+    },
+    "scores": {
+      "readiness": 45,
+      "recovery": 48,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 34
+    }
+  },
+  {
+    "date": "2025-09-27",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 37,
+      "sleep_score": 64,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-26",
+        "distance": 15.0,
+        "pace": 5.32,
+        "avg_hr": 153.0
+      }
+    },
+    "scores": {
+      "readiness": 34,
+      "recovery": 47,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 34
+    }
+  },
+  {
+    "date": "2025-09-28",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 37,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-09-28",
+        "distance": 26.0,
+        "pace": 4.75,
+        "avg_hr": 160.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 58,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2025-09-29",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 36,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-28",
+        "distance": 26.0,
+        "pace": 4.75,
+        "avg_hr": 160.0
+      }
+    },
+    "scores": {
+      "readiness": 10,
+      "recovery": 48,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2025-09-30",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 36,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-09-28",
+        "distance": 26.0,
+        "pace": 4.75,
+        "avg_hr": 160.0
+      }
+    },
+    "scores": {
+      "readiness": 49,
+      "recovery": 54,
+      "achilles": 55,
+      "tissue_capacity": 100,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2025-10-01",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 37,
+      "sleep_score": 78,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-01",
+        "distance": 3.0,
+        "pace": 5.24,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 58,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 33
+    }
+  },
+  {
+    "date": "2025-10-02",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 36,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-01",
+        "distance": 3.0,
+        "pace": 5.24,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 40,
+      "recovery": 52,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 33
+    }
+  },
+  {
+    "date": "2025-10-03",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-03",
+        "distance": 5.1,
+        "pace": 4.98,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 56,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 33
+    }
+  },
+  {
+    "date": "2025-10-04",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 35,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-04",
+        "distance": 1.0,
+        "pace": 4.88,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 52,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 13
+    }
+  },
+  {
+    "date": "2025-10-05",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": 34,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-05",
+        "distance": 20.0,
+        "pace": 4.78,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 49,
+      "recovery": 49,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 14
+    }
+  },
+  {
+    "date": "2025-10-06",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 33,
+      "sleep_score": 65,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-05",
+        "distance": 20.0,
+        "pace": 4.78,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 22,
+      "recovery": 42,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 14
+    }
+  },
+  {
+    "date": "2025-10-07",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 33,
+      "sleep_score": 72,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-05",
+        "distance": 20.0,
+        "pace": 4.78,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 45,
+      "recovery": 50,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 14
+    }
+  },
+  {
+    "date": "2025-10-08",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 33,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-08",
+        "distance": 5.1,
+        "pace": 5.08,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 58,
+      "recovery": 52,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 14
+    }
+  },
+  {
+    "date": "2025-10-09",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 78,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-09",
+        "distance": 5.1,
+        "pace": 5.09,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 56,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 17
+    }
+  },
+  {
+    "date": "2025-10-10",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 32,
+      "sleep_score": 58,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-09",
+        "distance": 5.1,
+        "pace": 5.09,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 49,
+      "recovery": 43,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 17
+    }
+  },
+  {
+    "date": "2025-10-11",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 32,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-11",
+        "distance": 5.2,
+        "pace": 4.97,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 52,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 19
+    }
+  },
+  {
+    "date": "2025-10-12",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 32,
+      "sleep_score": 63,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-12",
+        "distance": 42.6,
+        "pace": 4.62,
+        "avg_hr": 166.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 47,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 17
+    }
+  },
+  {
+    "date": "2025-10-13",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 31,
+      "sleep_score": 51,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-12",
+        "distance": 42.6,
+        "pace": 4.62,
+        "avg_hr": 166.0
+      }
+    },
+    "scores": {
+      "readiness": 1,
+      "recovery": 34,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 17
+    }
+  },
+  {
+    "date": "2025-10-14",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 32,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-12",
+        "distance": 42.6,
+        "pace": 4.62,
+        "avg_hr": 166.0
+      }
+    },
+    "scores": {
+      "readiness": 3,
+      "recovery": 41,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 17
+    }
+  },
+  {
+    "date": "2025-10-15",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 32,
+      "sleep_score": 65,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-12",
+        "distance": 42.6,
+        "pace": 4.62,
+        "avg_hr": 166.0
+      }
+    },
+    "scores": {
+      "readiness": 33,
+      "recovery": 45,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 17
+    }
+  },
+  {
+    "date": "2025-10-16",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 32,
+      "sleep_score": 71,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-16",
+        "distance": 5.1,
+        "pace": 5.22,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 50,
+      "achilles": 35,
+      "tissue_capacity": 100,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2025-10-17",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 78,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-17",
+        "distance": 5.1,
+        "pace": 5.15,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 54,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 34
+    }
+  },
+  {
+    "date": "2025-10-18",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 57,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-17",
+        "distance": 5.1,
+        "pace": 5.15,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 48,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 34
+    }
+  },
+  {
+    "date": "2025-10-19",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 71,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-19",
+        "distance": 8.3,
+        "pace": 5.84,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 55,
+      "achilles": 35,
+      "tissue_capacity": 96,
+      "monotony": 29
+    }
+  },
+  {
+    "date": "2025-10-20",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 37,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-19",
+        "distance": 8.3,
+        "pace": 5.84,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 96,
+      "monotony": 29
+    }
+  },
+  {
+    "date": "2025-10-21",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 50,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-19",
+        "distance": 8.3,
+        "pace": 5.84,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 51,
+      "recovery": 48,
+      "achilles": 0,
+      "tissue_capacity": 96,
+      "monotony": 29
+    }
+  },
+  {
+    "date": "2025-10-22",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 48,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-22",
+        "distance": 5.2,
+        "pace": 5.25,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 44,
+      "recovery": 44,
+      "achilles": 0,
+      "tissue_capacity": 96,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2025-10-23",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 62,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-23",
+        "distance": 5.2,
+        "pace": 5.09,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 51,
+      "achilles": 0,
+      "tissue_capacity": 96,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2025-10-24",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 71,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-24",
+        "distance": 5.2,
+        "pace": 5.03,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 52,
+      "achilles": 0,
+      "tissue_capacity": 96,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2025-10-25",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 35,
+      "sleep_score": 66,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-24",
+        "distance": 5.2,
+        "pace": 5.03,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 84,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2025-10-26",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 34,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-24",
+        "distance": 5.2,
+        "pace": 5.03,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 34,
+      "recovery": 36,
+      "achilles": 0,
+      "tissue_capacity": 84,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2025-10-27",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 79,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-27",
+        "distance": 5.2,
+        "pace": 5.29,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 84,
+      "monotony": 61
+    }
+  },
+  {
+    "date": "2025-10-28",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 84,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-28",
+        "distance": 3.4,
+        "pace": 5.34,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 59,
+      "achilles": 0,
+      "tissue_capacity": 84,
+      "monotony": 52
+    }
+  },
+  {
+    "date": "2025-10-29",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 59,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-10-28",
+        "distance": 3.4,
+        "pace": 5.34,
+        "avg_hr": 137.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 49,
+      "achilles": 0,
+      "tissue_capacity": 84,
+      "monotony": 52
+    }
+  },
+  {
+    "date": "2025-10-30",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 64,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-30",
+        "distance": 5.1,
+        "pace": 5.34,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 52,
+      "achilles": 0,
+      "tissue_capacity": 84,
+      "monotony": 52
+    }
+  },
+  {
+    "date": "2025-10-31",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 63,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-10-31",
+        "distance": 5.2,
+        "pace": 5.36,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 50,
+      "achilles": 10,
+      "tissue_capacity": 84,
+      "monotony": 74
+    }
+  },
+  {
+    "date": "2025-11-01",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-01",
+        "distance": 1.0,
+        "pace": 4.87,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 58,
+      "recovery": 54,
+      "achilles": 10,
+      "tissue_capacity": 84,
+      "monotony": 14
+    }
+  },
+  {
+    "date": "2025-11-02",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 35,
+      "sleep_score": 50,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-01",
+        "distance": 1.0,
+        "pace": 4.87,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 29,
+      "recovery": 44,
+      "achilles": 10,
+      "tissue_capacity": 84,
+      "monotony": 14
+    }
+  },
+  {
+    "date": "2025-11-03",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 79,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-03",
+        "distance": 7.0,
+        "pace": 5.19,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 57,
+      "achilles": 0,
+      "tissue_capacity": 80,
+      "monotony": 15
+    }
+  },
+  {
+    "date": "2025-11-04",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-04",
+        "distance": 7.0,
+        "pace": 5.15,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 80,
+      "monotony": 15
+    }
+  },
+  {
+    "date": "2025-11-05",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 86,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-05",
+        "distance": 3.0,
+        "pace": 5.21,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 85,
+      "recovery": 62,
+      "achilles": 10,
+      "tissue_capacity": 80,
+      "monotony": 16
+    }
+  },
+  {
+    "date": "2025-11-06",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 36,
+      "sleep_score": 62,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-05",
+        "distance": 3.0,
+        "pace": 5.21,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 65,
+      "recovery": 53,
+      "achilles": 10,
+      "tissue_capacity": 80,
+      "monotony": 16
+    }
+  },
+  {
+    "date": "2025-11-07",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 84,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-07",
+        "distance": 5.2,
+        "pace": 5.56,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 82,
+      "recovery": 62,
+      "achilles": 10,
+      "tissue_capacity": 80,
+      "monotony": 15
+    }
+  },
+  {
+    "date": "2025-11-08",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 37,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-08",
+        "distance": 7.0,
+        "pace": 5.16,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 77,
+      "recovery": 62,
+      "achilles": 0,
+      "tissue_capacity": 80,
+      "monotony": 16
+    }
+  },
+  {
+    "date": "2025-11-09",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 37,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-09",
+        "distance": 5.2,
+        "pace": 4.94,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 80,
+      "recovery": 60,
+      "achilles": 10,
+      "tissue_capacity": 80,
+      "monotony": 45
+    }
+  },
+  {
+    "date": "2025-11-10",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-10",
+        "distance": 5.3,
+        "pace": 5.19,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 77,
+      "recovery": 60,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2025-11-11",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 79,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-10",
+        "distance": 5.3,
+        "pace": 5.19,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 75,
+      "recovery": 61,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2025-11-12",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 39,
+      "sleep_score": 55,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-12",
+        "distance": 5.3,
+        "pace": 5.26,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 52,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 59
+    }
+  },
+  {
+    "date": "2025-11-13",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 39,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-12",
+        "distance": 5.3,
+        "pace": 5.26,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 59
+    }
+  },
+  {
+    "date": "2025-11-14",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 40,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-14",
+        "distance": 5.3,
+        "pace": 5.15,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 60,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 71
+    }
+  },
+  {
+    "date": "2025-11-15",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 39,
+      "sleep_score": 51,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-14",
+        "distance": 5.3,
+        "pace": 5.15,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 36,
+      "recovery": 46,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 71
+    }
+  },
+  {
+    "date": "2025-11-16",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 39,
+      "sleep_score": 67,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-16",
+        "distance": 5.2,
+        "pace": 5.46,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 54,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 72
+    }
+  },
+  {
+    "date": "2025-11-17",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 39,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-16",
+        "distance": 5.2,
+        "pace": 5.46,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 61,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 72
+    }
+  },
+  {
+    "date": "2025-11-18",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 71,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-18",
+        "distance": 5.3,
+        "pace": 5.44,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 75,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 84
+    }
+  },
+  {
+    "date": "2025-11-19",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-19",
+        "distance": 5.3,
+        "pace": 4.91,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 59,
+      "achilles": 20,
+      "tissue_capacity": 52,
+      "monotony": 83
+    }
+  },
+  {
+    "date": "2025-11-20",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 37,
+      "sleep_score": 60,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-20",
+        "distance": 5.3,
+        "pace": 5.11,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 53,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 84
+    }
+  },
+  {
+    "date": "2025-11-21",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 37,
+      "sleep_score": 78,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-20",
+        "distance": 5.3,
+        "pace": 5.11,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 57,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 84
+    }
+  },
+  {
+    "date": "2025-11-22",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 37,
+      "sleep_score": 79,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-20",
+        "distance": 5.3,
+        "pace": 5.11,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 81,
+      "recovery": 61,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 84
+    }
+  },
+  {
+    "date": "2025-11-23",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 38,
+      "sleep_score": 53,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-23",
+        "distance": 5.3,
+        "pace": 5.21,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 52,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 86
+    }
+  },
+  {
+    "date": "2025-11-24",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 59,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-23",
+        "distance": 5.3,
+        "pace": 5.21,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 52,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 86
+    }
+  },
+  {
+    "date": "2025-11-25",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 38,
+      "sleep_score": 53,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-23",
+        "distance": 5.3,
+        "pace": 5.21,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 47,
+      "recovery": 50,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 86
+    }
+  },
+  {
+    "date": "2025-11-26",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 38,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-26",
+        "distance": 5.3,
+        "pace": 4.9,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 85
+    }
+  },
+  {
+    "date": "2025-11-27",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 65,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-27",
+        "distance": 5.0,
+        "pace": 5.27,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 83
+    }
+  },
+  {
+    "date": "2025-11-28",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 38,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-27",
+        "distance": 5.0,
+        "pace": 5.27,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 83
+    }
+  },
+  {
+    "date": "2025-11-29",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 36,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-11-27",
+        "distance": 5.0,
+        "pace": 5.27,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 59,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 83
+    }
+  },
+  {
+    "date": "2025-11-30",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 36,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-11-30",
+        "distance": 5.0,
+        "pace": 5.42,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 88,
+      "recovery": 60,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 82
+    }
+  },
+  {
+    "date": "2025-12-01",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 36,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-01",
+        "distance": 7.0,
+        "pace": 5.37,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 83,
+      "recovery": 59,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 70
+    }
+  },
+  {
+    "date": "2025-12-02",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-02",
+        "distance": 5.2,
+        "pace": 5.55,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 72,
+      "recovery": 57,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2025-12-03",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-03",
+        "distance": 7.1,
+        "pace": 5.22,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 56,
+      "achilles": 10,
+      "tissue_capacity": 52,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2025-12-04",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 36,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-04",
+        "distance": 5.3,
+        "pace": 5.21,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 58,
+      "achilles": 10,
+      "tissue_capacity": 52,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2025-12-05",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 36,
+      "sleep_score": 85,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-05",
+        "distance": 7.1,
+        "pace": 5.42,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 64,
+      "achilles": 10,
+      "tissue_capacity": 52,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2025-12-06",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 36,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-06",
+        "distance": 7.0,
+        "pace": 5.43,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 61,
+      "recovery": 54,
+      "achilles": 10,
+      "tissue_capacity": 52,
+      "monotony": 70
+    }
+  },
+  {
+    "date": "2025-12-07",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-07",
+        "distance": 7.0,
+        "pace": 5.19,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 56,
+      "achilles": 10,
+      "tissue_capacity": 52,
+      "monotony": 73
+    }
+  },
+  {
+    "date": "2025-12-08",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 35,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-08",
+        "distance": 5.3,
+        "pace": 5.33,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 70
+    }
+  },
+  {
+    "date": "2025-12-09",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 72,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-08",
+        "distance": 5.3,
+        "pace": 5.33,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 70
+    }
+  },
+  {
+    "date": "2025-12-10",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 35,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-10",
+        "distance": 7.0,
+        "pace": 5.03,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 70,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 72
+    }
+  },
+  {
+    "date": "2025-12-11",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 48,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-10",
+        "distance": 7.0,
+        "pace": 5.03,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 34,
+      "recovery": 42,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 72
+    }
+  },
+  {
+    "date": "2025-12-12",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-12",
+        "distance": 5.2,
+        "pace": 5.16,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 52,
+      "monotony": 70
+    }
+  },
+  {
+    "date": "2025-12-13",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-13",
+        "distance": 10.0,
+        "pace": 5.72,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 55,
+      "achilles": 10,
+      "tissue_capacity": 57,
+      "monotony": 57
+    }
+  },
+  {
+    "date": "2025-12-14",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-14",
+        "distance": 5.0,
+        "pace": 5.65,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 54,
+      "achilles": 10,
+      "tissue_capacity": 57,
+      "monotony": 52
+    }
+  },
+  {
+    "date": "2025-12-15",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 34,
+      "sleep_score": 76,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-14",
+        "distance": 5.0,
+        "pace": 5.65,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 54,
+      "achilles": 10,
+      "tissue_capacity": 57,
+      "monotony": 52
+    }
+  },
+  {
+    "date": "2025-12-16",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-16",
+        "distance": 7.0,
+        "pace": 5.04,
+        "avg_hr": 149.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 57,
+      "achilles": 0,
+      "tissue_capacity": 67,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2025-12-17",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 80,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-17",
+        "distance": 8.0,
+        "pace": 5.37,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 67,
+      "monotony": 49
+    }
+  },
+  {
+    "date": "2025-12-18",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-18",
+        "distance": 17.0,
+        "pace": 5.9,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 78,
+      "recovery": 59,
+      "achilles": 25,
+      "tissue_capacity": 75,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2025-12-19",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 71,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-19",
+        "distance": 7.2,
+        "pace": 6.02,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 48,
+      "recovery": 50,
+      "achilles": 55,
+      "tissue_capacity": 75,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-12-20",
+    "inputs": {
+      "resting_hr": 62,
+      "hrv": 34,
+      "sleep_score": 29,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-19",
+        "distance": 7.2,
+        "pace": 6.02,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 8,
+      "recovery": 27,
+      "achilles": 55,
+      "tissue_capacity": 75,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-12-21",
+    "inputs": {
+      "resting_hr": 58,
+      "hrv": 32,
+      "sleep_score": 33,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-19",
+        "distance": 7.2,
+        "pace": 6.02,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 1,
+      "recovery": 27,
+      "achilles": 55,
+      "tissue_capacity": 75,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-12-22",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 30,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-19",
+        "distance": 7.2,
+        "pace": 6.02,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 40,
+      "recovery": 44,
+      "achilles": 35,
+      "tissue_capacity": 75,
+      "monotony": 41
+    }
+  },
+  {
+    "date": "2025-12-23",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 30,
+      "sleep_score": 87,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-23",
+        "distance": 10.0,
+        "pace": 5.58,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 53,
+      "achilles": 25,
+      "tissue_capacity": 75,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-12-24",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 29,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-24",
+        "distance": 10.0,
+        "pace": 5.53,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 52,
+      "achilles": 25,
+      "tissue_capacity": 75,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-12-25",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 29,
+      "sleep_score": 65,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-25",
+        "distance": 6.0,
+        "pace": 5.61,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 50,
+      "recovery": 46,
+      "achilles": 25,
+      "tissue_capacity": 75,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-12-26",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 31,
+      "sleep_score": 95,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-25",
+        "distance": 6.0,
+        "pace": 5.61,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 70,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 75,
+      "monotony": 43
+    }
+  },
+  {
+    "date": "2025-12-27",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 31,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-27",
+        "distance": 16.0,
+        "pace": 5.52,
+        "avg_hr": 154.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 49,
+      "achilles": 25,
+      "tissue_capacity": 87,
+      "monotony": 45
+    }
+  },
+  {
+    "date": "2025-12-28",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 72,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-27",
+        "distance": 16.0,
+        "pace": 5.52,
+        "avg_hr": 154.0
+      }
+    },
+    "scores": {
+      "readiness": 45,
+      "recovery": 51,
+      "achilles": 25,
+      "tissue_capacity": 87,
+      "monotony": 45
+    }
+  },
+  {
+    "date": "2025-12-29",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 37,
+      "sleep_score": 64,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-29",
+        "distance": 16.0,
+        "pace": 5.56,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 52,
+      "achilles": 45,
+      "tissue_capacity": 87,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2025-12-30",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 37,
+      "sleep_score": 84,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-12-30",
+        "distance": 19.0,
+        "pace": 5.39,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 59,
+      "achilles": 45,
+      "tissue_capacity": 96,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2025-12-31",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 37,
+      "sleep_score": 74,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2025-12-30",
+        "distance": 19.0,
+        "pace": 5.39,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 51,
+      "recovery": 54,
+      "achilles": 45,
+      "tissue_capacity": 96,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-01-01",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 37,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-01",
+        "distance": 9.0,
+        "pace": 5.28,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 57,
+      "achilles": 45,
+      "tissue_capacity": 96,
+      "monotony": 49
+    }
+  },
+  {
+    "date": "2026-01-02",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 60,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-01",
+        "distance": 9.0,
+        "pace": 5.28,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 52,
+      "achilles": 45,
+      "tissue_capacity": 96,
+      "monotony": 49
+    }
+  },
+  {
+    "date": "2026-01-03",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 36,
+      "sleep_score": 68,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-03",
+        "distance": 16.0,
+        "pace": 5.39,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 53,
+      "achilles": 45,
+      "tissue_capacity": 96,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-01-04",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 36,
+      "sleep_score": 56,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-03",
+        "distance": 16.0,
+        "pace": 5.39,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 36,
+      "recovery": 46,
+      "achilles": 45,
+      "tissue_capacity": 96,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-01-05",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 35,
+      "sleep_score": 67,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-05",
+        "distance": 13.0,
+        "pace": 5.43,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 51,
+      "recovery": 50,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-01-06",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 83,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-05",
+        "distance": 13.0,
+        "pace": 5.43,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 58,
+      "achilles": 45,
+      "tissue_capacity": 100,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-01-07",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 36,
+      "sleep_score": 72,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-05",
+        "distance": 13.0,
+        "pace": 5.43,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 56,
+      "achilles": 25,
+      "tissue_capacity": 100,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-01-08",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": 34,
+      "sleep_score": 46,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-05",
+        "distance": 13.0,
+        "pace": 5.43,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 43,
+      "achilles": 25,
+      "tissue_capacity": 100,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-01-09",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": 33,
+      "sleep_score": 69,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-09",
+        "distance": 10.2,
+        "pace": 5.59,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 100,
+      "monotony": 57
+    }
+  },
+  {
+    "date": "2026-01-10",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 40,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-09",
+        "distance": 10.2,
+        "pace": 5.59,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 25,
+      "recovery": 37,
+      "achilles": 25,
+      "tissue_capacity": 100,
+      "monotony": 57
+    }
+  },
+  {
+    "date": "2026-01-11",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 88,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-11",
+        "distance": 7.6,
+        "pace": 5.56,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 72,
+      "recovery": 61,
+      "achilles": 10,
+      "tissue_capacity": 100,
+      "monotony": 48
+    }
+  },
+  {
+    "date": "2026-01-12",
+    "inputs": {
+      "resting_hr": 47,
+      "hrv": 35,
+      "sleep_score": 92,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-11",
+        "distance": 7.6,
+        "pace": 5.56,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 92,
+      "recovery": 67,
+      "achilles": 10,
+      "tissue_capacity": 97,
+      "monotony": 48
+    }
+  },
+  {
+    "date": "2026-01-13",
+    "inputs": {
+      "resting_hr": 46,
+      "hrv": 37,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-13",
+        "distance": 13.0,
+        "pace": 5.87,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 93,
+      "recovery": 64,
+      "achilles": 0,
+      "tissue_capacity": 100,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-01-14",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 36,
+      "sleep_score": 66,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-13",
+        "distance": 13.0,
+        "pace": 5.87,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 56,
+      "achilles": 0,
+      "tissue_capacity": 97,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-01-15",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 39,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-13",
+        "distance": 13.0,
+        "pace": 5.87,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 81,
+      "recovery": 63,
+      "achilles": 0,
+      "tissue_capacity": 97,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-01-16",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 40,
+      "sleep_score": 62,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-13",
+        "distance": 13.0,
+        "pace": 5.87,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 58,
+      "achilles": 0,
+      "tissue_capacity": 89,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-01-17",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 41,
+      "sleep_score": 70,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-17",
+        "distance": 21.2,
+        "pace": 5.69,
+        "avg_hr": 151.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 61,
+      "achilles": 50,
+      "tissue_capacity": 82,
+      "monotony": 44
+    }
+  },
+  {
+    "date": "2026-01-18",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 39,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-17",
+        "distance": 21.2,
+        "pace": 5.69,
+        "avg_hr": 151.0
+      }
+    },
+    "scores": {
+      "readiness": 27,
+      "recovery": 52,
+      "achilles": 50,
+      "tissue_capacity": 82,
+      "monotony": 44
+    }
+  },
+  {
+    "date": "2026-01-19",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 38,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-17",
+        "distance": 21.2,
+        "pace": 5.69,
+        "avg_hr": 151.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 56,
+      "achilles": 50,
+      "tissue_capacity": 82,
+      "monotony": 44
+    }
+  },
+  {
+    "date": "2026-01-20",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 36,
+      "sleep_score": 81,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-17",
+        "distance": 21.2,
+        "pace": 5.69,
+        "avg_hr": 151.0
+      }
+    },
+    "scores": {
+      "readiness": 82,
+      "recovery": 62,
+      "achilles": 50,
+      "tissue_capacity": 82,
+      "monotony": 44
+    }
+  },
+  {
+    "date": "2026-01-21",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 75,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-21",
+        "distance": 5.1,
+        "pace": 5.48,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 82,
+      "recovery": 59,
+      "achilles": 50,
+      "tissue_capacity": 82,
+      "monotony": 47
+    }
+  },
+  {
+    "date": "2026-01-22",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 36,
+      "sleep_score": 83,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-21",
+        "distance": 5.1,
+        "pace": 5.48,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 82,
+      "recovery": 62,
+      "achilles": 50,
+      "tissue_capacity": 74,
+      "monotony": 47
+    }
+  },
+  {
+    "date": "2026-01-23",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 36,
+      "sleep_score": 71,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-21",
+        "distance": 5.1,
+        "pace": 5.48,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 56,
+      "achilles": 50,
+      "tissue_capacity": 70,
+      "monotony": 47
+    }
+  },
+  {
+    "date": "2026-01-24",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 34,
+      "sleep_score": 45,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 47,
+      "recovery": 42,
+      "achilles": 50,
+      "tissue_capacity": 82,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-25",
+    "inputs": {
+      "resting_hr": 56,
+      "hrv": 34,
+      "sleep_score": 52,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 10,
+      "recovery": 38,
+      "achilles": 30,
+      "tissue_capacity": 74,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-26",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 47,
+      "recovery": 51,
+      "achilles": 30,
+      "tissue_capacity": 74,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-27",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 82,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 60,
+      "achilles": 30,
+      "tissue_capacity": 70,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-28",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 35,
+      "sleep_score": 85,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 86,
+      "recovery": 64,
+      "achilles": 30,
+      "tissue_capacity": 56,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-29",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 35,
+      "sleep_score": 77,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 84,
+      "recovery": 61,
+      "achilles": 30,
+      "tissue_capacity": 56,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-30",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 35,
+      "sleep_score": 58,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 70,
+      "recovery": 52,
+      "achilles": 30,
+      "tissue_capacity": 56,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-01-31",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 73,
+      "body_battery": null,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 77,
+      "recovery": 57,
+      "achilles": 30,
+      "tissue_capacity": 56,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-01",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 60,
+      "body_battery": 36,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 56,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-02",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 77,
+      "body_battery": 33,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 81,
+      "recovery": 59,
+      "achilles": 15,
+      "tissue_capacity": 56,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-03",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 84,
+      "body_battery": 24,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 92,
+      "recovery": 63,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-04",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 71,
+      "body_battery": 50,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 82,
+      "recovery": 57,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-05",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 79,
+      "body_battery": 20,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 89,
+      "recovery": 58,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-06",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 33,
+      "sleep_score": 68,
+      "body_battery": 24,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-07",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 73,
+      "body_battery": 18,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 83,
+      "recovery": 56,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-08",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 76,
+      "body_battery": 16,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 85,
+      "recovery": 58,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-09",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 33,
+      "sleep_score": 76,
+      "body_battery": 20,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 85,
+      "recovery": 56,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-10",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 56,
+      "body_battery": 23,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 64,
+      "recovery": 48,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-11",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 32,
+      "sleep_score": 72,
+      "body_battery": 20,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-12",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 66,
+      "body_battery": 25,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 66,
+      "recovery": 49,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-13",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 31,
+      "sleep_score": 75,
+      "body_battery": 21,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-14",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 75,
+      "body_battery": 25,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-01-24",
+        "distance": 5.1,
+        "pace": 5.58,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 35
+    }
+  },
+  {
+    "date": "2026-02-15",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 82,
+      "body_battery": 25,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 85,
+      "recovery": 57,
+      "achilles": 25,
+      "tissue_capacity": 15,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-16",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 30,
+      "sleep_score": 84,
+      "body_battery": 32,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 84,
+      "recovery": 56,
+      "achilles": 25,
+      "tissue_capacity": 15,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-17",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 29,
+      "sleep_score": 74,
+      "body_battery": 28,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 73,
+      "recovery": 52,
+      "achilles": 25,
+      "tissue_capacity": 15,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-18",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 30,
+      "sleep_score": 72,
+      "body_battery": 24,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 51,
+      "achilles": 25,
+      "tissue_capacity": 15,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-19",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 30,
+      "sleep_score": 73,
+      "body_battery": 22,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 50,
+      "achilles": 25,
+      "tissue_capacity": 11,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-20",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 29,
+      "sleep_score": 62,
+      "body_battery": 14,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 46,
+      "achilles": 25,
+      "tissue_capacity": 11,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-21",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 28,
+      "sleep_score": 73,
+      "body_battery": 20,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-15",
+        "distance": 4.0,
+        "pace": 7.71,
+        "avg_hr": 115.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 11,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-22",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 29,
+      "sleep_score": 82,
+      "body_battery": 18,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-02-22",
+        "distance": 10.5,
+        "pace": 5.69,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 75,
+      "recovery": 54,
+      "achilles": 25,
+      "tissue_capacity": 6,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-23",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 29,
+      "sleep_score": 81,
+      "body_battery": 51,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-22",
+        "distance": 10.5,
+        "pace": 5.69,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 17,
+      "recovery": 45,
+      "achilles": 25,
+      "tissue_capacity": 6,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-24",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 30,
+      "sleep_score": 77,
+      "body_battery": 25,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-22",
+        "distance": 10.5,
+        "pace": 5.69,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 47,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 6,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-25",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 63,
+      "body_battery": 25,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-22",
+        "distance": 10.5,
+        "pace": 5.69,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 48,
+      "recovery": 43,
+      "achilles": 25,
+      "tissue_capacity": 6,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-26",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 30,
+      "sleep_score": 77,
+      "body_battery": 10,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-22",
+        "distance": 10.5,
+        "pace": 5.69,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 49,
+      "achilles": 25,
+      "tissue_capacity": 6,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-27",
+    "inputs": {
+      "resting_hr": 57,
+      "hrv": 30,
+      "sleep_score": 43,
+      "body_battery": 16,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-02-22",
+        "distance": 10.5,
+        "pace": 5.69,
+        "avg_hr": 152.0
+      }
+    },
+    "scores": {
+      "readiness": 20,
+      "recovery": 32,
+      "achilles": 25,
+      "tissue_capacity": 6,
+      "monotony": 10
+    }
+  },
+  {
+    "date": "2026-02-28",
+    "inputs": {
+      "resting_hr": 57,
+      "hrv": 29,
+      "sleep_score": 71,
+      "body_battery": 28,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-02-28",
+        "distance": 7.6,
+        "pace": 5.61,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 49,
+      "recovery": 44,
+      "achilles": 15,
+      "tissue_capacity": 6,
+      "monotony": 9
+    }
+  },
+  {
+    "date": "2026-03-01",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 30,
+      "sleep_score": 77,
+      "body_battery": 5,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 33,
+      "recovery": 45,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-02",
+    "inputs": {
+      "resting_hr": 58,
+      "hrv": 29,
+      "sleep_score": 68,
+      "body_battery": 29,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 1,
+      "recovery": 35,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-03",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 30,
+      "sleep_score": 91,
+      "body_battery": 53,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 1,
+      "recovery": 43,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-04",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 31,
+      "sleep_score": 77,
+      "body_battery": 30,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 31,
+      "recovery": 46,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-05",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 31,
+      "sleep_score": 75,
+      "body_battery": 21,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 46,
+      "recovery": 46,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-06",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 32,
+      "sleep_score": 75,
+      "body_battery": 18,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 61,
+      "recovery": 49,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-07",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 33,
+      "sleep_score": 71,
+      "body_battery": 19,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 51,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-08",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 32,
+      "sleep_score": 47,
+      "body_battery": 32,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 37,
+      "recovery": 39,
+      "achilles": 60,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-09",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 82,
+      "body_battery": 38,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 56,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-10",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 33,
+      "sleep_score": 81,
+      "body_battery": 50,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 85,
+      "recovery": 57,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-11",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 33,
+      "sleep_score": 59,
+      "body_battery": 35,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 51,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-12",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 63,
+      "body_battery": 25,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 50,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-13",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 33,
+      "sleep_score": 29,
+      "body_battery": 14,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 26,
+      "recovery": 33,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-14",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 42,
+      "body_battery": 20,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 36,
+      "recovery": 40,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-15",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 35,
+      "sleep_score": 67,
+      "body_battery": 46,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 53,
+      "achilles": 25,
+      "tissue_capacity": 36,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-16",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 63,
+      "body_battery": 36,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 54,
+      "achilles": 25,
+      "tissue_capacity": 32,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-17",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 63,
+      "body_battery": 34,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 52,
+      "achilles": 25,
+      "tissue_capacity": 32,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-18",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 72,
+      "body_battery": 39,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-01",
+        "distance": 42.8,
+        "pace": 5.08,
+        "avg_hr": 167.0
+      }
+    },
+    "scores": {
+      "readiness": 77,
+      "recovery": 55,
+      "achilles": 25,
+      "tissue_capacity": 32,
+      "monotony": 1
+    }
+  },
+  {
+    "date": "2026-03-19",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 69,
+      "body_battery": 35,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-03-19",
+        "distance": 3.0,
+        "pace": 5.75,
+        "avg_hr": 132.0
+      }
+    },
+    "scores": {
+      "readiness": 80,
+      "recovery": 54,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 2
+    }
+  },
+  {
+    "date": "2026-03-20",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 70,
+      "body_battery": 30,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-19",
+        "distance": 3.0,
+        "pace": 5.75,
+        "avg_hr": 132.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 2
+    }
+  },
+  {
+    "date": "2026-03-21",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 32,
+      "sleep_score": 81,
+      "body_battery": 40,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 88,
+      "recovery": 57,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-22",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 32,
+      "sleep_score": 67,
+      "body_battery": 41,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 36,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-23",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 32,
+      "sleep_score": 73,
+      "body_battery": 29,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 83,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 32,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-24",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 32,
+      "sleep_score": 82,
+      "body_battery": 59,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 88,
+      "recovery": 59,
+      "achilles": 15,
+      "tissue_capacity": 32,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-25",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 65,
+      "body_battery": 33,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 32,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-26",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 61,
+      "body_battery": 51,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 47,
+      "achilles": 15,
+      "tissue_capacity": 32,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-27",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 30,
+      "sleep_score": 50,
+      "body_battery": 45,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 42,
+      "recovery": 39,
+      "achilles": 15,
+      "tissue_capacity": 32,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-28",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 30,
+      "sleep_score": 68,
+      "body_battery": 28,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 61,
+      "recovery": 46,
+      "achilles": 15,
+      "tissue_capacity": 32,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-29",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 64,
+      "body_battery": 36,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 45,
+      "achilles": 15,
+      "tissue_capacity": 28,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-30",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 28,
+      "sleep_score": 61,
+      "body_battery": 51,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 45,
+      "achilles": 15,
+      "tissue_capacity": 0,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-03-31",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 66,
+      "body_battery": 30,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-03-21",
+        "distance": 4.0,
+        "pace": 5.85,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": 58,
+      "recovery": 46,
+      "achilles": 15,
+      "tissue_capacity": 0,
+      "monotony": 4
+    }
+  },
+  {
+    "date": "2026-04-01",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 75,
+      "body_battery": 22,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-01",
+        "distance": 4.0,
+        "pace": 5.97,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 49,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 5
+    }
+  },
+  {
+    "date": "2026-04-02",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 29,
+      "sleep_score": 67,
+      "body_battery": 30,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-01",
+        "distance": 4.0,
+        "pace": 5.97,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 46,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 5
+    }
+  },
+  {
+    "date": "2026-04-03",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 29,
+      "sleep_score": 56,
+      "body_battery": 43,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-03",
+        "distance": 3.0,
+        "pace": 6.04,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 54,
+      "recovery": 43,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-04",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 85,
+      "body_battery": 62,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-03",
+        "distance": 3.0,
+        "pace": 6.04,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 52,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-05",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": 30,
+      "sleep_score": 71,
+      "body_battery": 31,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-05",
+        "distance": 5.0,
+        "pace": 5.85,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-06",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 29,
+      "sleep_score": 80,
+      "body_battery": 50,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-05",
+        "distance": 5.0,
+        "pace": 5.85,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 52,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-07",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 30,
+      "sleep_score": 75,
+      "body_battery": 37,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-05",
+        "distance": 5.0,
+        "pace": 5.85,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 50,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-08",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 30,
+      "sleep_score": 69,
+      "body_battery": 31,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-08",
+        "distance": 5.0,
+        "pace": 5.9,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 50,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-09",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 30,
+      "sleep_score": 75,
+      "body_battery": 38,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-08",
+        "distance": 5.0,
+        "pace": 5.9,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 49,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-10",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 73,
+      "body_battery": 54,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-08",
+        "distance": 5.0,
+        "pace": 5.9,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 0,
+      "monotony": 30
+    }
+  },
+  {
+    "date": "2026-04-11",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 29,
+      "sleep_score": 67,
+      "body_battery": 52,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-11",
+        "distance": 5.0,
+        "pace": 5.97,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 47,
+      "achilles": 15,
+      "tissue_capacity": 0,
+      "monotony": 62
+    }
+  },
+  {
+    "date": "2026-04-12",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 30,
+      "sleep_score": 84,
+      "body_battery": 39,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-12",
+        "distance": 5.3,
+        "pace": 5.91,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 72,
+      "recovery": 54,
+      "achilles": 25,
+      "tissue_capacity": 1,
+      "monotony": 68
+    }
+  },
+  {
+    "date": "2026-04-13",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 30,
+      "sleep_score": 78,
+      "body_battery": 43,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-12",
+        "distance": 5.3,
+        "pace": 5.91,
+        "avg_hr": 150.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 50,
+      "achilles": 25,
+      "tissue_capacity": 1,
+      "monotony": 68
+    }
+  },
+  {
+    "date": "2026-04-14",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 76,
+      "body_battery": 37,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-14",
+        "distance": 5.3,
+        "pace": 5.8,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 70,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 1,
+      "monotony": 68
+    }
+  },
+  {
+    "date": "2026-04-15",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 30,
+      "sleep_score": 85,
+      "body_battery": 56,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-14",
+        "distance": 5.3,
+        "pace": 5.8,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 1,
+      "monotony": 68
+    }
+  },
+  {
+    "date": "2026-04-16",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 30,
+      "sleep_score": 55,
+      "body_battery": 33,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-16",
+        "distance": 5.3,
+        "pace": 5.6,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 51,
+      "recovery": 42,
+      "achilles": 15,
+      "tissue_capacity": 13,
+      "monotony": 68
+    }
+  },
+  {
+    "date": "2026-04-17",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 31,
+      "sleep_score": 80,
+      "body_battery": 64,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-16",
+        "distance": 5.3,
+        "pace": 5.6,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 49,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 13,
+      "monotony": 68
+    }
+  },
+  {
+    "date": "2026-04-18",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 32,
+      "sleep_score": 78,
+      "body_battery": 55,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-18",
+        "distance": 6.1,
+        "pace": 5.77,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 56,
+      "achilles": 15,
+      "tissue_capacity": 18,
+      "monotony": 81
+    }
+  },
+  {
+    "date": "2026-04-19",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 32,
+      "sleep_score": 69,
+      "body_battery": 52,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-19",
+        "distance": 5.0,
+        "pace": 5.21,
+        "avg_hr": 164.0
+      }
+    },
+    "scores": {
+      "readiness": 61,
+      "recovery": 52,
+      "achilles": 25,
+      "tissue_capacity": 18,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2026-04-20",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 32,
+      "sleep_score": 80,
+      "body_battery": 36,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-19",
+        "distance": 5.0,
+        "pace": 5.21,
+        "avg_hr": 164.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 54,
+      "achilles": 25,
+      "tissue_capacity": 18,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2026-04-21",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 32,
+      "sleep_score": 73,
+      "body_battery": 54,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-21",
+        "distance": 5.3,
+        "pace": 5.9,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 18,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2026-04-22",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 33,
+      "sleep_score": 53,
+      "body_battery": 71,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-21",
+        "distance": 5.3,
+        "pace": 5.9,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 36,
+      "recovery": 43,
+      "achilles": 15,
+      "tissue_capacity": 18,
+      "monotony": 69
+    }
+  },
+  {
+    "date": "2026-04-23",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 73,
+      "body_battery": 44,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-23",
+        "distance": 5.4,
+        "pace": 5.82,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 56,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 71
+    }
+  },
+  {
+    "date": "2026-04-24",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 34,
+      "sleep_score": 74,
+      "body_battery": 56,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-23",
+        "distance": 5.4,
+        "pace": 5.82,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 54,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 71
+    }
+  },
+  {
+    "date": "2026-04-25",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 82,
+      "body_battery": 58,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-25",
+        "distance": 6.8,
+        "pace": 5.86,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 60,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2026-04-26",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 34,
+      "sleep_score": 58,
+      "body_battery": 48,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-26",
+        "distance": 5.1,
+        "pace": 5.88,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 59,
+      "recovery": 50,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-04-27",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 66,
+      "body_battery": 40,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-26",
+        "distance": 5.1,
+        "pace": 5.88,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-04-28",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 73,
+      "body_battery": 58,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-28",
+        "distance": 5.9,
+        "pace": 5.97,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 53,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 63
+    }
+  },
+  {
+    "date": "2026-04-29",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 69,
+      "body_battery": 62,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-28",
+        "distance": 5.9,
+        "pace": 5.97,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 54,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 63
+    }
+  },
+  {
+    "date": "2026-04-30",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 80,
+      "body_battery": 36,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-04-30",
+        "distance": 5.3,
+        "pace": 5.79,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 59,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-01",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 82,
+      "body_battery": 37,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-04-30",
+        "distance": 5.3,
+        "pace": 5.79,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 60,
+      "achilles": 15,
+      "tissue_capacity": 22,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-02",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 54,
+      "body_battery": 51,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-02",
+        "distance": 7.5,
+        "pace": 5.98,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 56,
+      "recovery": 47,
+      "achilles": 15,
+      "tissue_capacity": 34,
+      "monotony": 74
+    }
+  },
+  {
+    "date": "2026-05-03",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 74,
+      "body_battery": 62,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-03",
+        "distance": 5.0,
+        "pace": 5.98,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 74
+    }
+  },
+  {
+    "date": "2026-05-04",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 33,
+      "sleep_score": 85,
+      "body_battery": 62,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-03",
+        "distance": 5.0,
+        "pace": 5.98,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 78,
+      "recovery": 61,
+      "achilles": 15,
+      "tissue_capacity": 34,
+      "monotony": 74
+    }
+  },
+  {
+    "date": "2026-05-05",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 34,
+      "sleep_score": 84,
+      "body_battery": 54,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-05",
+        "distance": 5.0,
+        "pace": 5.66,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 86,
+      "recovery": 62,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 72
+    }
+  },
+  {
+    "date": "2026-05-06",
+    "inputs": {
+      "resting_hr": 47,
+      "hrv": 35,
+      "sleep_score": 79,
+      "body_battery": 53,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-05",
+        "distance": 5.0,
+        "pace": 5.66,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 75,
+      "recovery": 60,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 72
+    }
+  },
+  {
+    "date": "2026-05-07",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 35,
+      "sleep_score": 78,
+      "body_battery": 44,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-07",
+        "distance": 5.1,
+        "pace": 5.89,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 60,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 73
+    }
+  },
+  {
+    "date": "2026-05-08",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 35,
+      "sleep_score": 52,
+      "body_battery": 31,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-07",
+        "distance": 5.1,
+        "pace": 5.89,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 48,
+      "recovery": 46,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 73
+    }
+  },
+  {
+    "date": "2026-05-09",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 75,
+      "body_battery": 33,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-09",
+        "distance": 8.2,
+        "pace": 6.09,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 65,
+      "recovery": 54,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2026-05-10",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 51,
+      "body_battery": 31,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-10",
+        "distance": 5.2,
+        "pace": 5.81,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 43,
+      "recovery": 43,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-11",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 33,
+      "sleep_score": 74,
+      "body_battery": 33,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-10",
+        "distance": 5.2,
+        "pace": 5.81,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 58,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-12",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 32,
+      "sleep_score": 73,
+      "body_battery": 59,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-12",
+        "distance": 5.4,
+        "pace": 5.66,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 51,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-13",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 32,
+      "sleep_score": 82,
+      "body_battery": 44,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-12",
+        "distance": 5.4,
+        "pace": 5.66,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 58,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-14",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 32,
+      "sleep_score": 76,
+      "body_battery": 53,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-14",
+        "distance": 5.2,
+        "pace": 5.72,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 66
+    }
+  },
+  {
+    "date": "2026-05-15",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 32,
+      "sleep_score": 78,
+      "body_battery": 44,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-15",
+        "distance": 5.3,
+        "pace": 5.66,
+        "avg_hr": 141.0
+      }
+    },
+    "scores": {
+      "readiness": 78,
+      "recovery": 57,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 67
+    }
+  },
+  {
+    "date": "2026-05-16",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 32,
+      "sleep_score": 59,
+      "body_battery": 45,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-16",
+        "distance": 9.1,
+        "pace": 6.06,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 48,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 58
+    }
+  },
+  {
+    "date": "2026-05-17",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 32,
+      "sleep_score": 88,
+      "body_battery": 53,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-17",
+        "distance": 5.2,
+        "pace": 5.77,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 75,
+      "recovery": 57,
+      "achilles": 25,
+      "tissue_capacity": 37,
+      "monotony": 59
+    }
+  },
+  {
+    "date": "2026-05-18",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 60,
+      "body_battery": 31,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-17",
+        "distance": 5.2,
+        "pace": 5.77,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 37,
+      "monotony": 59
+    }
+  },
+  {
+    "date": "2026-05-19",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 33,
+      "sleep_score": 80,
+      "body_battery": 58,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-19",
+        "distance": 6.1,
+        "pace": 5.76,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 73,
+      "recovery": 58,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-20",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 33,
+      "sleep_score": 77,
+      "body_battery": 59,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-19",
+        "distance": 6.1,
+        "pace": 5.76,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 70,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2026-05-21",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 33,
+      "sleep_score": 77,
+      "body_battery": 31,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-21",
+        "distance": 6.1,
+        "pace": 5.78,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 81,
+      "recovery": 56,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2026-05-22",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 34,
+      "sleep_score": 55,
+      "body_battery": 46,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-21",
+        "distance": 6.1,
+        "pace": 5.78,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 55,
+      "recovery": 46,
+      "achilles": 15,
+      "tissue_capacity": 37,
+      "monotony": 65
+    }
+  },
+  {
+    "date": "2026-05-23",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 75,
+      "body_battery": 31,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-23",
+        "distance": 10.1,
+        "pace": 5.94,
+        "avg_hr": 143.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 54,
+      "achilles": 15,
+      "tissue_capacity": 45,
+      "monotony": 56
+    }
+  },
+  {
+    "date": "2026-05-24",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 70,
+      "body_battery": 27,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-24",
+        "distance": 5.1,
+        "pace": 5.9,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 68,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 45,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2026-05-25",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 33,
+      "sleep_score": 76,
+      "body_battery": 51,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-25",
+        "distance": 5.2,
+        "pace": 5.78,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 75,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 45,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2026-05-26",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 82,
+      "body_battery": 21,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-26",
+        "distance": 6.0,
+        "pace": 5.84,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 84,
+      "recovery": 61,
+      "achilles": 15,
+      "tissue_capacity": 45,
+      "monotony": 60
+    }
+  },
+  {
+    "date": "2026-05-27",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 32,
+      "sleep_score": 58,
+      "body_battery": 49,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-26",
+        "distance": 6.0,
+        "pace": 5.84,
+        "avg_hr": 142.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 46,
+      "achilles": 15,
+      "tissue_capacity": 45,
+      "monotony": 60
+    }
+  },
+  {
+    "date": "2026-05-28",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 31,
+      "sleep_score": 77,
+      "body_battery": 26,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-28",
+        "distance": 5.1,
+        "pace": 5.86,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 65,
+      "recovery": 54,
+      "achilles": 15,
+      "tissue_capacity": 55,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2026-05-29",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 31,
+      "sleep_score": 76,
+      "body_battery": 53,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-28",
+        "distance": 5.1,
+        "pace": 5.86,
+        "avg_hr": 140.0
+      }
+    },
+    "scores": {
+      "readiness": 54,
+      "recovery": 50,
+      "achilles": 15,
+      "tissue_capacity": 45,
+      "monotony": 55
+    }
+  },
+  {
+    "date": "2026-05-30",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 31,
+      "sleep_score": 87,
+      "body_battery": 61,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-05-30",
+        "distance": 10.4,
+        "pace": 6.25,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 82,
+      "recovery": 58,
+      "achilles": 15,
+      "tissue_capacity": 59,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-05-31",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 52,
+      "body_battery": 71,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-05-30",
+        "distance": 10.4,
+        "pace": 6.25,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 50,
+      "recovery": 47,
+      "achilles": 15,
+      "tissue_capacity": 49,
+      "monotony": 50
+    }
+  },
+  {
+    "date": "2026-06-01",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 33,
+      "sleep_score": 82,
+      "body_battery": 35,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-01",
+        "distance": 5.2,
+        "pace": 5.48,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 58,
+      "achilles": 15,
+      "tissue_capacity": 49,
+      "monotony": 47
+    }
+  },
+  {
+    "date": "2026-06-02",
+    "inputs": {
+      "resting_hr": 47,
+      "hrv": 33,
+      "sleep_score": 74,
+      "body_battery": 55,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-02",
+        "distance": 7.0,
+        "pace": 5.41,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 69,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 59,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2026-06-03",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 33,
+      "sleep_score": 66,
+      "body_battery": 66,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-02",
+        "distance": 7.0,
+        "pace": 5.41,
+        "avg_hr": 156.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 52,
+      "achilles": 15,
+      "tissue_capacity": 59,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2026-06-04",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": 34,
+      "sleep_score": 87,
+      "body_battery": 39,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-04",
+        "distance": 5.2,
+        "pace": 5.57,
+        "avg_hr": 149.0
+      }
+    },
+    "scores": {
+      "readiness": 83,
+      "recovery": 62,
+      "achilles": 15,
+      "tissue_capacity": 59,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2026-06-05",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 75,
+      "body_battery": 36,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-04",
+        "distance": 5.2,
+        "pace": 5.57,
+        "avg_hr": 149.0
+      }
+    },
+    "scores": {
+      "readiness": 71,
+      "recovery": 55,
+      "achilles": 15,
+      "tissue_capacity": 59,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2026-06-06",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 73,
+      "body_battery": 24,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-06",
+        "distance": 16.0,
+        "pace": 6.04,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 74,
+      "recovery": 56,
+      "achilles": 60,
+      "tissue_capacity": 64,
+      "monotony": 40
+    }
+  },
+  {
+    "date": "2026-06-07",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 78,
+      "body_battery": 48,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-06",
+        "distance": 16.0,
+        "pace": 6.04,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 53,
+      "achilles": 60,
+      "tissue_capacity": 64,
+      "monotony": 40
+    }
+  },
+  {
+    "date": "2026-06-08",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 34,
+      "sleep_score": 80,
+      "body_battery": 56,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-08",
+        "distance": 7.1,
+        "pace": 5.67,
+        "avg_hr": 144.0
+      }
+    },
+    "scores": {
+      "readiness": 84,
+      "recovery": 60,
+      "achilles": 40,
+      "tissue_capacity": 64,
+      "monotony": 40
+    }
+  },
+  {
+    "date": "2026-06-09",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 35,
+      "sleep_score": 90,
+      "body_battery": 39,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-09",
+        "distance": 8.5,
+        "pace": 5.86,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 89,
+      "recovery": 64,
+      "achilles": 60,
+      "tissue_capacity": 64,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2026-06-10",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 34,
+      "sleep_score": 68,
+      "body_battery": 57,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-09",
+        "distance": 8.5,
+        "pace": 5.86,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 52,
+      "achilles": 40,
+      "tissue_capacity": 64,
+      "monotony": 42
+    }
+  },
+  {
+    "date": "2026-06-11",
+    "inputs": {
+      "resting_hr": 48,
+      "hrv": 34,
+      "sleep_score": 78,
+      "body_battery": 37,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-11",
+        "distance": 6.9,
+        "pace": 5.83,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 79,
+      "recovery": 59,
+      "achilles": 60,
+      "tissue_capacity": 64,
+      "monotony": 45
+    }
+  },
+  {
+    "date": "2026-06-12",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 34,
+      "sleep_score": 82,
+      "body_battery": 34,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-11",
+        "distance": 6.9,
+        "pace": 5.83,
+        "avg_hr": 147.0
+      }
+    },
+    "scores": {
+      "readiness": 76,
+      "recovery": 58,
+      "achilles": 40,
+      "tissue_capacity": 64,
+      "monotony": 45
+    }
+  },
+  {
+    "date": "2026-06-13",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 33,
+      "sleep_score": 49,
+      "body_battery": 33,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-13",
+        "distance": 16.0,
+        "pace": 5.89,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 47,
+      "recovery": 43,
+      "achilles": 45,
+      "tissue_capacity": 68,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-06-14",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 32,
+      "sleep_score": 78,
+      "body_battery": 42,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-13",
+        "distance": 16.0,
+        "pace": 5.89,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 46,
+      "recovery": 50,
+      "achilles": 45,
+      "tissue_capacity": 68,
+      "monotony": 46
+    }
+  },
+  {
+    "date": "2026-06-15",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 31,
+      "sleep_score": 73,
+      "body_battery": 23,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-15",
+        "distance": 5.2,
+        "pace": 5.68,
+        "avg_hr": 145.0
+      }
+    },
+    "scores": {
+      "readiness": 62,
+      "recovery": 50,
+      "achilles": 25,
+      "tissue_capacity": 68,
+      "monotony": 51
+    }
+  },
+  {
+    "date": "2026-06-16",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 30,
+      "sleep_score": 76,
+      "body_battery": 41,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-16",
+        "distance": 6.0,
+        "pace": 5.84,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 63,
+      "recovery": 50,
+      "achilles": 45,
+      "tissue_capacity": 68,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2026-06-17",
+    "inputs": {
+      "resting_hr": 54,
+      "hrv": 29,
+      "sleep_score": 73,
+      "body_battery": 27,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-16",
+        "distance": 6.0,
+        "pace": 5.84,
+        "avg_hr": 148.0
+      }
+    },
+    "scores": {
+      "readiness": 57,
+      "recovery": 48,
+      "achilles": 25,
+      "tissue_capacity": 68,
+      "monotony": 53
+    }
+  },
+  {
+    "date": "2026-06-18",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 28,
+      "sleep_score": 69,
+      "body_battery": 46,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-18",
+        "distance": 5.0,
+        "pace": 5.82,
+        "avg_hr": 149.0
+      }
+    },
+    "scores": {
+      "readiness": 53,
+      "recovery": 46,
+      "achilles": 45,
+      "tissue_capacity": 68,
+      "monotony": 54
+    }
+  },
+  {
+    "date": "2026-06-19",
+    "inputs": {
+      "resting_hr": 53,
+      "hrv": 27,
+      "sleep_score": 82,
+      "body_battery": 45,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-19",
+        "distance": 5.1,
+        "pace": 5.66,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 60,
+      "recovery": 50,
+      "achilles": 45,
+      "tissue_capacity": 68,
+      "monotony": 54
+    }
+  }
+]
