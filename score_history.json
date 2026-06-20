@@ -8393,5 +8393,29 @@
       "tissue_capacity": 68,
       "monotony": 54
     }
+  },
+  {
+    "date": "2026-06-20",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": 28,
+      "sleep_score": 84,
+      "body_battery": 56,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-06-19",
+        "distance": 5.1,
+        "pace": 5.66,
+        "avg_hr": 146.0
+      }
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 52,
+      "achilles": 45,
+      "tissue_capacity": 47,
+      "monotony": 54,
+      "acr": 1.88
+    }
   }
 ]
