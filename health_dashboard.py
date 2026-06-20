@@ -505,11 +505,19 @@ def get_training_phase():
 
 HISTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "score_history.json")
 
-def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data):
+def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data, checkin=None):
     """Append (or overwrite) today's scores + key inputs to score_history.json.
     Overwrites today's entry rather than appending, so running this twice in
     one day (morning + evening cron) doesn't create duplicates — the later
-    run wins since it has the day's completed training data."""
+    run wins since it has the day's completed training data.
+
+    checkin: today's subjective check-in dict (from get_latest_checkin), if
+    any. Stored alongside the objective Garmin/run data so injury_model.py's
+    replay_injury_penalty() has real check-in history to work from, instead
+    of needing a separate file lookup at scoring time. Only stored if it's
+    actually FOR today (not yesterday's, which get_latest_checkin can return
+    within its 24h grace window) — otherwise a rest-day's entry could
+    silently inherit yesterday's symptom report under today's date."""
     history = []
     if os.path.exists(HISTORY_FILE):
         try:
@@ -523,6 +531,27 @@ def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monoton
     runs = garmin_data.get("runs", [])
     last_run = runs[0] if runs else {}
     ran_today = bool(last_run) and last_run.get("date") == TODAY
+
+    checkin_is_for_today = bool(checkin) and checkin.get("date") == TODAY
+
+    # If this call doesn't have a valid same-day check-in, don't blindly
+    # null out today's checkin fields -- a different run earlier today
+    # (e.g. the morning cron) may have already saved real check-in data.
+    # Overwriting wholesale would silently discard it. Fall back to
+    # whatever's already recorded for today, if anything.
+    existing_today = next((h for h in history if h.get("date") == TODAY), None)
+    existing_inputs = (existing_today or {}).get("inputs", {})
+
+    if checkin_is_for_today:
+        checkin_stiffness = checkin.get("stiffness")
+        checkin_first_steps_pain = checkin.get("first_steps_pain")
+        checkin_post_run_pain = checkin.get("post_run_pain")
+        checkin_calf_raises = checkin.get("calf_raises")
+    else:
+        checkin_stiffness = existing_inputs.get("checkin_stiffness")
+        checkin_first_steps_pain = existing_inputs.get("checkin_first_steps_pain")
+        checkin_post_run_pain = existing_inputs.get("checkin_post_run_pain")
+        checkin_calf_raises = existing_inputs.get("checkin_calf_raises")
 
     entry = {
         "date": TODAY,
@@ -538,6 +567,10 @@ def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monoton
                 "pace": last_run.get("avg_pace"),
                 "avg_hr": last_run.get("avg_hr"),
             } if last_run else None,
+            "checkin_stiffness": checkin_stiffness,
+            "checkin_first_steps_pain": checkin_first_steps_pain,
+            "checkin_post_run_pain": checkin_post_run_pain,
+            "checkin_calf_raises": checkin_calf_raises,
         },
         "scores": {
             "readiness": readiness.get("score"),
@@ -2936,7 +2969,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
           <div class="chart-label">Last 7 days</div>
           <div class="checkin-trend" id="checkin-trend">Loading…</div>
           <div style="font-size:10px;color:var(--text3);margin-top:10px;line-height:1.5">
-            Saved on this device. Export → paste into <code style="background:var(--surface2);padding:1px 5px;border-radius:3px">checkins.json</code> and commit to sync with daily scores.
+            Auto-syncs to the server on save (one-time setup per device — see cloudflare-worker/SETUP.md). <code style="background:var(--surface2);padding:1px 5px;border-radius:3px">Export history</code> is a manual backup if sync is unavailable.
           </div>
         </div>
       </div>
@@ -4074,6 +4107,46 @@ function checkAlerts(battery, readiness) {{
 
 // ── DAILY CHECK-IN ──
 const CHECKIN_KEY = 'health_dashboard_checkins';
+const SYNC_SECRET_KEY = 'health_dashboard_sync_secret';
+const SYNC_WORKER_URL = ''; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
+
+function getSyncSecret() {{
+  let secret = localStorage.getItem(SYNC_SECRET_KEY);
+  if (!secret) {{
+    secret = prompt('One-time setup: paste your sync secret (see cloudflare-worker/SETUP.md). Leave blank to skip auto-sync and use manual export instead.');
+    if (secret) localStorage.setItem(SYNC_SECRET_KEY, secret);
+  }}
+  return secret;
+}}
+
+async function syncCheckinToServer(entry) {{
+  const status = document.getElementById('checkin-status');
+  if (!SYNC_WORKER_URL) {{
+    if (status) status.textContent = 'Saved locally — auto-sync not configured yet, use Export to sync.';
+    return;
+  }}
+  const secret = getSyncSecret();
+  if (!secret) {{
+    if (status) status.textContent = 'Saved locally — auto-sync skipped, use Export to sync.';
+    return;
+  }}
+  if (status) status.textContent = 'Saving for ' + entry.date + '\\u2026 syncing\\u2026';
+  try {{
+    const resp = await fetch(SYNC_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ ...entry, secret }}),
+    }});
+    if (resp.ok) {{
+      if (status) status.textContent = 'Synced \\u2713 ' + entry.date + ' saved to server.';
+    }} else {{
+      const err = await resp.json().catch(() => ({{}}));
+      if (status) status.textContent = 'Saved locally, sync failed (' + (err.error || resp.status) + ') — try again or use Export.';
+    }}
+  }} catch (e) {{
+    if (status) status.textContent = 'Saved locally, sync failed (network) — try again or use Export.';
+  }}
+}}
 const checkInServerHistory = {checkin_history_json};
 const checkInToday = '{today_iso}';
 
@@ -4157,9 +4230,8 @@ function saveCheckin() {{
   const local = getLocalCheckins().filter(c => c.date !== checkInToday);
   local.push(entry);
   localStorage.setItem(CHECKIN_KEY, JSON.stringify(local));
-  const status = document.getElementById('checkin-status');
-  if (status) status.textContent = 'Saved locally for ' + checkInToday + ' — export & commit to update server scores.';
   renderCheckinTrend();
+  syncCheckinToServer(entry);
 }}
 
 function exportCheckins() {{
@@ -4313,7 +4385,7 @@ def main():
     generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals)
 
     print("Saving score history...")
-    save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data)
+    save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data, checkin=latest_checkin)
 
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,

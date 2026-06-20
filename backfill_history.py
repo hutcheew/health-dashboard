@@ -33,6 +33,7 @@ from health_dashboard import (
     RACE_DATE,
     PHASES,
     HISTORY_FILE,
+    load_checkins,
 )
 
 
@@ -112,13 +113,11 @@ def fetch_day(garmin, d_str):
     except Exception as e:
         print(f"    body battery fetch failed for {d_str}: {e}")
 
-    # Sleep is filed under the WAKE date (a night from Mon 10pm-Tue 6am is
-    # Tuesday's record) -- same convention health_dashboard.py now uses for
-    # live fetches. The live script's fallback to YESTERDAY exists only to
-    # handle same-morning sync delay; that doesn't apply to historical
-    # dates, so backfilling queries d_str directly with no offset.
+    # Sleep data is reported against the night it started, same convention
+    # health_dashboard.py uses (queries YESTERDAY for TODAY's sleep stats).
+    sleep_query_date = (date.fromisoformat(d_str) - timedelta(days=1)).isoformat()
     try:
-        sleep = garmin.get_sleep_data(d_str)
+        sleep = garmin.get_sleep_data(sleep_query_date)
         daily = sleep.get("dailySleepDTO", {})
         out["sleep"] = {"duration_hrs": round(daily.get("sleepTimeSeconds", 0) / 3600, 1)}
     except Exception as e:
@@ -188,13 +187,18 @@ def fetch_all_runs(garmin, lookback_days):
     return runs
 
 
-def main(n_days, force=False):
+def main(n_days):
     print("Connecting to Garmin...")
     garmin = get_garmin()
 
     print("Fetching activity history for run slicing...")
     all_runs = fetch_all_runs(garmin, n_days)
     print(f"  {len(all_runs)} runs found")
+
+    print("Loading check-in history...")
+    checkins_by_date = {c["date"]: c for c in load_checkins() if c.get("date")}
+    print(f"  {len(checkins_by_date)} check-in entries found"
+          f"{' (none yet — achilles scores will use the flat baseline for all dates)' if not checkins_by_date else ''}")
 
     history = []
     if os.path.exists(HISTORY_FILE):
@@ -204,13 +208,12 @@ def main(n_days, force=False):
 
     today = date.today()
     added = 0
-    updated = 0
     for n in range(n_days, 0, -1):
         target = today - timedelta(days=n)
         d_str = target.isoformat()
 
-        if d_str in existing_dates and not force:
-            print(f"  {d_str}: already have an entry, skipping (use --force to recompute)")
+        if d_str in existing_dates:
+            print(f"  {d_str}: already have an entry, skipping")
             continue
 
         print(f"  Backfilling {d_str}...")
@@ -234,8 +237,9 @@ def main(n_days, force=False):
         )
         last_run = runs_as_of[-1] if runs_as_of else {}
         ran_today = bool(last_run) and last_run.get("date") == d_str
+        checkin = checkins_by_date.get(d_str)
 
-        new_entry = {
+        history.append({
             "date": d_str,
             "inputs": {
                 "resting_hr": day_data.get("resting_hr"),
@@ -249,6 +253,10 @@ def main(n_days, force=False):
                     "pace": last_run.get("avg_pace"),
                     "avg_hr": last_run.get("avg_hr"),
                 } if last_run else None,
+                "checkin_stiffness": checkin.get("stiffness") if checkin else None,
+                "checkin_first_steps_pain": checkin.get("first_steps_pain") if checkin else None,
+                "checkin_post_run_pain": checkin.get("post_run_pain") if checkin else None,
+                "checkin_calf_raises": checkin.get("calf_raises") if checkin else None,
             },
             "scores": {
                 "readiness": day_data.get("readiness", {}).get("score"),
@@ -257,29 +265,19 @@ def main(n_days, force=False):
                 "tissue_capacity": tissue_capacity.get("score") if runs_as_of else None,
                 "monotony": monotony.get("score") if runs_as_of else None,
             },
-        }
-
-        if d_str in existing_dates:
-            history = [h for h in history if h["date"] != d_str]
-            updated += 1
-        else:
-            added += 1
-        history.append(new_entry)
+        })
+        added += 1
         time.sleep(1.5)  # be polite to Garmin's unofficial API — avoid rate-limit/block
 
     history.sort(key=lambda h: h["date"])
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
 
-    print(f"\nDone. Added {added} new days, recomputed {updated} existing days. "
-          f"{len(history)} total days in {HISTORY_FILE}")
+    print(f"\nDone. Added {added} new days. {len(history)} total days in {HISTORY_FILE}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--days", type=int, default=30, help="How many past days to backfill")
-    parser.add_argument("--force", action="store_true",
-                         help="Recompute days that already have an entry instead of skipping them "
-                              "(use after a scoring/data fix to correct already-backfilled history)")
     args = parser.parse_args()
-    main(args.days, force=args.force)
+    main(args.days)
