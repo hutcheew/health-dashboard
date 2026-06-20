@@ -8417,5 +8417,33 @@
       "monotony": 54,
       "acr": 1.88
     }
+  },
+  {
+    "date": "2026-06-21",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": 29,
+      "sleep_score": 82,
+      "body_battery": 85,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-21",
+        "distance": 17.0,
+        "pace": 5.92,
+        "avg_hr": 147.0
+      },
+      "checkin_stiffness": null,
+      "checkin_first_steps_pain": null,
+      "checkin_post_run_pain": null,
+      "checkin_calf_raises": null
+    },
+    "scores": {
+      "readiness": 67,
+      "recovery": 54,
+      "achilles": 45,
+      "tissue_capacity": 47,
+      "monotony": 54,
+      "acr": 1.67
+    }
   }
 ]
