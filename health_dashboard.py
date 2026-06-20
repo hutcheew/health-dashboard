@@ -475,6 +475,7 @@ def weather_icon(code):
 
 PLAN_START = date(2026, 5, 1)
 RACE_DATE  = date(2026, 10, 12)
+INJURY_DATE = date(2026, 1, 17)  # limping after the run on this date — left Achilles insertional tendinopathy onset
 
 PHASES = [
     {"name": "Rehab / Base",       "weeks": (1, 4),   "km_min": 20, "km_max": 30,  "focus": "Easy aerobic, seated calf raises"},
@@ -499,6 +500,62 @@ def get_training_phase():
         "days_to_race": days_to_race,
         "phase_pct": round(week_in_phase / phase_total * 100),
     }
+
+# ─── SCORE HISTORY ───────────────────────────────────────────────────────────
+
+HISTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "score_history.json")
+
+def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data):
+    """Append (or overwrite) today's scores + key inputs to score_history.json.
+    Overwrites today's entry rather than appending, so running this twice in
+    one day (morning + evening cron) doesn't create duplicates — the later
+    run wins since it has the day's completed training data."""
+    history = []
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, encoding="utf-8") as f:
+                history = json.load(f)
+        except Exception as e:
+            print(f"  Score history load failed: {e}")
+            history = []
+
+    readiness = garmin_data.get("readiness", {})
+    runs = garmin_data.get("runs", [])
+    last_run = runs[0] if runs else {}
+    ran_today = bool(last_run) and last_run.get("date") == TODAY
+
+    entry = {
+        "date": TODAY,
+        "inputs": {
+            "resting_hr": garmin_data.get("resting_hr"),
+            "hrv": readiness.get("hrv_weekly_avg"),
+            "sleep_score": readiness.get("sleep_score"),
+            "body_battery": garmin_data.get("body_battery"),
+            "ran_today": ran_today,
+            "last_run": {
+                "date": last_run.get("date"),
+                "distance": last_run.get("distance"),
+                "pace": last_run.get("avg_pace"),
+                "avg_hr": last_run.get("avg_hr"),
+            } if last_run else None,
+        },
+        "scores": {
+            "readiness": readiness.get("score"),
+            "recovery": recovery.get("score"),
+            "achilles": achilles.get("score"),
+            "tissue_capacity": tissue_capacity.get("score"),
+            "monotony": monotony.get("score"),
+            "acr": load_data.get("acr"),
+        },
+    }
+
+    history = [h for h in history if h.get("date") != TODAY]
+    history.append(entry)
+    history.sort(key=lambda h: h["date"])
+
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2)
+    print(f"  Score history: {len(history)} days total")
 
 # ─── DAILY CHECK-IN ──────────────────────────────────────────────────────────
 
@@ -716,7 +773,7 @@ def compute_weekly_loads(runs):
     }
 
 
-def compute_tissue_capacity(runs):
+def compute_tissue_capacity(runs, as_of=None):
     """
     Tissue Capacity Score 0-100.
     Answers: "What is your tendon currently prepared to handle?"
@@ -733,12 +790,17 @@ def compute_tissue_capacity(runs):
       - Number of runs >60 min (repeated long exposures build capacity)
       - Run frequency (consistent stimulus = adaptation)
       - Previous Achilles history (permanent -15 penalty — never fully resets)
+
+    as_of: reference date for the 28-day window. Defaults to the real
+    current date (production use). Pass an explicit date when computing
+    scores for a historical date (e.g. backfilling) — otherwise the window
+    is measured from the wrong day.
     """
     if not runs:
         return {"score": 0, "level": "low", "summary": "No run data — capacity unknown",
                 "limiting_factor": "Insufficient data"}
 
-    today = datetime.now(MELB_TZ).date()
+    today = as_of or datetime.now(MELB_TZ).date()
     score = 0
 
     # ── Factor 1: 28-day running volume (50% of score) ────────────────────────
@@ -784,9 +846,12 @@ def compute_tissue_capacity(runs):
     else:                     freq_score = 0
     score += freq_score
 
-    # ── Permanent penalty: Previous Achilles injury ────────────────────────────
-    # Scar tissue = permanently lower capacity ceiling
-    score -= 15
+    # ── Penalty: Previous Achilles injury — only applies from actual onset ─────
+    # Scar tissue = lower capacity ceiling, but only once the injury exists.
+    # Backfilling pre-injury dates with this penalty applied would corrupt
+    # exactly the clean pre-injury baseline that's most valuable to have.
+    if today >= INJURY_DATE:
+        score -= 15
 
     score = max(0, min(score, 100))
 
@@ -1159,7 +1224,7 @@ def generate_workout(decision, phase_info, achilles):
         "avoid": ["Too much volume same week"],
     }
 
-def compute_achilles_score(runs, phase_info):
+def compute_achilles_score(runs, phase_info, as_of=None):
     """
     Achilles Watch-List v3 — flag system, not a risk prediction.
     Based on patterns associated with Achilles overload in literature.
@@ -1171,6 +1236,13 @@ def compute_achilles_score(runs, phase_info):
       21-45: Watch — keep an eye on load and form
       46-70: Several flags — consider easing back, check with physio
       71+:   Many flags stacked — consider rest and professional assessment
+
+    as_of: reference date for the "last 7/5 days" windows. Defaults to the
+    real current date (production use). Pass an explicit date when
+    computing scores for a historical date (e.g. backfilling) — otherwise
+    these windows are measured from the wrong day. `runs` should be ordered
+    most-recent-first (matching Garmin's native order) since the cadence/GCT
+    baseline below assumes that ordering.
     """
     if not runs:
         return {"score": None, "level": "low", "factors": [], "this_week_km": 0, "last_week_km": 0,
@@ -1190,7 +1262,7 @@ def compute_achilles_score(runs, phase_info):
     last_week_km = weekly[weeks_sorted[-2]] if len(weeks_sorted) >= 2 else this_week_km
 
     # ── Last 7 days ───────────────────────────────────────────────────────────
-    today = datetime.now(MELB_TZ).date()
+    today = as_of or datetime.now(MELB_TZ).date()
     recent_runs = [r for r in runs if (today - datetime.strptime(r["date"], "%Y-%m-%d").date()).days <= 7]
     recent_km   = sum(r["distance"] for r in recent_runs)
 
@@ -1227,10 +1299,15 @@ def compute_achilles_score(runs, phase_info):
         else:
             factors.append({"label": "Long run distance", "value": f"{longest_run:.1f}km ✓", "level": "low", "points": 0})
 
-        # ── Flag 2: Long run with HR > 145 (+15) ──────────────────────────────
-        if longest_run >= 14 and longest_hr > 145:
+        # ── Flag 2: Long run with HR > 150 (+15) ──────────────────────────────
+        # Was >145 — but across 19 logged runs >=14km, average HR was 151.8
+        # and >145 flagged 84% of them (basically every long run, controlled
+        # effort or not). >150 splits closer to the real midpoint (47%
+        # flagged), separating genuinely elevated-effort long runs from
+        # normal ones instead of flagging almost everything.
+        if longest_run >= 14 and longest_hr > 150:
             score += 15
-            factors.append({"label": "Long run HR >145", "value": f"HR {longest_hr} on {longest_run:.1f}km", "level": "high", "points": 15})
+            factors.append({"label": "Long run HR >150", "value": f"HR {longest_hr} on {longest_run:.1f}km", "level": "high", "points": 15})
         elif longest_run >= 14:
             factors.append({"label": "Long run HR", "value": f"HR {longest_hr} ✓", "level": "low", "points": 0})
 
@@ -1271,10 +1348,15 @@ def compute_achilles_score(runs, phase_info):
             else:
                 factors.append({"label": "GCT", "value": f"{recent_gct_avg:.0f}ms (baseline {baseline_gct:.0f}ms) ✓", "level": "low", "points": 0})
 
-    # ── Flag 6: Previous Achilles injury within 12 months (+15) ───────────────
-    # Always add this for Nat — known left insertional Achilles tendinopathy
-    score += 15
-    factors.append({"label": "Previous Achilles injury", "value": "Left insertional (within 12 months)", "level": "high", "points": 15})
+    # ── Flag 6: Previous Achilles injury (gated on actual onset date) ──────────
+    # Only applies from INJURY_DATE forward — unconditionally applying this
+    # broke backfilling, since pre-injury days got penalized for an injury
+    # that hadn't happened yet. No decay yet (still flat +15 once active) —
+    # that's a deliberate follow-up, not done here.
+    if today >= INJURY_DATE:
+        score += 15
+        days_since = (today - INJURY_DATE).days
+        factors.append({"label": "Previous Achilles injury", "value": f"Left insertional (onset {INJURY_DATE.isoformat()}, {days_since}d ago)", "level": "high", "points": 15})
 
     # ── Week-on-week mileage ──────────────────────────────────────────────────
     if last_week_km > 0:
@@ -4229,6 +4311,9 @@ def main():
 
     print("Generating daily email report...")
     generate_daily_report(garmin_data, bp_readings, phase_info, achilles, weather, intervals)
+
+    print("Saving score history...")
+    save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data)
 
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,

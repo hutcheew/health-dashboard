@@ -1,5 +1,120 @@
 [
   {
+    "date": "2025-06-20",
+    "inputs": {
+      "resting_hr": 50,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-20",
+        "distance": 6.0,
+        "pace": 5.2,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 54,
+      "achilles": 0,
+      "tissue_capacity": 70,
+      "monotony": 64
+    }
+  },
+  {
+    "date": "2025-06-21",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-21",
+        "distance": 2.0,
+        "pace": 5.31,
+        "avg_hr": 136.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 0,
+      "tissue_capacity": 70,
+      "monotony": 20
+    }
+  },
+  {
+    "date": "2025-06-22",
+    "inputs": {
+      "resting_hr": 57,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-22",
+        "distance": 8.0,
+        "pace": 5.48,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 0,
+      "tissue_capacity": 70,
+      "monotony": 19
+    }
+  },
+  {
+    "date": "2025-06-23",
+    "inputs": {
+      "resting_hr": 55,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-23",
+        "distance": 6.0,
+        "pace": 5.44,
+        "avg_hr": 139.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 51,
+      "achilles": 0,
+      "tissue_capacity": 70,
+      "monotony": 19
+    }
+  },
+  {
+    "date": "2025-06-24",
+    "inputs": {
+      "resting_hr": 49,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": null,
+      "ran_today": true,
+      "last_run": {
+        "date": "2025-06-24",
+        "distance": 6.0,
+        "pace": 5.46,
+        "avg_hr": 138.0
+      }
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
+      "monotony": 18
+    }
+  },
+  {
     "date": "2025-06-25",
     "inputs": {
       "resting_hr": 52,
@@ -17,8 +132,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 18
     }
   },
@@ -40,8 +155,8 @@
     "scores": {
       "readiness": null,
       "recovery": 55,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 74
     }
   },
@@ -63,8 +178,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 82
     }
   },
@@ -86,8 +201,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 64
     }
   },
@@ -109,8 +224,8 @@
     "scores": {
       "readiness": null,
       "recovery": 49,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 56
     }
   },
@@ -132,8 +247,8 @@
     "scores": {
       "readiness": null,
       "recovery": 52,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 58
     }
   },
@@ -155,8 +270,8 @@
     "scores": {
       "readiness": null,
       "recovery": 55,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 54
     }
   },
@@ -178,8 +293,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 54
     }
   },
@@ -201,8 +316,8 @@
     "scores": {
       "readiness": null,
       "recovery": 55,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 63
     }
   },
@@ -224,8 +339,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 67
     }
   },
@@ -247,8 +362,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 61
     }
   },
@@ -270,8 +385,8 @@
     "scores": {
       "readiness": null,
       "recovery": 49,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 56
     }
   },
@@ -293,8 +408,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 58
     }
   },
@@ -316,8 +431,8 @@
     "scores": {
       "readiness": null,
       "recovery": 55,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 55
     }
   },
@@ -339,8 +454,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 55,
+      "achilles": 0,
+      "tissue_capacity": 70,
       "monotony": 56
     }
   },
@@ -362,8 +477,8 @@
     "scores": {
       "readiness": null,
       "recovery": 55,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 55
     }
   },
@@ -385,8 +500,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 55
     }
   },
@@ -408,8 +523,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -431,8 +546,8 @@
     "scores": {
       "readiness": null,
       "recovery": 50,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -454,8 +569,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 52
     }
   },
@@ -477,8 +592,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 50
     }
   },
@@ -500,8 +615,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 51
     }
   },
@@ -523,8 +638,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 59
     }
   },
@@ -546,8 +661,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 73
     }
   },
@@ -569,8 +684,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 63
     }
   },
@@ -592,8 +707,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -615,8 +730,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -638,8 +753,8 @@
     "scores": {
       "readiness": null,
       "recovery": 52,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -661,8 +776,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -684,8 +799,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -707,8 +822,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -730,8 +845,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -753,8 +868,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -776,8 +891,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 63,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 53
     }
   },
@@ -799,8 +914,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 15,
-      "tissue_capacity": 67,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 51
     }
   },
@@ -822,8 +937,8 @@
     "scores": {
       "readiness": null,
       "recovery": 52,
-      "achilles": 15,
-      "tissue_capacity": 67,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 44
     }
   },
@@ -845,8 +960,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 15,
-      "tissue_capacity": 67,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 44
     }
   },
@@ -868,8 +983,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 67,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 42
     }
   },
@@ -891,8 +1006,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 15,
-      "tissue_capacity": 67,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 41
     }
   },
@@ -914,8 +1029,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 15,
-      "tissue_capacity": 67,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 41
     }
   },
@@ -938,8 +1053,8 @@
       "readiness": null,
       "recovery": 51,
       "achilles": 0,
-      "tissue_capacity": 17,
-      "monotony": 40
+      "tissue_capacity": 82,
+      "monotony": 42
     }
   },
   {
@@ -961,8 +1076,8 @@
       "readiness": null,
       "recovery": 51,
       "achilles": 0,
-      "tissue_capacity": 17,
-      "monotony": 43
+      "tissue_capacity": 82,
+      "monotony": 48
     }
   },
   {
@@ -983,9 +1098,9 @@
     "scores": {
       "readiness": null,
       "recovery": 52,
-      "achilles": 10,
-      "tissue_capacity": 33,
-      "monotony": 45
+      "achilles": 0,
+      "tissue_capacity": 82,
+      "monotony": 60
     }
   },
   {
@@ -1006,8 +1121,8 @@
     "scores": {
       "readiness": null,
       "recovery": 53,
-      "achilles": 10,
-      "tissue_capacity": 33,
+      "achilles": 0,
+      "tissue_capacity": 82,
       "monotony": 58
     }
   },
@@ -1029,8 +1144,8 @@
     "scores": {
       "readiness": null,
       "recovery": 51,
-      "achilles": 10,
-      "tissue_capacity": 33,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 58
     }
   },
@@ -1052,8 +1167,8 @@
     "scores": {
       "readiness": null,
       "recovery": 57,
-      "achilles": 10,
-      "tissue_capacity": 33,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 64
     }
   },
@@ -1075,8 +1190,8 @@
     "scores": {
       "readiness": null,
       "recovery": 56,
-      "achilles": 10,
-      "tissue_capacity": 37,
+      "achilles": 0,
+      "tissue_capacity": 78,
       "monotony": 63
     }
   },
@@ -1099,7 +1214,7 @@
       "readiness": null,
       "recovery": 55,
       "achilles": 0,
-      "tissue_capacity": 37,
+      "tissue_capacity": 78,
       "monotony": 69
     }
   },
@@ -1122,7 +1237,7 @@
       "readiness": 55,
       "recovery": 50,
       "achilles": 0,
-      "tissue_capacity": 49,
+      "tissue_capacity": 78,
       "monotony": 74
     }
   },
@@ -1145,7 +1260,7 @@
       "readiness": 48,
       "recovery": 53,
       "achilles": 0,
-      "tissue_capacity": 57,
+      "tissue_capacity": 78,
       "monotony": 65
     }
   },
@@ -1168,7 +1283,7 @@
       "readiness": 46,
       "recovery": 55,
       "achilles": 0,
-      "tissue_capacity": 57,
+      "tissue_capacity": 78,
       "monotony": 65
     }
   },
@@ -1191,7 +1306,7 @@
       "readiness": 60,
       "recovery": 53,
       "achilles": 0,
-      "tissue_capacity": 57,
+      "tissue_capacity": 78,
       "monotony": 66
     }
   },
@@ -1214,7 +1329,7 @@
       "readiness": 37,
       "recovery": 53,
       "achilles": 0,
-      "tissue_capacity": 57,
+      "tissue_capacity": 70,
       "monotony": 66
     }
   },
@@ -1237,7 +1352,7 @@
       "readiness": 13,
       "recovery": 35,
       "achilles": 0,
-      "tissue_capacity": 57,
+      "tissue_capacity": 70,
       "monotony": 66
     }
   },
@@ -1260,7 +1375,7 @@
       "readiness": 43,
       "recovery": 49,
       "achilles": 0,
-      "tissue_capacity": 67,
+      "tissue_capacity": 70,
       "monotony": 71
     }
   },
@@ -1283,7 +1398,7 @@
       "readiness": 45,
       "recovery": 53,
       "achilles": 0,
-      "tissue_capacity": 67,
+      "tissue_capacity": 78,
       "monotony": 65
     }
   },
@@ -1306,7 +1421,7 @@
       "readiness": 54,
       "recovery": 58,
       "achilles": 10,
-      "tissue_capacity": 75,
+      "tissue_capacity": 87,
       "monotony": 53
     }
   },
@@ -1329,7 +1444,7 @@
       "readiness": 15,
       "recovery": 45,
       "achilles": 10,
-      "tissue_capacity": 75,
+      "tissue_capacity": 87,
       "monotony": 53
     }
   },
@@ -1673,7 +1788,7 @@
     "scores": {
       "readiness": 54,
       "recovery": 55,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 96,
       "monotony": 41
     }
@@ -1696,7 +1811,7 @@
     "scores": {
       "readiness": 4,
       "recovery": 46,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 96,
       "monotony": 41
     }
@@ -1719,7 +1834,7 @@
     "scores": {
       "readiness": 28,
       "recovery": 53,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 96,
       "monotony": 41
     }
@@ -1742,7 +1857,7 @@
     "scores": {
       "readiness": 55,
       "recovery": 58,
-      "achilles": 55,
+      "achilles": 40,
       "tissue_capacity": 96,
       "monotony": 41
     }
@@ -1765,7 +1880,7 @@
     "scores": {
       "readiness": 30,
       "recovery": 49,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 96,
       "monotony": 41
     }
@@ -1788,7 +1903,7 @@
     "scores": {
       "readiness": 67,
       "recovery": 60,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 96,
       "monotony": 41
     }
@@ -1811,7 +1926,7 @@
     "scores": {
       "readiness": 59,
       "recovery": 49,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 100,
       "monotony": 42
     }
@@ -1834,7 +1949,7 @@
     "scores": {
       "readiness": 17,
       "recovery": 47,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 100,
       "monotony": 42
     }
@@ -1880,7 +1995,7 @@
     "scores": {
       "readiness": 59,
       "recovery": 51,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 100,
       "monotony": 43
     }
@@ -1903,7 +2018,7 @@
     "scores": {
       "readiness": 1,
       "recovery": 44,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 100,
       "monotony": 43
     }
@@ -1926,7 +2041,7 @@
     "scores": {
       "readiness": 22,
       "recovery": 46,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 100,
       "monotony": 43
     }
@@ -1949,7 +2064,7 @@
     "scores": {
       "readiness": 58,
       "recovery": 55,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 100,
       "monotony": 50
     }
@@ -1972,7 +2087,7 @@
     "scores": {
       "readiness": 61,
       "recovery": 53,
-      "achilles": 55,
+      "achilles": 40,
       "tissue_capacity": 100,
       "monotony": 41
     }
@@ -1995,7 +2110,7 @@
     "scores": {
       "readiness": 10,
       "recovery": 43,
-      "achilles": 55,
+      "achilles": 40,
       "tissue_capacity": 100,
       "monotony": 41
     }
@@ -2018,7 +2133,7 @@
     "scores": {
       "readiness": 50,
       "recovery": 55,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 100,
       "monotony": 39
     }
@@ -4065,7 +4180,7 @@
     "scores": {
       "readiness": 78,
       "recovery": 59,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 75,
       "monotony": 42
     }
@@ -4088,7 +4203,7 @@
     "scores": {
       "readiness": 48,
       "recovery": 50,
-      "achilles": 55,
+      "achilles": 40,
       "tissue_capacity": 75,
       "monotony": 41
     }
@@ -4111,7 +4226,7 @@
     "scores": {
       "readiness": 8,
       "recovery": 27,
-      "achilles": 55,
+      "achilles": 40,
       "tissue_capacity": 75,
       "monotony": 41
     }
@@ -4134,7 +4249,7 @@
     "scores": {
       "readiness": 1,
       "recovery": 27,
-      "achilles": 55,
+      "achilles": 40,
       "tissue_capacity": 75,
       "monotony": 41
     }
@@ -4157,7 +4272,7 @@
     "scores": {
       "readiness": 40,
       "recovery": 44,
-      "achilles": 35,
+      "achilles": 20,
       "tissue_capacity": 75,
       "monotony": 41
     }
@@ -4180,7 +4295,7 @@
     "scores": {
       "readiness": 57,
       "recovery": 53,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 75,
       "monotony": 43
     }
@@ -4203,7 +4318,7 @@
     "scores": {
       "readiness": 64,
       "recovery": 52,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 75,
       "monotony": 43
     }
@@ -4226,7 +4341,7 @@
     "scores": {
       "readiness": 50,
       "recovery": 46,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 75,
       "monotony": 43
     }
@@ -4318,7 +4433,7 @@
     "scores": {
       "readiness": 63,
       "recovery": 52,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 87,
       "monotony": 46
     }
@@ -4341,7 +4456,7 @@
     "scores": {
       "readiness": 67,
       "recovery": 59,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 96,
       "monotony": 46
     }
@@ -4364,7 +4479,7 @@
     "scores": {
       "readiness": 51,
       "recovery": 54,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 96,
       "monotony": 46
     }
@@ -4387,7 +4502,7 @@
     "scores": {
       "readiness": 67,
       "recovery": 57,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 96,
       "monotony": 49
     }
@@ -4410,7 +4525,7 @@
     "scores": {
       "readiness": 59,
       "recovery": 52,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 96,
       "monotony": 49
     }
@@ -4433,7 +4548,7 @@
     "scores": {
       "readiness": 63,
       "recovery": 53,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 96,
       "monotony": 50
     }
@@ -4456,7 +4571,7 @@
     "scores": {
       "readiness": 36,
       "recovery": 46,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 96,
       "monotony": 50
     }
@@ -4479,7 +4594,7 @@
     "scores": {
       "readiness": 51,
       "recovery": 50,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 100,
       "monotony": 50
     }
@@ -4502,7 +4617,7 @@
     "scores": {
       "readiness": 66,
       "recovery": 58,
-      "achilles": 45,
+      "achilles": 30,
       "tissue_capacity": 100,
       "monotony": 50
     }
@@ -4525,7 +4640,7 @@
     "scores": {
       "readiness": 67,
       "recovery": 56,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 100,
       "monotony": 50
     }
@@ -4548,7 +4663,7 @@
     "scores": {
       "readiness": 57,
       "recovery": 43,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 100,
       "monotony": 50
     }
@@ -4571,7 +4686,7 @@
     "scores": {
       "readiness": 53,
       "recovery": 48,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 100,
       "monotony": 57
     }
@@ -4594,7 +4709,7 @@
     "scores": {
       "readiness": 25,
       "recovery": 37,
-      "achilles": 25,
+      "achilles": 10,
       "tissue_capacity": 100,
       "monotony": 57
     }
@@ -4939,7 +5054,7 @@
     "scores": {
       "readiness": 10,
       "recovery": 38,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 74,
       "monotony": 35
     }
@@ -4962,7 +5077,7 @@
     "scores": {
       "readiness": 47,
       "recovery": 51,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 74,
       "monotony": 35
     }
@@ -4985,7 +5100,7 @@
     "scores": {
       "readiness": 71,
       "recovery": 60,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 70,
       "monotony": 35
     }
@@ -5008,7 +5123,7 @@
     "scores": {
       "readiness": 86,
       "recovery": 64,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 56,
       "monotony": 35
     }
@@ -5031,7 +5146,7 @@
     "scores": {
       "readiness": 84,
       "recovery": 61,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 56,
       "monotony": 35
     }
@@ -5054,7 +5169,7 @@
     "scores": {
       "readiness": 70,
       "recovery": 52,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 56,
       "monotony": 35
     }
@@ -5077,7 +5192,7 @@
     "scores": {
       "readiness": 77,
       "recovery": 57,
-      "achilles": 30,
+      "achilles": 15,
       "tissue_capacity": 56,
       "monotony": 35
     }
@@ -7975,7 +8090,7 @@
     "scores": {
       "readiness": 74,
       "recovery": 56,
-      "achilles": 60,
+      "achilles": 45,
       "tissue_capacity": 64,
       "monotony": 40
     }
@@ -7998,7 +8113,7 @@
     "scores": {
       "readiness": 57,
       "recovery": 53,
-      "achilles": 60,
+      "achilles": 45,
       "tissue_capacity": 64,
       "monotony": 40
     }
@@ -8021,7 +8136,7 @@
     "scores": {
       "readiness": 84,
       "recovery": 60,
-      "achilles": 40,
+      "achilles": 25,
       "tissue_capacity": 64,
       "monotony": 40
     }
@@ -8044,7 +8159,7 @@
     "scores": {
       "readiness": 89,
       "recovery": 64,
-      "achilles": 60,
+      "achilles": 45,
       "tissue_capacity": 64,
       "monotony": 42
     }
@@ -8067,7 +8182,7 @@
     "scores": {
       "readiness": 67,
       "recovery": 52,
-      "achilles": 40,
+      "achilles": 25,
       "tissue_capacity": 64,
       "monotony": 42
     }
@@ -8090,7 +8205,7 @@
     "scores": {
       "readiness": 79,
       "recovery": 59,
-      "achilles": 60,
+      "achilles": 45,
       "tissue_capacity": 64,
       "monotony": 45
     }
@@ -8113,7 +8228,7 @@
     "scores": {
       "readiness": 76,
       "recovery": 58,
-      "achilles": 40,
+      "achilles": 25,
       "tissue_capacity": 64,
       "monotony": 45
     }
