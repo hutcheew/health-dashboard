@@ -209,12 +209,38 @@ def main(n_days):
 
     today = date.today()
     added = 0
-    for n in range(n_days, 0, -1):
+    patched = 0
+    # range stop is -1, not 0, so n=0 (today) is included -- the old
+    # range(n_days, 0, -1) stopped at n=1, meaning today was structurally
+    # never checked against existing_dates or patched with check-in data.
+    # Harmless for the live dashboard (save_score_history handles today
+    # directly), but this script should still be able to patch today too.
+    for n in range(n_days, -1, -1):
         target = today - timedelta(days=n)
         d_str = target.isoformat()
 
         if d_str in existing_dates:
-            print(f"  {d_str}: already have an entry, skipping")
+            # Don't fully skip -- patch in any check-in data for this date
+            # if we have it and the existing entry doesn't, since that's
+            # cheap (no Garmin calls, no score recompute) and is exactly
+            # what's needed after setting up check-in sync retroactively.
+            # Doesn't touch scores: nothing in this pipeline reads
+            # checkin_* yet (that's the still-paused injury_model.py
+            # integration), so there's nothing to recompute here.
+            checkin = checkins_by_date.get(d_str)
+            if checkin:
+                for h in history:
+                    if h["date"] == d_str:
+                        before = h.get("inputs", {}).get("checkin_stiffness")
+                        h.setdefault("inputs", {})
+                        h["inputs"]["checkin_stiffness"] = checkin.get("stiffness")
+                        h["inputs"]["checkin_first_steps_pain"] = checkin.get("first_steps_pain")
+                        h["inputs"]["checkin_post_run_pain"] = checkin.get("post_run_pain")
+                        h["inputs"]["checkin_calf_raises"] = checkin.get("calf_raises")
+                        if before is None:
+                            patched += 1
+                            print(f"  {d_str}: already have an entry, patched in check-in data")
+                        break
             continue
 
         print(f"  Backfilling {d_str}...")
@@ -274,7 +300,8 @@ def main(n_days):
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
 
-    print(f"\nDone. Added {added} new days. {len(history)} total days in {HISTORY_FILE}")
+    print(f"\nDone. Added {added} new days, patched check-ins into {patched} existing days. "
+          f"{len(history)} total days in {HISTORY_FILE}")
 
 
 if __name__ == "__main__":
