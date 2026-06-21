@@ -220,8 +220,14 @@ def fetch_garmin_data(garmin):
         data["intensity_minutes"] = {}
 
     # Sleep data
+    # Garmin's get_sleep_data(date) returns the session that ENDED on `date`
+    # (i.e. the date you woke up) -- not the date you fell asleep. Use TODAY
+    # to get last night's sleep, matching get_morning_training_readiness(TODAY)
+    # above, which already correctly reflects last night. Using YESTERDAY here
+    # returned the wrong, one-night-too-old session (e.g. on a Sunday it
+    # showed Friday->Saturday's sleep instead of Saturday->Sunday's).
     try:
-        sleep = garmin.get_sleep_data(YESTERDAY)
+        sleep = garmin.get_sleep_data(TODAY)
         daily = sleep.get("dailySleepDTO", {})
 
         # Sleep stage timeline — convert GMT to Melbourne local HH:MM

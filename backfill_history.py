@@ -113,11 +113,12 @@ def fetch_day(garmin, d_str):
     except Exception as e:
         print(f"    body battery fetch failed for {d_str}: {e}")
 
-    # Sleep data is reported against the night it started, same convention
-    # health_dashboard.py uses (queries YESTERDAY for TODAY's sleep stats).
-    sleep_query_date = (date.fromisoformat(d_str) - timedelta(days=1)).isoformat()
+    # Garmin's get_sleep_data(date) returns the session that ENDED on `date`
+    # (the wake-up day), not the night it started -- so query d_str directly,
+    # not d_str-1. (Originally matched health_dashboard.py's old convention,
+    # which was itself wrong -- see the matching fix there.)
     try:
-        sleep = garmin.get_sleep_data(sleep_query_date)
+        sleep = garmin.get_sleep_data(d_str)
         daily = sleep.get("dailySleepDTO", {})
         out["sleep"] = {"duration_hrs": round(daily.get("sleepTimeSeconds", 0) / 3600, 1)}
     except Exception as e:
