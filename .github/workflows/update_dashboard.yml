@@ -18,7 +18,10 @@ jobs:
         run: |
           now=$(TZ='Australia/Melbourne' date +%H:%M)
           echo "Melbourne local time right now: $now"
-          if [[ "$now" > "10:00" && "$now" < "10:30" ]] || [[ "$now" > "19:45" && "$now" < "20:15" ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "Manually triggered -- bypassing the time gate."
+          elif [[ "$now" > "10:00" && "$now" < "10:30" ]] || [[ "$now" > "19:45" && "$now" < "20:15" ]]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             echo "This is the correct trigger for the current DST state -- proceeding."
           else
