@@ -1,22 +1,44 @@
 on:
   schedule:
-    - cron: '15 0 * * *'    # ~10:15am AEST -- gives Garmin time to sync overnight sleep/HRV first
-    - cron: '0 10 * * *'    # 8:00pm AEST -- evening check
+    # Melbourne has no fixed UTC offset (AEST = UTC+10, Oct-Apr AEDT = UTC+11),
+    # but cron only understands UTC. Each desired Melbourne time needs two
+    # entries -- one per offset -- with a guard step below picking the real
+    # one and skipping the other as a no-op.
+    - cron: '15 0 * * *'    # 10:15am AEST  (UTC+10, ~Apr-Oct)
+    - cron: '15 23 * * *'   # 10:15am AEDT  (UTC+11, ~Oct-Apr) -- fires 23:15 UTC previous day
+    - cron: '0 10 * * *'    # 8:00pm AEST
+    - cron: '0 9 * * *'     # 8:00pm AEDT
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check if this run matches current Melbourne time
+        id: gate
+        run: |
+          now=$(TZ='Australia/Melbourne' date +%H:%M)
+          echo "Melbourne local time right now: $now"
+          if [[ "$now" > "10:00" && "$now" < "10:30" ]] || [[ "$now" > "19:45" && "$now" < "20:15" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "This is the correct trigger for the current DST state -- proceeding."
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Off-season trigger for the current DST state -- skipping, no-op."
+          fi
       - name: Checkout repo
+        if: steps.gate.outputs.run == 'true'
         uses: actions/checkout@v4
       - name: Set up Python
+        if: steps.gate.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
         run: |
           pip install garminconnect withings-api requests python-dotenv PyNaCl
       - name: Write token files
+        if: steps.gate.outputs.run == 'true'
         env:
           GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
           WITHINGS_TOKENS: ${{ secrets.WITHINGS_TOKENS }}
@@ -25,6 +47,7 @@ jobs:
           echo "$GARMIN_TOKENS"  > ~/.garminconnect/garmin_tokens.json
           echo "$WITHINGS_TOKENS" > ~/.withings/withings_tokens.json
       - name: Refresh Withings token
+        if: steps.gate.outputs.run == 'true'
         env:
           WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
           WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
@@ -32,6 +55,7 @@ jobs:
         run: |
           python refresh_withings_token.py
       - name: Generate dashboard
+        if: steps.gate.outputs.run == 'true'
         env:
           WITHINGS_CLIENT_ID: ${{ secrets.WITHINGS_CLIENT_ID }}
           WITHINGS_CLIENT_SECRET: ${{ secrets.WITHINGS_CLIENT_SECRET }}
@@ -44,6 +68,7 @@ jobs:
           python health_dashboard.py
 
       - name: Commit and push
+        if: steps.gate.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
