@@ -4108,7 +4108,7 @@ function checkAlerts(battery, readiness) {{
 // ── DAILY CHECK-IN ──
 const CHECKIN_KEY = 'health_dashboard_checkins';
 const SYNC_SECRET_KEY = 'health_dashboard_sync_secret';
-const SYNC_WORKER_URL = 'https://checkin-sync.yoursubdomain.workers.dev'; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
+const SYNC_WORKER_URL = ''; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
 
 function getSyncSecret() {{
   let secret = localStorage.getItem(SYNC_SECRET_KEY);
