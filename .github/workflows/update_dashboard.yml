@@ -73,7 +73,7 @@ jobs:
       - name: Install dependencies
         if: steps.gate.outputs.run == 'true'
         run: |
-          pip install garminconnect withings-api requests python-dotenv PyNaCl
+          pip install garminconnect withings-api requests python-dotenv PyNaCl numpy
       - name: Write token files
         if: steps.gate.outputs.run == 'true'
         env:
