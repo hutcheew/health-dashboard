@@ -13,20 +13,54 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if this run matches current Melbourne time
+      - name: Check if this cron matches current Melbourne DST state
         id: gate
+        env:
+          # The literal cron expression that triggered this run -- fixed at
+          # schedule-definition time, NOT dependent on when GitHub actually
+          # executes the job. GitHub Actions cron is best-effort and can be
+          # delayed by hours under load; a wall-clock check (e.g. "is it
+          # between 10:00 and 10:30 right now") breaks under that delay,
+          # since a legitimately-correct firing can execute well outside
+          # its intended window. Comparing cron identity to the CURRENT
+          # real DST offset is delay-proof: it doesn't matter when GitHub
+          # runs the job, only whether AEST/AEDT actually changed since the
+          # job was scheduled -- which happens twice a year, not hourly.
+          FIRED_CRON: ${{ github.event.schedule }}
         run: |
-          now=$(TZ='Australia/Melbourne' date +%H:%M)
-          echo "Melbourne local time right now: $now"
+          now_offset=$(TZ='Australia/Melbourne' date +%z)
+          echo "Fired cron: '$FIRED_CRON'   Current Melbourne UTC offset: $now_offset"
+
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             echo "Manually triggered -- bypassing the time gate."
-          elif [[ "$now" > "10:00" && "$now" < "10:30" ]] || [[ "$now" > "19:45" && "$now" < "20:15" ]]; then
+            exit 0
+          fi
+
+          case "$FIRED_CRON" in
+            "15 0 * * *"|"0 10 * * *")
+              expected="+1000"   # this cron line assumes AEST
+              ;;
+            "15 23 * * *"|"0 9 * * *")
+              expected="+1100"   # this cron line assumes AEDT
+              ;;
+            *)
+              expected=""
+              ;;
+          esac
+
+          if [[ -z "$expected" ]]; then
+            # Missing/unrecognized schedule context -- fail OPEN. An extra
+            # run costs a few minutes of Action time; a silently skipped
+            # run costs a missing day of real data.
             echo "run=true" >> "$GITHUB_OUTPUT"
-            echo "This is the correct trigger for the current DST state -- proceeding."
+            echo "Could not determine which cron fired -- running anyway rather than risk a silent skip."
+          elif [[ "$now_offset" == "$expected" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "Cron assumes $expected and current offset is $now_offset -- match, proceeding (regardless of any scheduling delay)."
           else
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "Off-season trigger for the current DST state -- skipping, no-op."
+            echo "Cron assumes $expected but current offset is $now_offset -- this is the other season's disambiguation pair, skipping."
           fi
       - name: Checkout repo
         if: steps.gate.outputs.run == 'true'
@@ -89,7 +123,3 @@ jobs:
           git pull --rebase --autostash
 
           git push
-
-
-
-
