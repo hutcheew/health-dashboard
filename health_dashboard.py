@@ -1713,6 +1713,7 @@ def format_email_html(report_text, garmin_data, bp_readings, phase_info, achille
     <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#5c6480;margin-bottom:4px;">NAT / HEALTH DASHBOARD</div>
     <div style="font-size:20px;font-weight:600;color:#f0f2f8;">{today_str}</div>
     <div style="font-size:12px;color:#5c6480;margin-top:4px;">Week {phase_info['week_num']}/28 — {phase['name']} · {phase_info['days_to_race']} days to Melbourne Marathon</div>
+    <a href="run_compare.html" style="display:inline-block;margin-top:10px;font-size:12px;color:#58a6ff;text-decoration:none;border:1px solid #252836;border-radius:6px;padding:5px 10px;">→ Run comparison: latest vs 1y vs 2y ago</a>
   </div>
 
   <!-- Stats row -->

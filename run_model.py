@@ -47,12 +47,64 @@ INJURY_SIDE = "left"  # your Achilles is left insertional — flags drift away f
 
 
 # ── DATE PARSING ──────────────────────────────────────────────────────────────
-def parse_date_arg(s):
+def find_latest_run_date(garmin=None, lookback_days=21):
+    """Find the actual most recent run date by scanning score_history.json
+    backward from today for the last entry with ran_today=True.
+
+    This deliberately does NOT use find_run_on_date()'s forward-only search
+    anchored at "today" -- that search only looks at today, today+1, ...
+    today+7, which are FUTURE dates relative to "today" if you haven't run
+    yet. On a rest day (or run live before today's run happens), that
+    forward search finds nothing and silently skips the comparison instead
+    of finding your real most recent run from a few days ago. Scanning
+    backward through already-recorded history is the correct direction for
+    "what's my latest run", as opposed to "is there a run near THIS date"
+    (which forward search is fine for, since historical 1y/2y-ago anchors
+    are always in the past already).
+    """
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, encoding="utf-8") as f:
+                history = json.load(f)
+            for h in sorted(history, key=lambda x: x.get("date", ""), reverse=True):
+                if h.get("inputs", {}).get("ran_today"):
+                    return date.fromisoformat(h["date"])
+        except Exception as e:
+            print(f"  Could not read score history for latest-run lookup: {e}")
+
+    # Fallback: score_history.json missing/stale -- ask Garmin directly,
+    # day by day, backward from today.
+    print("  Falling back to direct Garmin lookup for latest run date...")
+    if garmin is None:
+        garmin = get_garmin()
+    today = date.today()
+    for offset in range(lookback_days + 1):
+        d = today - timedelta(days=offset)
+        activities = garmin.get_activities_by_date(d.isoformat(), d.isoformat(), "running")
+        if activities:
+            return d
+    raise SystemExit(f"No runs found in the last {lookback_days} days via score_history or Garmin.")
+
+
+def parse_date_arg(s, latest_date=None):
     s = s.strip().lower()
     if s == "today":
         return date.today()
     if s == "yesterday":
         return date.today() - timedelta(days=1)
+    if s == "latest":
+        if latest_date is None:
+            raise SystemExit("'latest' used but no latest_date was resolved.")
+        return latest_date
+    m = re.match(r"^latest-(\d+)y$", s)
+    if m:
+        if latest_date is None:
+            raise SystemExit("'latest-Ny' used but no latest_date was resolved.")
+        years = int(m.group(1))
+        try:
+            return latest_date.replace(year=latest_date.year - years)
+        except ValueError:
+            return latest_date.replace(month=2, day=28, year=latest_date.year - years)
     m = re.match(r"^today-(\d+)y$", s)
     if m:
         years = int(m.group(1))
@@ -64,7 +116,7 @@ def parse_date_arg(s):
     try:
         return date.fromisoformat(s)
     except ValueError:
-        raise SystemExit(f"Can't parse date '{s}'. Use YYYY-MM-DD, 'today', 'yesterday', or 'today-Ny'.")
+        raise SystemExit(f"Can't parse date '{s}'. Use YYYY-MM-DD, 'today', 'yesterday', 'latest', 'latest-Ny', or 'today-Ny'.")
 
 
 # ── SCORE HISTORY LOOKUP ──────────────────────────────────────────────────────
@@ -785,9 +837,17 @@ def main():
     print("Connecting to Garmin...")
     garmin = get_garmin()
 
+    needs_latest = any(d.strip().lower() == "latest" or re.match(r"^latest-\d+y$", d.strip().lower())
+                        for d in args.dates)
+    latest_date = None
+    if needs_latest:
+        print("Resolving 'latest' to your actual most recent run date...")
+        latest_date = find_latest_run_date(garmin=garmin)
+        print(f"  Latest run found: {latest_date.isoformat()}")
+
     runs = []
     for i, date_str in enumerate(args.dates):
-        target = parse_date_arg(date_str)
+        target = parse_date_arg(date_str, latest_date=latest_date)
         print(f"\nLooking for run on {target.isoformat()}...")
         activity, actual = find_run_on_date(garmin, target)
         if not activity:
