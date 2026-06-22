@@ -20,6 +20,11 @@ MELB_TZ = ZoneInfo("Australia/Melbourne")
 from dotenv import load_dotenv
 from garminconnect import Garmin
 
+# Shadow-mode only (see save_score_history): computes and logs
+# injury_model.py's output alongside the live scores without it driving
+# anything yet -- lets real data accumulate for validation before cutover.
+from injury_model import replay_injury_penalty
+
 load_dotenv()
 
 GARMIN_TOKEN_FILE  = os.path.expanduser("~/.garminconnect/garmin_tokens.json")
@@ -591,6 +596,21 @@ def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monoton
     history = [h for h in history if h.get("date") != TODAY]
     history.append(entry)
     history.sort(key=lambda h: h["date"])
+
+    # ── Shadow-mode injury_model.py logging ────────────────────────────────
+    # Computed and logged daily so real data accumulates for validation, but
+    # NOT used anywhere in compute_achilles_score yet -- that still runs the
+    # plain date-gated penalty. Wrapped defensively: a bug or import issue
+    # here should never be able to break the actual live dashboard write.
+    try:
+        shadow = replay_injury_penalty(history, as_of=_melb_now.date(), injury_date=INJURY_DATE)
+        entry["injury_model_shadow"] = {
+            "state": shadow.get("state"),
+            "load_tolerance": shadow.get("load_tolerance"),
+            "injury_penalty": shadow.get("injury_penalty"),
+        }
+    except Exception as e:
+        print(f"  Shadow injury_model computation failed (non-fatal): {e}")
 
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
@@ -4114,7 +4134,7 @@ function checkAlerts(battery, readiness) {{
 // ── DAILY CHECK-IN ──
 const CHECKIN_KEY = 'health_dashboard_checkins';
 const SYNC_SECRET_KEY = 'health_dashboard_sync_secret';
-const SYNC_WORKER_URL = 'https://checkin-sync.hutcheew.workers.dev'; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
+const SYNC_WORKER_URL = 'https://checkin-sync.yoursubdomain.workers.dev'; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
 
 function getSyncSecret() {{
   let secret = localStorage.getItem(SYNC_SECRET_KEY);
