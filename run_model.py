@@ -688,6 +688,7 @@ def build_comparison_section(runs):
 '''}
 
 <script>
+(function() {{
 const D = {json.dumps({
     "hrByDist": hr_by_dist, "paceByDist": pace_by_dist,
     "hrNorm": hr_norm, "paceNorm": pace_norm,
@@ -794,6 +795,7 @@ if (D.scatter.length >= 2) {{
     }}
   }});
 }}
+}})();
 </script>
 
 </div>"""
