@@ -134,6 +134,61 @@ def get_score_history_entry(d_str):
 
 
 # ── GARMIN FETCH ──────────────────────────────────────────────────────────────
+def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_km, window_days=21):
+    """
+    Find the best comparison run near anchor_date (e.g. ~1 year before the
+    latest run), prioritizing in this order:
+      1. Same day-of-week as the latest run (e.g. always Monday vs Monday
+         vs Monday) -- a literal year-ago date usually ISN'T the same
+         weekday (365 % 7 == 1, so it drifts by a day or two per year),
+         so this is a deliberate search, not just a date shift.
+      2. Among same-weekday candidates, closest distance to the latest
+         run's distance -- comparing a 5km recovery jog against a 16km
+         long run a year apart isn't a meaningful comparison.
+      3. Date proximity to anchor_date as the final tiebreaker.
+
+    Falls back to the best available date+distance match (ignoring
+    weekday) if nothing in the window shares the target weekday.
+    """
+    start = (anchor_date - timedelta(days=window_days)).isoformat()
+    end = (anchor_date + timedelta(days=window_days)).isoformat()
+    activities = garmin.get_activities_by_date(start, end, "running")
+    if not activities:
+        return None, None
+
+    candidates = []
+    for a in activities:
+        d_str = a.get("startTimeLocal", "")[:10]
+        if not d_str:
+            continue
+        try:
+            d = date.fromisoformat(d_str)
+        except ValueError:
+            continue
+        dist_km = round(a.get("distance", 0) / 1000, 1)
+        candidates.append((a, d, dist_km))
+
+    if not candidates:
+        return None, None
+
+    same_weekday = [c for c in candidates if c[1].weekday() == target_weekday]
+    pool = same_weekday if same_weekday else candidates
+    if not same_weekday:
+        print(f"    ⚠️  No run on the matching weekday within ±{window_days}d of "
+              f"{anchor_date.isoformat()} -- falling back to best date+distance match")
+
+    def score(c):
+        _, d, dist_km = c
+        dist_penalty = abs(dist_km - target_distance_km) if target_distance_km else 0
+        date_penalty = abs((d - anchor_date).days)
+        # Distance similarity dominates; date proximity only breaks ties
+        # between otherwise-similar-distance candidates.
+        return dist_penalty * 10 + date_penalty
+
+    activity, actual_date, dist_km = min(pool, key=score)
+    return activity, actual_date
+
+
 def find_run_on_date(garmin, d, max_lookahead=7):
     for offset in range(max_lookahead + 1):
         d_str = (d + timedelta(days=offset)).isoformat()
@@ -884,18 +939,55 @@ def build_comparison_runs(garmin, dates, debug=False):
     an embedding caller (e.g. health_dashboard.py, which has its own Garmin
     connection and main() already) can produce the same data without going
     through a second standalone HTML file.
+
+    'latest-Ny' entries don't just shift the date back N years -- they
+    search a window around that point for a run matching the LATEST run's
+    day-of-week (Monday vs Monday vs Monday, not whatever weekday a literal
+    date subtraction happens to land on) and, among same-weekday
+    candidates, the closest distance to the latest run (so a 16km long run
+    isn't compared against a 5km recovery jog just because they're both
+    "a year apart"). Plain dates and 'today'/'today-Ny' are unaffected --
+    those still resolve to an exact date via find_run_on_date().
     """
-    needs_latest = any(d.strip().lower() == "latest" or re.match(r"^latest-\d+y$", d.strip().lower())
+    latest_ny_re = re.compile(r"^latest-(\d+)y$")
+    needs_latest = any(d.strip().lower() == "latest" or latest_ny_re.match(d.strip().lower())
                         for d in dates)
-    latest_date = find_latest_run_date(garmin=garmin) if needs_latest else None
+
+    latest_date = None
+    latest_weekday = None
+    latest_distance_km = None
+    if needs_latest:
+        print("Resolving 'latest' to your actual most recent run date...")
+        latest_date = find_latest_run_date(garmin=garmin)
+        print(f"  Latest run found: {latest_date.isoformat()}")
+        latest_activity, _ = find_run_on_date(garmin, latest_date)
+        if latest_activity:
+            latest_weekday = latest_date.weekday()
+            latest_distance_km = round(latest_activity.get("distance", 0) / 1000, 1)
+            print(f"  Latest run: {latest_distance_km}km on a "
+                  f"{latest_date.strftime('%A')} -- comparisons will match both.")
 
     runs = []
     for i, date_str in enumerate(dates):
-        target = parse_date_arg(date_str, latest_date=latest_date)
-        print(f"\nLooking for run on {target.isoformat()}...")
-        activity, actual = find_run_on_date(garmin, target)
+        key = date_str.strip().lower()
+        m = latest_ny_re.match(key)
+
+        if m and latest_date is not None and latest_distance_km is not None:
+            years = int(m.group(1))
+            try:
+                anchor = latest_date.replace(year=latest_date.year - years)
+            except ValueError:
+                anchor = latest_date.replace(month=2, day=28, year=latest_date.year - years)
+            print(f"\nLooking for a {latest_date.strftime('%A')} near {anchor.isoformat()} "
+                  f"(~{latest_distance_km}km, {years}y ago)...")
+            activity, actual = find_similar_run_near(garmin, anchor, latest_weekday, latest_distance_km)
+        else:
+            target = parse_date_arg(date_str, latest_date=latest_date)
+            print(f"\nLooking for run on {target.isoformat()}...")
+            activity, actual = find_run_on_date(garmin, target)
+
         if not activity:
-            print(f"  ❌ No run found within 7 days of {target.isoformat()}, skipping.")
+            print(f"  ❌ No comparable run found, skipping.")
             continue
 
         dist_km = round(activity.get("distance", 0) / 1000, 1)
