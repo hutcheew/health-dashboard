@@ -138,17 +138,16 @@ def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_k
     """
     Find the best comparison run near anchor_date (e.g. ~1 year before the
     latest run), prioritizing in this order:
-      1. Same day-of-week as the latest run (e.g. always Monday vs Monday
-         vs Monday) -- a literal year-ago date usually ISN'T the same
-         weekday (365 % 7 == 1, so it drifts by a day or two per year),
-         so this is a deliberate search, not just a date shift.
-      2. Among same-weekday candidates, closest distance to the latest
-         run's distance -- comparing a 5km recovery jog against a 16km
-         long run a year apart isn't a meaningful comparison.
-      3. Date proximity to anchor_date as the final tiebreaker.
-
-    Falls back to the best available date+distance match (ignoring
-    weekday) if nothing in the window shares the target weekday.
+      1. Distance similarity to the latest run -- comparing a 5km recovery
+         jog against a 16km long run a year apart isn't a meaningful
+         comparison, and this matters more than which day it fell on.
+      2. Day-of-week as a TIEBREAKER -- only decides between candidates
+         whose distances are already close (within ~1km equivalent); it
+         does not override a clearly better distance match on a
+         different day. (Earlier version had this the other way around --
+         flipped per explicit instruction: weekday was overriding distance
+         even when the weekday-matched candidate's distance was much worse.)
+      3. Date proximity to anchor_date as the final, smallest tiebreaker.
     """
     start = (anchor_date - timedelta(days=window_days)).isoformat()
     end = (anchor_date + timedelta(days=window_days)).isoformat()
@@ -171,21 +170,18 @@ def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_k
     if not candidates:
         return None, None
 
-    same_weekday = [c for c in candidates if c[1].weekday() == target_weekday]
-    pool = same_weekday if same_weekday else candidates
-    if not same_weekday:
-        print(f"    ⚠️  No run on the matching weekday within ±{window_days}d of "
-              f"{anchor_date.isoformat()} -- falling back to best date+distance match")
-
     def score(c):
         _, d, dist_km = c
         dist_penalty = abs(dist_km - target_distance_km) if target_distance_km else 0
-        date_penalty = abs((d - anchor_date).days)
-        # Distance similarity dominates; date proximity only breaks ties
-        # between otherwise-similar-distance candidates.
-        return dist_penalty * 10 + date_penalty
+        # Weekday mismatch costs roughly "1km of distance difference" --
+        # enough to decide between near-identical distances, not enough to
+        # override a real distance gap (e.g. 5km vs 3km, the case that
+        # prompted this flip).
+        weekday_penalty = 0 if d.weekday() == target_weekday else 1.0
+        date_penalty = abs((d - anchor_date).days) * 0.01
+        return dist_penalty + weekday_penalty + date_penalty
 
-    activity, actual_date, dist_km = min(pool, key=score)
+    activity, actual_date, dist_km = min(candidates, key=score)
     return activity, actual_date
 
 
