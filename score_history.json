@@ -8460,10 +8460,10 @@
         "pace": 5.92,
         "avg_hr": 147.0
       },
-      "checkin_stiffness": null,
-      "checkin_first_steps_pain": null,
-      "checkin_post_run_pain": null,
-      "checkin_calf_raises": null
+      "checkin_stiffness": 1,
+      "checkin_first_steps_pain": 0,
+      "checkin_post_run_pain": 1,
+      "checkin_calf_raises": true
     },
     "scores": {
       "readiness": 51,
@@ -8472,6 +8472,44 @@
       "tissue_capacity": 47,
       "monotony": 54,
       "acr": 1.67
+    },
+    "injury_model_shadow": {
+      "state": "ACTIVE_INJURY",
+      "load_tolerance": 1.0,
+      "injury_penalty": 15.0
+    }
+  },
+  {
+    "date": "2026-06-23",
+    "inputs": {
+      "resting_hr": 52,
+      "hrv": 30,
+      "sleep_score": 75,
+      "body_battery": 51,
+      "ran_today": true,
+      "last_run": {
+        "date": "2026-06-23",
+        "distance": 6.0,
+        "pace": 5.78,
+        "avg_hr": 143.0
+      },
+      "checkin_stiffness": null,
+      "checkin_first_steps_pain": null,
+      "checkin_post_run_pain": null,
+      "checkin_calf_raises": null
+    },
+    "scores": {
+      "readiness": 65,
+      "recovery": 50,
+      "achilles": 45,
+      "tissue_capacity": 47,
+      "monotony": 53,
+      "acr": 1.88
+    },
+    "injury_model_shadow": {
+      "state": "ACTIVE_INJURY",
+      "load_tolerance": 1.0,
+      "injury_penalty": 15.0
     }
   }
 ]
