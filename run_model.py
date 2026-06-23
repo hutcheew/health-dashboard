@@ -526,7 +526,12 @@ def fmt_pace(p):
 
 
 # ── HTML GENERATION ───────────────────────────────────────────────────────────
-def build_html(runs, out_path):
+def build_comparison_section(runs):
+    """Render just the inner content (cards + charts + script) for the
+    run comparison, with no <html>/<head>/<body> wrapper -- meant to be
+    embedded directly into another page (health_dashboard.py's dashboard).
+    Standalone CLI use still gets a full document via build_html() below,
+    which just wraps this."""
     def mk_ds(label, color, pts, x_key, y_key):
         data = [{"x": round(p[x_key], 3), "y": round(p[y_key], 2)}
                 for p in pts if p.get(x_key) is not None and p.get(y_key) is not None]
@@ -576,37 +581,8 @@ def build_html(runs, out_path):
     threshold = CONFIG["hr_threshold"]
     mhr       = CONFIG["max_hr"]
 
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Run Model — Physiology + Mechanics</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<style>
-:root {{--bg:#0e1116;--surface:#161b22;--surface2:#1f2630;--border:#21262d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--warn:#f78166;--ok:#34d399;}}
-*{{box-sizing:border-box;margin:0;padding:0;}}
-body{{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:24px;font-size:13px;}}
-h1{{font-size:20px;font-weight:600;margin-bottom:4px;}}
-h2{{font-size:13px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}}
-.sub{{color:var(--muted);font-size:12px;margin-bottom:24px;}}
-.card{{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}}
-.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:16px;}}
-canvas{{max-height:280px;}}
-table{{width:100%;border-collapse:collapse;font-size:12px;}}
-th{{text-align:left;padding:8px 10px;border-bottom:2px solid var(--border);font-size:11px;}}
-td{{padding:8px 10px;border-bottom:1px solid var(--border);}}
-.ml{{color:var(--muted);}}
-.section-header td{{background:var(--surface2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;font-weight:600;}}
-.flag-ok{{color:var(--ok);font-weight:600;}}
-.flag-warn{{color:#fbbf24;font-weight:600;}}
-.flag-bad{{color:var(--warn);font-weight:600;}}
-.insight{{background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;line-height:1.6;color:#c0c8e0;}}
-.mech-flag{{background:#1f1a14;border-left:3px solid #fbbf24;border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#f5dfa0;}}
-.mech-ok{{background:#131f18;border-left:3px solid var(--ok);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#a3e4c3;}}
-.note{{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic;}}
-</style>
-</head>
-<body>
+    
+    section = f"""<div class="rc-section">
 <h1>Run Model — Physiology + Mechanics</h1>
 <div class="sub">HR threshold: {threshold} bpm · Max HR: {mhr} bpm · GCT balance drift flag: ±{CONFIG["gct_balance_drift_flag"]}% · Injury side: {INJURY_SIDE}</div>
 
@@ -624,10 +600,10 @@ td{{padding:8px 10px;border-bottom:1px solid var(--border);}}
   <table>
     <thead><tr><th>Metric</th>{headers}</tr></thead>
     <tbody>
-      <tr class="section-header"><td colspan="{1 + len(runs)}">Context</td></tr>
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Context</td></tr>
       {row("Resting HR (morning)", lambda r: f"{r['metrics']['resting_hr']} bpm" if r['metrics'].get('resting_hr') else "--")}
       {row("HR reserve at breakpoint", lambda r: f"{r['metrics']['hr_reserve_pct']}% of max" if r['metrics'].get('hr_reserve_pct') else "--")}
-      <tr class="section-header"><td colspan="{1 + len(runs)}">Physiology</td></tr>
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Physiology</td></tr>
       {row("Total distance", lambda r: f"{r['metrics']['total_dist_km']}km" if r['metrics'].get('total_dist_km') else "--")}
       {row("Breakpoint", lambda r: f"🔴 {r['metrics']['bp_dist_km']}km ({r['metrics']['fatigue_onset_pct']}%)" if not r['metrics']['fully_controlled'] else "🟢 Fully controlled")}
       {row("Avg pace (A — controlled)", lambda r: fmt_pace(r['metrics'].get('pace_a')))}
@@ -639,7 +615,7 @@ td{{padding:8px 10px;border-bottom:1px solid var(--border);}}
       {row("EI — Segment B",            lambda r: str(r['metrics']['ei_b']) if r['metrics'].get('ei_b') else "--")}
       {row("Decoupling (EI drift)",     lambda r: f"{r['metrics']['decoupling']}%" if r['metrics'].get('decoupling') is not None else "--")}
       {row("HR crossings",              lambda r: str(r['metrics']['crossings']))}
-      <tr class="section-header"><td colspan="{1 + len(runs)}">Running Mechanics</td></tr>
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Running Mechanics</td></tr>
       {row("GCT — early laps (ms)",        lambda r: str(r['dynamics'].get('gct_early_ms') or '--'))}
       {row("GCT — late laps (ms)",         lambda r: str(r['dynamics'].get('gct_late_ms') or '--'))}
       {row("GCT drift (late − early)",     lambda r: f"+{r['dynamics']['gct_drift_ms']}ms" if (r['dynamics'].get('gct_drift_ms') or 0) > 0 else (f"{r['dynamics']['gct_drift_ms']}ms" if r['dynamics'].get('gct_drift_ms') is not None else "--"))}
@@ -819,6 +795,77 @@ if (D.scatter.length >= 2) {{
   }});
 }}
 </script>
+
+</div>"""
+    return section
+
+
+# Plain (non-f-string) CSS constant for health_dashboard.py to splice into
+# its own <style> block once. Scoped under .rc-section and remapped to the
+# dashboard's existing CSS variable names (--text3/--blue/--orange/--green)
+# instead of redeclaring a second, slightly different color palette.
+EMBEDDED_CSS = """
+.rc-section h1{font-size:20px;font-weight:600;margin-bottom:4px;}
+.rc-section h2{font-size:13px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+.rc-section .sub{color:var(--text3);font-size:12px;margin-bottom:24px;}
+.rc-section .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.rc-section .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.rc-section canvas{max-height:280px;}
+.rc-section table{width:100%;border-collapse:collapse;font-size:12px;}
+.rc-section th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--border);font-size:11px;}
+.rc-section td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.rc-section .ml{color:var(--text3);}
+.rc-section .rc-section-header td{background:var(--surface2);color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;font-weight:600;}
+.rc-section .flag-ok{color:var(--green);font-weight:600;}
+.rc-section .flag-warn{color:#fbbf24;font-weight:600;}
+.rc-section .flag-bad{color:var(--orange);font-weight:600;}
+.rc-section .insight{background:var(--surface2);border-left:3px solid var(--blue);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;line-height:1.6;color:#c0c8e0;}
+.rc-section .mech-flag{background:#1f1a14;border-left:3px solid #fbbf24;border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#f5dfa0;}
+.rc-section .mech-ok{background:#131f18;border-left:3px solid var(--green);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#a3e4c3;}
+.rc-section .note{font-size:11px;color:var(--text3);margin-top:8px;font-style:italic;}
+"""
+
+
+def build_html(runs, out_path):
+    """Standalone CLI entrypoint: wraps build_comparison_section()'s
+    underlying content in a full HTML document and writes it to disk.
+    Kept for manual/local use; the dashboard embeds the section directly
+    instead of generating this second file."""
+    section = build_comparison_section(runs)
+    # Standalone document needs its own full page chrome + original
+    # (unscoped) CSS, since there's no host page styling to inherit here.
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Run Model — Physiology + Mechanics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {--bg:#0e1116;--surface:#161b22;--surface2:#1f2630;--border:#21262d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--warn:#f78166;--ok:#34d399;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:24px;font-size:13px;}
+h1{font-size:20px;font-weight:600;margin-bottom:4px;}
+h2{font-size:13px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+.sub{color:var(--muted);font-size:12px;margin-bottom:24px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+canvas{max-height:280px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--border);font-size:11px;}
+td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.ml{color:var(--muted);}
+.section-header td{background:var(--surface2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;font-weight:600;}
+.flag-ok{color:var(--ok);font-weight:600;}
+.flag-warn{color:#fbbf24;font-weight:600;}
+.flag-bad{color:var(--warn);font-weight:600;}
+.insight{background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;line-height:1.6;color:#c0c8e0;}
+.mech-flag{background:#1f1a14;border-left:3px solid #fbbf24;border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#f5dfa0;}
+.mech-ok{background:#131f18;border-left:3px solid var(--ok);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#a3e4c3;}
+.note{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic;}
+</style>
+</head>
+<body>
+""" + section + """
 </body>
 </html>"""
 
@@ -826,27 +873,22 @@ if (D.scatter.length >= 2) {{
         f.write(html)
 
 
+
 # ── MAIN ──────────────────────────────────────────────────────────────────────
-def main():
-    parser = argparse.ArgumentParser(description="Physiological + mechanical run analysis.")
-    parser.add_argument("dates", nargs="+", help="e.g. today today-1y 2025-06-21")
-    parser.add_argument("--out", default="run_model.html")
-    parser.add_argument("--debug", action="store_true", help="Dump raw metric keys from Garmin")
-    args = parser.parse_args()
-
-    print("Connecting to Garmin...")
-    garmin = get_garmin()
-
+def build_comparison_runs(garmin, dates, debug=False):
+    """Resolve a list of date keywords (e.g. ['latest','latest-1y','latest-2y'])
+    into fully-processed run dicts (points, metrics, dynamics), ready for
+    build_comparison_section(). Factored out so both the CLI entrypoint and
+    an embedding caller (e.g. health_dashboard.py, which has its own Garmin
+    connection and main() already) can produce the same data without going
+    through a second standalone HTML file.
+    """
     needs_latest = any(d.strip().lower() == "latest" or re.match(r"^latest-\d+y$", d.strip().lower())
-                        for d in args.dates)
-    latest_date = None
-    if needs_latest:
-        print("Resolving 'latest' to your actual most recent run date...")
-        latest_date = find_latest_run_date(garmin=garmin)
-        print(f"  Latest run found: {latest_date.isoformat()}")
+                        for d in dates)
+    latest_date = find_latest_run_date(garmin=garmin) if needs_latest else None
 
     runs = []
-    for i, date_str in enumerate(args.dates):
+    for i, date_str in enumerate(dates):
         target = parse_date_arg(date_str, latest_date=latest_date)
         print(f"\nLooking for run on {target.isoformat()}...")
         activity, actual = find_run_on_date(garmin, target)
@@ -859,7 +901,6 @@ def main():
         color = COLORS[i % len(COLORS)]
         label = f"{actual.isoformat()} ({dist_km}km)"
 
-        # Resting HR from score_history.json
         history_inputs = get_score_history_entry(actual.isoformat())
         resting_hr = history_inputs.get("resting_hr")
         if resting_hr:
@@ -869,7 +910,7 @@ def main():
 
         print("  Fetching activity stream...")
         try:
-            points = fetch_activity_stream(garmin, activity["activityId"], debug=args.debug)
+            points = fetch_activity_stream(garmin, activity["activityId"], debug=debug)
         except ValueError as e:
             print(f"  ❌ Stream error: {e}")
             continue
@@ -878,7 +919,7 @@ def main():
         points = smooth_stream(points)
 
         print("  Fetching lap dynamics...")
-        laps = fetch_lap_dynamics(garmin, activity["activityId"], debug=args.debug)
+        laps = fetch_lap_dynamics(garmin, activity["activityId"], debug=debug)
         dynamics = analyse_dynamics(laps)
         if dynamics.get("has_dynamics"):
             print(f"  GCT early/late: {dynamics.get('gct_early_ms')}ms → {dynamics.get('gct_late_ms')}ms")
@@ -905,6 +946,20 @@ def main():
             "points": points, "bp_idx": bp_idx,
             "metrics": metrics, "dynamics": dynamics,
         })
+    return runs
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Physiological + mechanical run analysis.")
+    parser.add_argument("dates", nargs="+", help="e.g. today today-1y 2025-06-21")
+    parser.add_argument("--out", default="run_model.html")
+    parser.add_argument("--debug", action="store_true", help="Dump raw metric keys from Garmin")
+    args = parser.parse_args()
+
+    print("Connecting to Garmin...")
+    garmin = get_garmin()
+
+    runs = build_comparison_runs(garmin, args.dates, debug=args.debug)
 
     if not runs:
         sys.exit("No valid run data found.")

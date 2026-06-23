@@ -24,6 +24,9 @@ from garminconnect import Garmin
 # injury_model.py's output alongside the live scores without it driving
 # anything yet -- lets real data accumulate for validation before cutover.
 from injury_model import replay_injury_penalty
+# run_model is imported lazily inside main() (not here) -- it imports
+# get_garmin/HISTORY_FILE FROM this module, so a top-level import here
+# would be circular.
 
 load_dotenv()
 
@@ -1713,7 +1716,6 @@ def format_email_html(report_text, garmin_data, bp_readings, phase_info, achille
     <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#5c6480;margin-bottom:4px;">NAT / HEALTH DASHBOARD</div>
     <div style="font-size:20px;font-weight:600;color:#f0f2f8;">{today_str}</div>
     <div style="font-size:12px;color:#5c6480;margin-top:4px;">Week {phase_info['week_num']}/28 — {phase['name']} · {phase_info['days_to_race']} days to Melbourne Marathon</div>
-    <a href="run_compare.html" style="display:inline-block;margin-top:10px;font-size:12px;color:#58a6ff;text-decoration:none;border:1px solid #252836;border-radius:6px;padding:5px 10px;">→ Run comparison: latest vs 1y vs 2y ago</a>
   </div>
 
   <!-- Stats row -->
@@ -1911,7 +1913,7 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
     }
 
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None, comparison_section_html="", embedded_css=""):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -2909,6 +2911,9 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     .chart-grid {{ grid-template-columns: 1fr; }}
     .topbar-logo {{ font-size: 11px; }}
   }}
+
+  /* ── RUN COMPARISON (embedded from run_model.py) ── */
+  {embedded_css}
 </style>
 </head>
 <body>
@@ -4331,6 +4336,8 @@ Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) To
 }}
 </script>
 
+{comparison_section_html}
+
 </body>
 </html>"""
     return html
@@ -4414,11 +4421,31 @@ def main():
     print("Saving score history...")
     save_score_history(garmin_data, achilles, recovery, tissue_capacity, monotony, load_data, checkin=latest_checkin)
 
+    print("Building run comparison section (latest vs 1y vs 2y ago)...")
+    comparison_section_html = ""
+    comparison_css = ""
+    try:
+        # Deferred import: run_model.py imports get_garmin/HISTORY_FILE FROM
+        # this module, so importing it at module top-level here would be
+        # circular. By the time main() runs, this module is fully loaded,
+        # so the import resolves cleanly.
+        from run_model import build_comparison_runs, build_comparison_section, EMBEDDED_CSS
+        comparison_css = EMBEDDED_CSS
+        comparison_runs = build_comparison_runs(garmin, ["latest", "latest-1y", "latest-2y"])
+        if comparison_runs:
+            comparison_section_html = build_comparison_section(comparison_runs)
+            print(f"  Built comparison with {len(comparison_runs)} run(s)")
+        else:
+            print("  No comparable runs found -- skipping this section for today")
+    except Exception as e:
+        print(f"  Run comparison failed (non-fatal, dashboard continues without it): {e}")
+
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,
                          load_data=load_data, recovery=recovery, injury_contributors=injury_contributors,
                          tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today,
-                         checkins=checkins)
+                         checkins=checkins, comparison_section_html=comparison_section_html,
+                         embedded_css=comparison_css)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")

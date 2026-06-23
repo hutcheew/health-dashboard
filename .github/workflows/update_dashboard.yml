@@ -104,12 +104,6 @@ jobs:
         run: |
           python health_dashboard.py
 
-      - name: Generate run comparison (latest vs 1y vs 2y ago)
-        if: steps.gate.outputs.run == 'true'
-        continue-on-error: true  # don't let this block the main dashboard commit if it fails
-        run: |
-          python run_model.py latest latest-1y latest-2y --out run_compare.html
-
       - name: Commit and push
         if: steps.gate.outputs.run == 'true'
         run: |
@@ -122,10 +116,6 @@ jobs:
 
           if [ -f score_history.json ]; then
             git add score_history.json
-          fi
-
-          if [ -f run_compare.html ]; then
-            git add run_compare.html
           fi
 
           git commit -m "Dashboard update $(date +'%Y-%m-%d %H:%M')" || echo "Nothing to commit"
