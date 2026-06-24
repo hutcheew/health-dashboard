@@ -185,6 +185,18 @@ def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_k
     return activity, actual_date
 
 
+def compute_ytd_mileage(garmin, through_date):
+    """Total running distance from Jan 1 of through_date's year through
+    through_date itself (inclusive) -- lets each comparison run show "how
+    much had I run by this point" in its own calendar year, so volume
+    context carries over alongside the single day's distance.
+    """
+    start = date(through_date.year, 1, 1).isoformat()
+    end = through_date.isoformat()
+    activities = garmin.get_activities_by_date(start, end, "running")
+    return round(sum(a.get("distance", 0) for a in activities) / 1000, 1)
+
+
 def find_run_on_date(garmin, d, max_lookahead=7):
     for offset in range(max_lookahead + 1):
         d_str = (d + timedelta(days=offset)).isoformat()
@@ -302,8 +314,12 @@ def fetch_lap_dynamics(garmin, activity_id, debug=False):
         # Cadence: stepsPerMinute or averageRunCadence (steps/min, not strides)
         cadence = lap.get("averageRunningCadenceInStepsPerMinute") or lap.get("averageRunCadence")
 
-        # Vertical oscillation in mm
-        vert_osc = lap.get("avgVerticalOscillation")
+        # Vertical oscillation in mm. Garmin's field naming isn't consistent
+        # across metrics (groundContactTime has no avg/average prefix
+        # despite being a lap average; cadence below already needs two
+        # fallback names for the same reason) -- try both known variants
+        # rather than assuming one.
+        vert_osc = lap.get("avgVerticalOscillation") or lap.get("verticalOscillation")
 
         # Stride length in m
         stride = lap.get("avgStrideLength")
@@ -654,6 +670,7 @@ def build_comparison_section(runs):
       <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Context</td></tr>
       {row("Resting HR (morning)", lambda r: f"{r['metrics']['resting_hr']} bpm" if r['metrics'].get('resting_hr') else "--")}
       {row("HR reserve at breakpoint", lambda r: f"{r['metrics']['hr_reserve_pct']}% of max" if r['metrics'].get('hr_reserve_pct') else "--")}
+      {row("YTD mileage (same point in year)", lambda r: f"{r['ytd_km']}km" if r.get('ytd_km') is not None else "--")}
       <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Physiology</td></tr>
       {row("Total distance", lambda r: f"{r['metrics']['total_dist_km']}km" if r['metrics'].get('total_dist_km') else "--")}
       {row("Breakpoint", lambda r: f"🔴 {r['metrics']['bp_dist_km']}km ({r['metrics']['fatigue_onset_pct']}%)" if not r['metrics']['fully_controlled'] else "🟢 Fully controlled")}
@@ -1031,10 +1048,15 @@ def build_comparison_runs(garmin, dates, debug=False):
         print("  Computing metrics...")
         metrics = compute_metrics(points, bp_idx, activity, resting_hr=resting_hr)
 
+        print(f"  Computing {actual.year} YTD mileage through {actual.isoformat()}...")
+        ytd_km = compute_ytd_mileage(garmin, actual)
+        print(f"  YTD: {ytd_km}km")
+
         runs.append({
             "label": label, "color": color,
             "points": points, "bp_idx": bp_idx,
             "metrics": metrics, "dynamics": dynamics,
+            "ytd_km": ytd_km,
         })
     return runs
 
