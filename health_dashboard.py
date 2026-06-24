@@ -2938,6 +2938,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   <div class="tab" onclick="switchTab('performance')"><span class="tab-icon">◈</span>Performance</div>
   <div class="tab" onclick="switchTab('bp')"><span class="tab-icon">↕</span>Blood Pressure</div>
   <div class="tab" onclick="switchTab('hrcompare')"><span class="tab-icon">⇌</span>HR Compare</div>
+  <div class="tab" onclick="switchTab('compare')"><span class="tab-icon">⧉</span>Compare</div>
 </div>
 
 <div class="content">
@@ -3814,6 +3815,11 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ COMPARE -->
+<div class="tab-panel" id="panel-compare">
+{comparison_section_html if comparison_section_html else '<div class="section"><div class="section-header"><div class="section-title">Run Comparison</div></div><p style="color:var(--text3);font-size:13px;">No comparable run found for today -- this section needs a recent run plus matching runs from ~1y/~2y ago.</p></div>'}
+</div>
+
 <!-- EXPORT -->
 <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
@@ -4140,7 +4146,7 @@ function checkAlerts(battery, readiness) {{
 // ── DAILY CHECK-IN ──
 const CHECKIN_KEY = 'health_dashboard_checkins';
 const SYNC_SECRET_KEY = 'health_dashboard_sync_secret';
-const SYNC_WORKER_URL = 'https://checkin-sync.hutcheew.workers.dev'; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
+const SYNC_WORKER_URL = 'https://checkin-sync.yoursubdomain.workers.dev'; // <-- paste your Cloudflare Worker URL here, see cloudflare-worker/SETUP.md
 
 function getSyncSecret() {{
   let secret = localStorage.getItem(SYNC_SECRET_KEY);
@@ -4335,8 +4341,6 @@ Give: 1) Recovery/readiness assessment 2) Achilles risk based on GCT trend 3) To
   document.body.removeChild(link);
 }}
 </script>
-
-{comparison_section_html}
 
 </body>
 </html>"""

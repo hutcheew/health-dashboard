@@ -222,10 +222,11 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
         print()
 
     idx = {d["key"]: d["metricsIndex"] for d in descriptors}
-    time_key = next((k for k in ["sumDuration", "sumElapsedDuration"] if k in idx), None)
-    hr_key   = next((k for k in ["directHeartRate", "heartRate"] if k in idx), None)
-    spd_key  = next((k for k in ["directGradeAdjustedSpeed", "directSpeed"] if k in idx), None)
-    dist_key = next((k for k in ["sumDistance", "directDistance"] if k in idx), None)
+    time_key  = next((k for k in ["sumDuration", "sumElapsedDuration"] if k in idx), None)
+    hr_key    = next((k for k in ["directHeartRate", "heartRate"] if k in idx), None)
+    spd_key   = next((k for k in ["directGradeAdjustedSpeed", "directSpeed"] if k in idx), None)
+    dist_key  = next((k for k in ["sumDistance", "directDistance"] if k in idx), None)
+    power_key = next((k for k in ["directPower", "power"] if k in idx), None)
 
     if not hr_key:
         raise ValueError(f"No HR metric found. Available: {list(idx.keys())}")
@@ -249,18 +250,24 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
         hr       = get(hr_key)
         speed    = get(spd_key)
         dist_m   = get(dist_key)
+        power    = get(power_key)
 
         if time_sec is None:
             continue
         if hr is None and speed is None:
             continue
 
-        pace = round(1000 / speed / 60, 3) if speed and speed > 0.5 else None
+        pace    = round(1000 / speed / 60, 3) if speed and speed > 0.5 else None
+        spd_mpm = (1000 / pace) if pace and pace > 0 else None
+        mech_eff_stream = round(spd_mpm / power, 4) if spd_mpm and power and power > 0 else None
+
         points.append({
             "t": float(time_sec),
             "hr": float(hr) if hr else None,
             "pace": pace,
             "dist_km": round(dist_m / 1000, 3) if dist_m else None,
+            "power": round(float(power), 1) if power else None,
+            "mech_eff_stream": mech_eff_stream,
         })
 
     if points and all(p["dist_km"] is None for p in points):
@@ -335,6 +342,18 @@ def fetch_lap_dynamics(garmin, activity_id, debug=False):
         # meaning anything is mechanically wrong.
         vert_ratio = lap.get("verticalRatio")
 
+        # Power (watts) — averagePower and normalizedPower
+        avg_power  = lap.get("averagePower")
+        norm_power = lap.get("normalizedPower")
+
+        # Power Variability Index = NP / avg_power (1.00 = perfectly steady)
+        pvi = round(norm_power / avg_power, 3) if avg_power and norm_power and avg_power > 0 else None
+
+        # Mechanical efficiency: speed (m/min) / power (W)
+        # Higher = covering more ground per watt
+        avg_speed_mpm = (1000 / lap.get("averageSpeed", 1) / 60) if lap.get("averageSpeed") else None
+        mech_eff = round(avg_speed_mpm / avg_power, 4) if avg_speed_mpm and avg_power and avg_power > 0 else None
+
         result.append({
             "lap": i + 1,
             "dist_km": round(dist_m / 1000, 2),
@@ -346,6 +365,10 @@ def fetch_lap_dynamics(garmin, activity_id, debug=False):
             "vert_osc_mm": round(vert_osc, 1) if vert_osc else None,
             "vert_ratio_pct": round(vert_ratio, 2) if vert_ratio else None,
             "stride_m": round(stride, 2) if stride else None,
+            "avg_power": round(avg_power, 1) if avg_power else None,
+            "norm_power": round(norm_power, 1) if norm_power else None,
+            "pvi": pvi,
+            "mech_eff": mech_eff,
             "avg_hr": lap.get("averageHR"),
             "avg_pace": round(1000 / lap.get("averageSpeed", 1) / 60, 2) if lap.get("averageSpeed") else None,
         })
@@ -486,6 +509,90 @@ def analyse_dynamics(laps, bp_idx_lap=None):
         if stride_early and stride_late else None
     )
 
+    # Power drift across laps
+    power_early = lap_avg(early, "avg_power")
+    power_late  = lap_avg(late,  "avg_power")
+    power_drift = round(power_late - power_early, 1) if power_early and power_late else None
+
+    # Mechanical efficiency drift (speed/power — lower late = wasting more watts)
+    meff_early = lap_avg(early, "mech_eff")
+    meff_late  = lap_avg(late,  "mech_eff")
+    meff_drift_pct = round((meff_early - meff_late) / meff_early * 100, 1) \
+                     if meff_early and meff_late and meff_early > 0 else None
+
+    # PVI summary (average across laps — closer to 1.0 = steadier effort)
+    pvi_vals = [l["pvi"] for l in laps if l.get("pvi") is not None]
+    avg_pvi = round(sum(pvi_vals) / len(pvi_vals), 3) if pvi_vals else None
+
+    # ── FATIGUE RESISTANCE SCORE (0-100) ─────────────────────────────────────
+    # Composite score answering: "how well did mechanics hold up under fatigue?"
+    # Higher = more fatigue-resistant.
+    #
+    # Weights (from the blueprint):
+    #   40% aerobic decoupling (passed in from metrics, or estimated from HR drift)
+    #   30% GCT drift
+    #   20% stride collapse
+    #   10% HR drift (within seg A vs overall — proxy without needing full metrics)
+    #
+    # Since analyse_dynamics doesn't have access to the stream-based decoupling
+    # computed in compute_metrics, we estimate cardiovascular drift from lap HR
+    # and use it as a proxy for the decoupling component.
+    frs = None
+    frs_components = {}
+
+    hr_early_lap = lap_avg(early, "avg_hr")
+    hr_late_lap  = lap_avg(late,  "avg_hr")
+    hr_drift_pct = abs(round((hr_late_lap - hr_early_lap) / hr_early_lap * 100, 1)) \
+                   if hr_early_lap and hr_late_lap and hr_early_lap > 0 else None
+
+    if gct_drift is not None or stride_collapse_pct is not None or hr_drift_pct is not None:
+        # Convert each metric to a 0-100 penalty (0 = perfect, 100 = terrible)
+        # then invert so FRS 100 = no fatigue, 0 = complete collapse
+
+        # GCT drift penalty: 0ms = 0, 30ms+ = 100
+        gct_penalty = min(100, max(0, (gct_drift or 0) / 30 * 100)) if gct_drift is not None else 50
+
+        # Stride collapse penalty: 0% = 0, 5%+ = 100
+        stride_penalty = min(100, max(0, (stride_collapse_pct or 0) / 5 * 100)) if stride_collapse_pct is not None else 50
+
+        # HR drift penalty: 0% = 0, 8%+ = 100
+        hr_penalty = min(100, max(0, (hr_drift_pct or 0) / 8 * 100)) if hr_drift_pct is not None else 50
+
+        # Balance drift penalty: 0% = 0, 4%+ = 100
+        bal_penalty = min(100, max(0, abs(bal_drift or 0) / 4 * 100)) if bal_drift is not None else 50
+
+        # Weighted penalty (lower weights where we're using proxies)
+        n_components = sum(1 for x in [gct_drift, stride_collapse_pct, hr_drift_pct, bal_drift] if x is not None)
+        if n_components >= 2:
+            weighted = (
+                gct_penalty     * 0.30 +
+                stride_penalty  * 0.20 +
+                hr_penalty      * 0.40 +
+                bal_penalty     * 0.10
+            )
+            frs = round(100 - weighted)
+            frs_components = {
+                "gct_component":     round(100 - gct_penalty),
+                "stride_component":  round(100 - stride_penalty),
+                "hr_component":      round(100 - hr_penalty),
+                "balance_component": round(100 - bal_penalty),
+            }
+
+    # Mechanical Fatigue Curve — the km-by-km table the blueprint describes
+    # Formatted as a list of dicts for charting and the summary table
+    fatigue_curve = []
+    for lap in laps:
+        fatigue_curve.append({
+            "km":      lap["cum_km"],
+            "gct":     lap.get("gct_ms"),
+            "balance": lap.get("gct_balance_left"),
+            "stride":  lap.get("stride_m"),
+            "cadence": lap.get("cadence"),
+            "hr":      lap.get("avg_hr"),
+            "pace":    lap.get("avg_pace"),
+            "power":   lap.get("avg_power"),
+        })
+
     return {
         "gct_early_ms": gct_early,
         "gct_late_ms":  gct_late,
@@ -507,6 +614,17 @@ def analyse_dynamics(laps, bp_idx_lap=None):
         "stride_early_m": stride_early,
         "stride_late_m":  stride_late,
         "stride_collapse_pct": stride_collapse_pct,
+        "power_early": power_early,
+        "power_late":  power_late,
+        "power_drift": power_drift,
+        "meff_early": meff_early,
+        "meff_late":  meff_late,
+        "meff_drift_pct": meff_drift_pct,
+        "avg_pvi": avg_pvi,
+        "hr_drift_pct": hr_drift_pct,
+        "frs": frs,
+        "frs_components": frs_components,
+        "fatigue_curve": fatigue_curve,
         "laps": laps,
         "has_dynamics": any(l.get("gct_ms") for l in laps),
     }
@@ -522,24 +640,63 @@ def compute_metrics(points, bp_idx, activity, resting_hr=None):
         vals = [p[key] for p in lst if p.get(key) is not None]
         return round(sum(vals) / len(vals), 2) if vals else None
 
-    def ei(lst):
+    # Aerobic EI: speed (m/min) / HR — "is cardiovascular system improving?"
+    def aero_ei(lst):
         vals = [1000 / p["pace_smooth"] / p["hr_smooth"]
                 for p in lst if p.get("pace_smooth") and p.get("hr_smooth")
                 and p["pace_smooth"] > 0 and p["hr_smooth"] > 0]
         return round(sum(vals) / len(vals), 3) if vals else None
 
+    # Mechanical EI: speed (m/min) / power (W) — "am I producing speed economically?"
+    def mech_ei(lst):
+        vals = [1000 / p["pace_smooth"] / p["power"]
+                for p in lst if p.get("pace_smooth") and p.get("power")
+                and p["pace_smooth"] > 0 and p["power"] > 0]
+        return round(sum(vals) / len(vals), 4) if vals else None
+
     hr_a   = avg(seg_a, "hr_smooth")
     hr_b   = avg(seg_b, "hr_smooth")
     pace_a = avg(seg_a, "pace_smooth")
     pace_b = avg(seg_b, "pace_smooth")
-    ei_a   = ei(seg_a)
-    ei_b   = ei(seg_b)
 
+    # Aerobic EI (replaces old single EI)
+    aei_a = aero_ei(seg_a)
+    aei_b = aero_ei(seg_b)
+
+    # Mechanical EI (new — needs power in stream)
+    mei_a = mech_ei(seg_a)
+    mei_b = mech_ei(seg_b)
+
+    # Aerobic decoupling (first half vs second half, same as before)
     mid = len(total) // 2
-    ei_first  = ei(total[:mid])
-    ei_second = ei(total[mid:])
-    decoupling = round((ei_first - ei_second) / ei_first * 100, 1) \
-                 if ei_first and ei_second and ei_first > 0 else None
+    aei_first  = aero_ei(total[:mid])
+    aei_second = aero_ei(total[mid:])
+    aero_decoupling = round((aei_first - aei_second) / aei_first * 100, 1) \
+                      if aei_first and aei_second and aei_first > 0 else None
+
+    # Mechanical decoupling (mechanical EI drift — "am I wasting more watts as I tire?")
+    mei_first  = mech_ei(total[:mid])
+    mei_second = mech_ei(total[mid:])
+    mech_decoupling = round((mei_first - mei_second) / mei_first * 100, 1) \
+                      if mei_first and mei_second and mei_first > 0 else None
+
+    # Run-level Power Variability Index from stream
+    # NP ≈ 4th-root mean of 4th-powers of 30s rolling average power
+    # This is a simplified version — proper NP needs 30s rolling avg
+    power_vals = [p["power"] for p in total if p.get("power") and p["power"] > 0]
+    avg_power_run = round(sum(power_vals) / len(power_vals), 1) if power_vals else None
+    if len(power_vals) >= 30:
+        # 30s rolling 4th-power mean
+        fourth_powers = [v**4 for v in power_vals]
+        rolling_4th = []
+        for i in range(len(fourth_powers)):
+            window = fourth_powers[max(0, i-29):i+1]
+            rolling_4th.append(sum(window) / len(window))
+        norm_power_run = round((sum(rolling_4th) / len(rolling_4th)) ** 0.25, 1)
+        pvi_run = round(norm_power_run / avg_power_run, 3) if avg_power_run else None
+    else:
+        norm_power_run = None
+        pvi_run = None
 
     total_dist = points[-1].get("dist_km") if points else None
     bp_dist    = points[bp_idx - 1].get("dist_km") if 0 < bp_idx <= len(points) else None
@@ -566,7 +723,6 @@ def compute_metrics(points, bp_idx, activity, resting_hr=None):
         crossings += 1
 
     # HR reserve at breakpoint
-    # (breakpoint HR - resting HR) / (max HR - resting HR) × 100
     bp_hr = avg([p for p in points[max(0, bp_idx-30):bp_idx+30]
                  if p.get("hr_smooth")], "hr_smooth") if not fully_controlled else None
     hr_reserve_pct = None
@@ -580,8 +736,16 @@ def compute_metrics(points, bp_idx, activity, resting_hr=None):
         "pace_a": pace_a, "pace_b": pace_b,
         "hr_rise":   round(hr_b - hr_a, 1)   if hr_a and hr_b     else None,
         "pace_drop": round(pace_b - pace_a, 2) if pace_a and pace_b else None,
-        "ei_a": ei_a, "ei_b": ei_b,
-        "decoupling": decoupling,
+        # Aerobic EI (was just ei_a/ei_b)
+        "ei_a": aei_a, "ei_b": aei_b,
+        "decoupling": aero_decoupling,
+        # Mechanical EI (new)
+        "mei_a": mei_a, "mei_b": mei_b,
+        "mech_decoupling": mech_decoupling,
+        # Power (new)
+        "avg_power": avg_power_run,
+        "norm_power": norm_power_run,
+        "pvi": pvi_run,
         "fatigue_onset_pct": fatigue_onset_pct,
         "bp_dist_km": bp_dist,
         "total_dist_km": total_dist,
@@ -630,6 +794,28 @@ def fmt_pace(p):
 
 
 # ── HTML GENERATION ───────────────────────────────────────────────────────────
+def _fatigue_curve_rows(runs):
+    """Build HTML rows for the mechanical fatigue curve table, one row per km."""
+    all_kms = sorted(set(
+        c["km"]
+        for r in runs
+        for c in r["dynamics"].get("fatigue_curve", [])
+    ))
+    keys = ["km", "gct", "balance", "stride", "cadence", "hr", "power"]
+    rows = []
+    for lap_km in all_kms:
+        cells = f"<td style='color:var(--muted,#8b949e)'>{lap_km}</td>"
+        for r in runs:
+            curve = r["dynamics"].get("fatigue_curve", [])
+            row_data = next((c for c in curve if c["km"] == lap_km), {})
+            cells += f"<td style='font-size:10px;color:var(--muted,#8b949e)'>{r['label'][:8]}</td>"
+            for k in ["gct", "balance", "stride", "cadence", "hr", "power"]:
+                v = row_data.get(k)
+                cells += f"<td>{v if v is not None else '--'}</td>"
+        rows.append(f"<tr>{cells}</tr>")
+    return "\n".join(rows)
+
+
 def build_comparison_section(runs):
     """Render just the inner content (cards + charts + script) for the
     run comparison, with no <html>/<head>/<body> wrapper -- meant to be
@@ -698,6 +884,24 @@ def build_comparison_section(runs):
   {r["dynamics"].get("mech_fatigue_detail") or "No GCT balance data available for this run."}
 </div>''' for r in runs if r["dynamics"].get("mech_fatigue_detail") is not None)}
 
+<!-- FATIGUE RESISTANCE SCORES -->
+{"".join(f'''
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2,#8b949e);margin-bottom:4px">Fatigue Resistance — {r["label"]}</div>
+      <div style="font-size:28px;font-weight:700;color:{"#34d399" if (r["dynamics"].get("frs") or 0) >= 70 else "#fbbf24" if (r["dynamics"].get("frs") or 0) >= 45 else "#f78166"}">{r["dynamics"].get("frs") or "--"}<span style="font-size:14px;color:var(--text2,#8b949e)">/100</span></div>
+      <div style="font-size:11px;color:var(--text2,#8b949e);margin-top:2px">{"🟢 Good — mechanics held up" if (r["dynamics"].get("frs") or 0) >= 70 else "🟡 Moderate — some drift detected" if (r["dynamics"].get("frs") or 0) >= 45 else "🔴 High fatigue — significant mechanical breakdown"}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:11px;color:var(--text2,#8b949e)">
+      <div>GCT <span style="color:var(--text,#e6edf3)">{r["dynamics"]["frs_components"].get("gct_component","--")}/100</span></div>
+      <div>Stride <span style="color:var(--text,#e6edf3)">{r["dynamics"]["frs_components"].get("stride_component","--")}/100</span></div>
+      <div>HR <span style="color:var(--text,#e6edf3)">{r["dynamics"]["frs_components"].get("hr_component","--")}/100</span></div>
+      <div>Balance <span style="color:var(--text,#e6edf3)">{r["dynamics"]["frs_components"].get("balance_component","--")}/100</span></div>
+    </div>
+  </div>
+</div>''' for r in runs if r["dynamics"].get("frs") is not None)}
+
 <!-- METRICS TABLE -->
 <div class="card">
   <h2>Performance + Physiology Matrix</h2>
@@ -716,33 +920,52 @@ def build_comparison_section(runs):
       {row("Avg HR (A — controlled)",   lambda r: f"{r['metrics']['hr_a']} bpm" if r['metrics'].get('hr_a') else "--")}
       {row("Avg HR (B — fatigue)",      lambda r: f"{r['metrics']['hr_b']} bpm" if r['metrics'].get('hr_b') else "--")}
       {row("HR rise (B−A)",             lambda r: f"+{r['metrics']['hr_rise']} bpm" if r['metrics'].get('hr_rise') else "--")}
-      {row("EI — Segment A",            lambda r: str(r['metrics']['ei_a']) if r['metrics'].get('ei_a') else "--")}
-      {row("EI — Segment B",            lambda r: str(r['metrics']['ei_b']) if r['metrics'].get('ei_b') else "--")}
-      {row("Decoupling (EI drift)",     lambda r: f"{r['metrics']['decoupling']}%" if r['metrics'].get('decoupling') is not None else "--")}
-      {row("HR crossings",              lambda r: str(r['metrics']['crossings']))}
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Aerobic Efficiency (speed / HR)</td></tr>
+      {row("Aerobic EI — Seg A",        lambda r: str(r['metrics']['ei_a']) if r['metrics'].get('ei_a') else "--")}
+      {row("Aerobic EI — Seg B",        lambda r: str(r['metrics']['ei_b']) if r['metrics'].get('ei_b') else "--")}
+      {row("Aero decoupling",           lambda r: f"{r['metrics']['decoupling']}%" if r['metrics'].get('decoupling') is not None else "--")}
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Mechanical Efficiency (speed / power)</td></tr>
+      {row("Mechanical EI — Seg A",     lambda r: str(r['metrics']['mei_a']) if r['metrics'].get('mei_a') else "--")}
+      {row("Mechanical EI — Seg B",     lambda r: str(r['metrics']['mei_b']) if r['metrics'].get('mei_b') else "--")}
+      {row("Mech decoupling",           lambda r: f"{r['metrics']['mech_decoupling']}%" if r['metrics'].get('mech_decoupling') is not None else "--")}
+      {row("Avg power",                 lambda r: f"{r['metrics']['avg_power']}W" if r['metrics'].get('avg_power') else "--")}
+      {row("Norm power",                lambda r: f"{r['metrics']['norm_power']}W" if r['metrics'].get('norm_power') else "--")}
+      {row("Power Variability Index",   lambda r: f"{r['metrics']['pvi']} {'✓ steady' if r['metrics'].get('pvi') and r['metrics']['pvi'] <= 1.05 else '↑ variable'}" if r['metrics'].get('pvi') else "--")}
       <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Running Mechanics</td></tr>
-      {row("GCT — early laps (ms)",        lambda r: str(r['dynamics'].get('gct_early_ms') or '--'))}
-      {row("GCT — late laps (ms)",         lambda r: str(r['dynamics'].get('gct_late_ms') or '--'))}
-      {row("GCT drift (late − early)",     lambda r: f"+{r['dynamics']['gct_drift_ms']}ms" if (r['dynamics'].get('gct_drift_ms') or 0) > 0 else (f"{r['dynamics']['gct_drift_ms']}ms" if r['dynamics'].get('gct_drift_ms') is not None else "--"))}
-      {row("GCT balance — early (L%)",     lambda r: f"{r['dynamics'].get('bal_early_pct')}% L" if r['dynamics'].get('bal_early_pct') is not None else "--")}
-      {row("GCT balance — late (L%)",      lambda r: f"{r['dynamics'].get('bal_late_pct')}% L" if r['dynamics'].get('bal_late_pct') is not None else "--")}
-      {row("Balance drift",                lambda r: f"{r['dynamics']['bal_drift_pct']:+.1f}%" if r['dynamics'].get('bal_drift_pct') is not None else "--")}
-      {row("Cadence — early (spm)",        lambda r: str(r['dynamics'].get('cadence_early') or '--'))}
-      {row("Cadence — late (spm)",         lambda r: str(r['dynamics'].get('cadence_late') or '--'))}
-      {row("Cadence drop",                 lambda r: f"{r['dynamics']['cadence_drop']:+.1f} spm" if r['dynamics'].get('cadence_drop') is not None else "--")}
-      {row("Vert. osc. — early (mm)",      lambda r: str(r['dynamics'].get('vert_osc_early_mm') or '--'))}
-      {row("Vert. osc. — late (mm)",       lambda r: str(r['dynamics'].get('vert_osc_late_mm') or '--'))}
-      {row("Vert. osc. change",            lambda r: f"{r['dynamics']['vert_osc_change_mm']:+.1f}mm" if r['dynamics'].get('vert_osc_change_mm') is not None else "--")}
-      {row("Vert. ratio — early (%)",      lambda r: str(r['dynamics'].get('vert_ratio_early_pct') or '--'))}
-      {row("Vert. ratio — late (%)",       lambda r: str(r['dynamics'].get('vert_ratio_late_pct') or '--'))}
-      {row("Vert. ratio change",           lambda r: f"{r['dynamics']['vert_ratio_change_pct']:+.2f}%" if r['dynamics'].get('vert_ratio_change_pct') is not None else "--")}
-      {row("Stride — early (m)",           lambda r: str(r['dynamics'].get('stride_early_m') or '--'))}
-      {row("Stride — late (m)",            lambda r: str(r['dynamics'].get('stride_late_m') or '--'))}
-      {row("Stride collapse",              lambda r: f"{r['dynamics']['stride_collapse_pct']:+.1f}%" if r['dynamics'].get('stride_collapse_pct') is not None else "--")}
+      {row("GCT — early (ms)",          lambda r: str(r['dynamics'].get('gct_early_ms') or '--'))}
+      {row("GCT — late (ms)",           lambda r: str(r['dynamics'].get('gct_late_ms') or '--'))}
+      {row("GCT drift",                 lambda r: f"{r['dynamics']['gct_drift_ms']:+.1f}ms" if r['dynamics'].get('gct_drift_ms') is not None else "--")}
+      {row("Balance — early (L%)",      lambda r: f"{r['dynamics'].get('bal_early_pct')}%L" if r['dynamics'].get('bal_early_pct') is not None else "--")}
+      {row("Balance — late (L%)",       lambda r: f"{r['dynamics'].get('bal_late_pct')}%L" if r['dynamics'].get('bal_late_pct') is not None else "--")}
+      {row("Balance drift",             lambda r: f"{r['dynamics']['bal_drift_pct']:+.1f}%" if r['dynamics'].get('bal_drift_pct') is not None else "--")}
+      {row("Stride — early (m)",        lambda r: str(r['dynamics'].get('stride_early_m') or '--'))}
+      {row("Stride — late (m)",         lambda r: str(r['dynamics'].get('stride_late_m') or '--'))}
+      {row("Stride collapse",           lambda r: f"{r['dynamics']['stride_collapse_pct']:+.1f}%" if r['dynamics'].get('stride_collapse_pct') is not None else "--")}
+      {row("Cadence drop",              lambda r: f"{r['dynamics']['cadence_drop']:+.1f} spm" if r['dynamics'].get('cadence_drop') is not None else "--")}
+      {row("Vert. ratio change",        lambda r: f"{r['dynamics']['vert_ratio_change_pct']:+.2f}%" if r['dynamics'].get('vert_ratio_change_pct') is not None else "--")}
+      {row("HR crossings",              lambda r: str(r['metrics']['crossings']))}
     </tbody>
   </table>
-  <p class="note">EI = m/min per bpm. Higher = more efficient. Decoupling = EI drift first → second half. HR reserve = (BP HR − resting HR) / ({mhr} − resting HR). GCT balance: 50% = perfect symmetry.</p>
+  <p class="note">Aerobic EI = speed/HR (cardiovascular). Mechanical EI = speed/power (economy). PVI 1.00–1.05 = steady pacing. FRS = Fatigue Resistance Score (GCT 30%, stride 20%, HR 40%, balance 10%). GCT balance: 50% = symmetry. Left = Achilles side.</p>
 </div>
+
+<!-- MECHANICAL FATIGUE CURVE -->
+{"" if not any(r["dynamics"].get("fatigue_curve") for r in runs) else f'''
+<div class="card" style="margin-bottom:12px;overflow-x:auto">
+  <h2>Mechanical Fatigue Curve — km by km</h2>
+  <table style="font-size:11px;min-width:500px">
+    <thead>
+      <tr>
+        <th>km</th><th>GCT (ms)</th><th>Balance (L%)</th><th>Stride (m)</th><th>Cadence</th><th>HR</th><th>Power (W)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {_fatigue_curve_rows(runs)}
+    </tbody>
+  </table>
+  <p class="note" style="margin-top:8px">Rising GCT + falling stride = mechanical fatigue. Balance drifting from 50% = side compensation.</p>
+</div>
+'''}
 
 <!-- RUNNING MECHANICS CHARTS -->
 {"" if not any(r["dynamics"].get("has_dynamics") for r in runs) else f'''
