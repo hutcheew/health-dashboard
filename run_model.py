@@ -321,8 +321,19 @@ def fetch_lap_dynamics(garmin, activity_id, debug=False):
         # rather than assuming one.
         vert_osc = lap.get("avgVerticalOscillation") or lap.get("verticalOscillation")
 
-        # Stride length in m
-        stride = lap.get("avgStrideLength")
+        # Stride length in m. Same naming inconsistency as vert_osc above --
+        # this was only trying avgStrideLength, but the actual field (per
+        # direct --debug output) is strideLength with no prefix, so this
+        # has been silently returning None the whole time, same root cause
+        # as the vertical oscillation bug.
+        stride = lap.get("avgStrideLength") or lap.get("strideLength")
+
+        # Vertical ratio (%) = vertical oscillation / stride length. Better
+        # than raw vertical oscillation for cross-comparison since it
+        # normalizes for height/stride differences -- a taller runner or a
+        # longer stride naturally produces more oscillation without that
+        # meaning anything is mechanically wrong.
+        vert_ratio = lap.get("verticalRatio")
 
         result.append({
             "lap": i + 1,
@@ -333,6 +344,7 @@ def fetch_lap_dynamics(garmin, activity_id, debug=False):
             "gct_balance_right": gct_balance_right,
             "cadence": round(cadence, 1) if cadence else None,
             "vert_osc_mm": round(vert_osc, 1) if vert_osc else None,
+            "vert_ratio_pct": round(vert_ratio, 2) if vert_ratio else None,
             "stride_m": round(stride, 2) if stride else None,
             "avg_hr": lap.get("averageHR"),
             "avg_pace": round(1000 / lap.get("averageSpeed", 1) / 60, 2) if lap.get("averageSpeed") else None,
@@ -455,6 +467,25 @@ def analyse_dynamics(laps, bp_idx_lap=None):
     vo_late  = lap_avg(late,  "vert_osc_mm")
     vo_change = round(vo_late - vo_early, 1) if vo_early and vo_late else None
 
+    # Vertical ratio change -- normalizes oscillation for stride length, so
+    # it's comparable across different efforts/paces for the same runner
+    # in a way raw vertical oscillation isn't.
+    vr_early = lap_avg(early, "vert_ratio_pct")
+    vr_late  = lap_avg(late,  "vert_ratio_pct")
+    vr_change = round(vr_late - vr_early, 2) if vr_early is not None and vr_late is not None else None
+
+    # Stride length drift ("stride collapse %") -- cadence staying steady
+    # while stride length shrinks under fatigue is a documented pattern in
+    # distance-running fatigue, and specifically relevant here: it's a way
+    # the body can maintain pace while reducing per-stride load, which is
+    # exactly the kind of compensation worth watching for an Achilles.
+    stride_early = lap_avg(early, "stride_m")
+    stride_late  = lap_avg(late,  "stride_m")
+    stride_collapse_pct = (
+        round((stride_early - stride_late) / stride_early * 100, 1)
+        if stride_early and stride_late else None
+    )
+
     return {
         "gct_early_ms": gct_early,
         "gct_late_ms":  gct_late,
@@ -470,6 +501,12 @@ def analyse_dynamics(laps, bp_idx_lap=None):
         "vert_osc_early_mm": vo_early,
         "vert_osc_late_mm":  vo_late,
         "vert_osc_change_mm": vo_change,
+        "vert_ratio_early_pct": vr_early,
+        "vert_ratio_late_pct":  vr_late,
+        "vert_ratio_change_pct": vr_change,
+        "stride_early_m": stride_early,
+        "stride_late_m":  stride_late,
+        "stride_collapse_pct": stride_collapse_pct,
         "laps": laps,
         "has_dynamics": any(l.get("gct_ms") for l in laps),
     }
@@ -696,6 +733,12 @@ def build_comparison_section(runs):
       {row("Vert. osc. — early (mm)",      lambda r: str(r['dynamics'].get('vert_osc_early_mm') or '--'))}
       {row("Vert. osc. — late (mm)",       lambda r: str(r['dynamics'].get('vert_osc_late_mm') or '--'))}
       {row("Vert. osc. change",            lambda r: f"{r['dynamics']['vert_osc_change_mm']:+.1f}mm" if r['dynamics'].get('vert_osc_change_mm') is not None else "--")}
+      {row("Vert. ratio — early (%)",      lambda r: str(r['dynamics'].get('vert_ratio_early_pct') or '--'))}
+      {row("Vert. ratio — late (%)",       lambda r: str(r['dynamics'].get('vert_ratio_late_pct') or '--'))}
+      {row("Vert. ratio change",           lambda r: f"{r['dynamics']['vert_ratio_change_pct']:+.2f}%" if r['dynamics'].get('vert_ratio_change_pct') is not None else "--")}
+      {row("Stride — early (m)",           lambda r: str(r['dynamics'].get('stride_early_m') or '--'))}
+      {row("Stride — late (m)",            lambda r: str(r['dynamics'].get('stride_late_m') or '--'))}
+      {row("Stride collapse",              lambda r: f"{r['dynamics']['stride_collapse_pct']:+.1f}%" if r['dynamics'].get('stride_collapse_pct') is not None else "--")}
     </tbody>
   </table>
   <p class="note">EI = m/min per bpm. Higher = more efficient. Decoupling = EI drift first → second half. HR reserve = (BP HR − resting HR) / ({mhr} − resting HR). GCT balance: 50% = perfect symmetry.</p>
