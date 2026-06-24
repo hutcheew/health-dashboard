@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install garminconnect requests python-dotenv PyNaCl
+        run: pip install garminconnect withings-api requests python-dotenv PyNaCl numpy
 
       - name: Write Garmin token
         env:
