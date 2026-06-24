@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run Comparison — Nat</title>
+<style>
+:root {
+  --bg:#0e1116; --surface:#161b22; --surface2:#1f2630;
+  --border:#21262d; --text:#e6edf3; --muted:#8b949e;
+  --accent:#58a6ff; --warn:#f78166; --ok:#34d399;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  min-height:100vh; padding:20px 16px 40px;
+  max-width:640px; margin:0 auto;
+}
+
+.topbar {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px;
+}
+.topbar a { color:var(--muted); font-size:12px; text-decoration:none; }
+.topbar a:hover { color:var(--accent); }
+h1 { font-size:18px; font-weight:600; }
+.sub { color:var(--muted); font-size:12px; margin-top:3px; }
+
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:18px; margin-bottom:14px;
+}
+.card-title {
+  font-size:11px; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--muted); margin-bottom:14px; font-weight:500;
+}
+
+.date-row {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  margin-bottom:14px;
+}
+label {
+  display:block; font-size:11px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px;
+}
+input[type=date], input[type=password] {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); padding:11px 12px;
+  font-size:14px; -webkit-appearance:none; appearance:none;
+}
+input[type=date]:focus, input[type=password]:focus {
+  outline:none; border-color:var(--accent);
+}
+input[type=password] { font-size:13px; letter-spacing:.05em; }
+
+.secret-wrap { margin-bottom:14px; }
+.secret-note {
+  font-size:11px; color:var(--muted); margin-top:5px; line-height:1.5;
+}
+
+.btn {
+  width:100%; padding:14px; border-radius:10px; border:none;
+  font-size:15px; font-weight:600; cursor:pointer;
+  background:var(--accent); color:#0e1116;
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .15s, transform .1s;
+}
+.btn:active:not(:disabled) { opacity:.8; transform:scale(.98); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+
+/* Status bar */
+.status {
+  border-radius:10px; padding:13px 15px;
+  font-size:13px; line-height:1.6; margin-bottom:14px;
+  display:none;
+}
+.status.running {
+  display:block;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--muted);
+}
+.status.error {
+  display:block;
+  background:#1a1015; border:1px solid var(--warn); color:var(--warn);
+}
+.status.done {
+  display:block;
+  background:#131f18; border:1px solid var(--ok); color:var(--ok);
+}
+.progress-track {
+  background:var(--border); border-radius:4px; height:3px;
+  margin-top:10px; overflow:hidden;
+}
+.progress-fill {
+  height:100%; background:var(--accent);
+  border-radius:4px; transition:width .6s ease;
+}
+.spinner {
+  display:inline-block; width:12px; height:12px;
+  border:2px solid var(--border); border-top-color:var(--accent);
+  border-radius:50%; animation:spin .7s linear infinite;
+  vertical-align:middle; margin-right:7px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Result iframe */
+#result-wrap { display:none; margin-bottom:14px; }
+#result-frame {
+  border:none; width:100%; border-radius:12px;
+  background:var(--surface); min-height:200px;
+}
+
+/* History */
+.history-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 0; border-bottom:1px solid var(--border); cursor:pointer;
+}
+.history-item:last-child { border-bottom:none; }
+.history-dates { font-size:13px; }
+.history-time  { font-size:11px; color:var(--muted); margin-top:2px; }
+.history-btn {
+  font-size:11px; color:var(--accent);
+  border:1px solid var(--accent); border-radius:6px;
+  padding:4px 10px; white-space:nowrap;
+}
+
+@media(max-width:380px) {
+  .date-row { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>🏃 Run Comparison</h1>
+    <div class="sub">Garmin · HR · Pace · GCT Balance</div>
+  </div>
+  <a href="index.html">← Dashboard</a>
+</div>
+
+<!-- CONFIG: update WORKER_URL after deploying the Cloudflare Worker -->
+<script>
+const WORKER_URL  = 'https://checkin-sync.hutcheew.workers.dev';  // e.g. https://run-compare.hutcheew.workers.dev
+const SECRET_KEY  = 'health_dashboard_sync_secret';  // reuses existing sync secret
+const HISTORY_KEY = 'rc_history';
+</script>
+
+<!-- DATE PICKER CARD -->
+<div class="card">
+  <div class="card-title">Select runs to compare</div>
+  <div class="date-row">
+    <div>
+      <label>Date A</label>
+      <input type="date" id="date-a">
+    </div>
+    <div>
+      <label>Date B</label>
+      <input type="date" id="date-b">
+    </div>
+  </div>
+  <button class="btn" id="compare-btn" onclick="startComparison()">Compare</button>
+</div>
+
+<!-- STATUS -->
+<div class="status" id="status"></div>
+
+<!-- RESULT -->
+<div id="result-wrap">
+  <iframe id="result-frame" scrolling="no"
+    onload="autoHeight(this)"></iframe>
+</div>
+
+<!-- HISTORY -->
+<div class="card" id="history-card" style="display:none">
+  <div class="card-title">Recent comparisons</div>
+  <div id="history-list"></div>
+</div>
+
+<script>
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const today    = new Date();
+  const lastYear = new Date(today);
+  lastYear.setFullYear(today.getFullYear() - 1);
+  document.getElementById('date-a').value = fmt(today);
+  document.getElementById('date-b').value = fmt(lastYear);
+  renderHistory();
+});
+
+function fmt(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+let _progressTimer = null;
+
+function setStatus(type, msg, pct) {
+  const el = document.getElementById('status');
+  el.className = 'status ' + type;
+  el.innerHTML = (type === 'running' ? '<span class="spinner"></span>' : '') + msg;
+  if (pct != null) {
+    el.innerHTML += `
+      <div class="progress-track">
+        <div class="progress-fill" id="pf" style="width:${pct}%"></div>
+      </div>`;
+  }
+}
+
+function animatePct(from, to, ms) {
+  clearTimeout(_progressTimer);
+  const steps = 24;
+  const step  = (to - from) / steps;
+  const delay = ms / steps;
+  let i = 0, cur = from;
+  function tick() {
+    cur = Math.min(to, from + step * ++i);
+    const el = document.getElementById('pf');
+    if (el) el.style.width = cur + '%';
+    if (i < steps) _progressTimer = setTimeout(tick, delay);
+  }
+  tick();
+}
+
+// ── SECRET ────────────────────────────────────────────────────────────────────
+function getSecret() {
+  let s = localStorage.getItem(SECRET_KEY);
+  if (!s) {
+    s = prompt('One-time setup: enter your sync secret (same one you use for check-ins).');
+    if (s) localStorage.setItem(SECRET_KEY, s);
+  }
+  return s;
+}
+
+// ── MAIN FLOW ─────────────────────────────────────────────────────────────────
+async function startComparison() {
+  const dateA = document.getElementById('date-a').value;
+  const dateB = document.getElementById('date-b').value;
+  if (!dateA || !dateB) { alert('Select both dates.'); return; }
+
+  if (!WORKER_URL) {
+    alert('WORKER_URL not set yet — paste your Cloudflare Worker URL into compare.html.');
+    return;
+  }
+
+  const secret = getSecret();
+  if (!secret) return;
+
+  document.getElementById('compare-btn').disabled = true;
+  document.getElementById('result-wrap').style.display = 'none';
+
+  setStatus('running', `Triggering: ${dateA} vs ${dateB}…`, 5);
+
+  try {
+    // 1. Trigger
+    const trigResp = await workerPost('/trigger', { secret, date_a: dateA, date_b: dateB });
+    if (!trigResp.ok) {
+      const e = await trigResp.json().catch(() => ({}));
+      throw new Error(e.error || `Trigger failed (${trigResp.status})`);
+    }
+
+    setStatus('running', 'Workflow queued — waiting for Garmin data (~90 seconds)…', 10);
+    animatePct(10, 80, 90000);
+
+    // 2. Poll for completion
+    await pollStatus(secret, dateA, dateB);
+
+  } catch (e) {
+    setStatus('error', '❌ ' + e.message);
+    document.getElementById('compare-btn').disabled = false;
+  }
+}
+
+async function workerPost(path, body) {
+  return fetch(WORKER_URL.replace(/\/$/, '') + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+}
+
+async function pollStatus(secret, dateA, dateB) {
+  const started = Date.now();
+  const TIMEOUT = 5 * 60 * 1000;
+  const POLL    = 12000;
+
+  await sleep(6000);  // let GitHub register the run
+
+  while (Date.now() - started < TIMEOUT) {
+    try {
+      const r    = await workerPost('/status', { secret });
+      const data = await r.json();
+
+      const elapsed = Math.round((Date.now() - started) / 1000);
+
+      if (data.status === 'completed') {
+        if (data.conclusion === 'success') {
+          await loadResult(secret, dateA, dateB);
+          return;
+        }
+        throw new Error(`Workflow ended with: ${data.conclusion}. Check GitHub Actions tab.`);
+      }
+
+      const msg = data.status === 'queued' ? 'Queued…' : 'Running…';
+      setStatus('running', `${msg} (${elapsed}s)`, null);
+    } catch (e) {
+      if (e.message.includes('Workflow ended')) throw e;
+      // swallow transient poll errors
+    }
+    await sleep(POLL);
+  }
+  throw new Error('Timed out after 5 minutes. Check GitHub Actions tab.');
+}
+
+async function loadResult(secret, dateA, dateB) {
+  clearTimeout(_progressTimer);
+
+  const r = await workerPost('/result', { secret });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.error || 'Could not fetch result HTML');
+  }
+
+  const html  = await r.text();
+  const frame = document.getElementById('result-frame');
+  const wrap  = document.getElementById('result-wrap');
+
+  frame.srcdoc = html;
+  wrap.style.display = 'block';
+
+  setStatus('done', `✓ ${dateA} vs ${dateB} — scroll down to see results`);
+  document.getElementById('compare-btn').disabled = false;
+
+  saveHistory(dateA, dateB);
+  renderHistory();
+}
+
+function autoHeight(frame) {
+  try {
+    const h = frame.contentDocument.body.scrollHeight;
+    frame.style.height = (h + 20) + 'px';
+  } catch {
+    frame.style.height = '2400px';
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function saveHistory(dateA, dateB) {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  h.unshift({ dateA, dateB, at: new Date().toISOString() });
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0, 8)));
+}
+
+function renderHistory() {
+  const h    = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  const card = document.getElementById('history-card');
+  const list = document.getElementById('history-list');
+  if (!h.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  list.innerHTML = h.map((item, i) => `
+    <div class="history-item" onclick="reloadHistory(${i})">
+      <div>
+        <div class="history-dates">${item.dateA} vs ${item.dateB}</div>
+        <div class="history-time">${new Date(item.at).toLocaleString()}</div>
+      </div>
+      <div class="history-btn">Load</div>
+    </div>
+  `).join('');
+}
+
+async function reloadHistory(i) {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  const item = h[i];
+  if (!item) return;
+  const secret = getSecret();
+  if (!secret) return;
+  setStatus('running', 'Loading last result…', 50);
+  try {
+    await loadResult(secret, item.dateA, item.dateB);
+  } catch (e) {
+    setStatus('error', '❌ ' + e.message + ' (try running a fresh comparison)');
+  }
+}
+</script>
+
+</body>
+</html>

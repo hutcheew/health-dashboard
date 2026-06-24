@@ -1,0 +1,49 @@
+name: Run Comparison
+
+on:
+  workflow_dispatch:
+    inputs:
+      date_a:
+        description: 'Primary date (YYYY-MM-DD)'
+        required: true
+      date_b:
+        description: 'Comparison date (YYYY-MM-DD)'
+        required: true
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install garminconnect requests python-dotenv PyNaCl
+
+      - name: Write Garmin token
+        env:
+          GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
+        run: |
+          mkdir -p ~/.garminconnect
+          echo "$GARMIN_TOKENS" > ~/.garminconnect/garmin_tokens.json
+
+      - name: Run comparison
+        run: |
+          python run_model.py "${{ github.event.inputs.date_a }}" "${{ github.event.inputs.date_b }}" --out run_comparison_output.html
+        env:
+          INTERVALS_ATHLETE_ID: i416094
+          INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
+
+      - name: Commit output
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add run_comparison_output.html
+          git commit -m "Run comparison ${{ github.event.inputs.date_a }} vs ${{ github.event.inputs.date_b }}"
+          git pull --rebase --autostash
+          git push
