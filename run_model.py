@@ -40,6 +40,13 @@ CONFIG = {
     "sample_every_sec":         5,   # downsample for chart rendering
     "max_hr":                 190,   # used for HR reserve — adjust if you know your real max
     "gct_balance_drift_flag": 2.0,   # % left/right drift threshold for mechanical fatigue flag
+    # Fatigue onset thresholds -- fixed starting values (not yet personal-
+    # baseline-calibrated, same caveat as the original HR thresholds before
+    # compute_personal_hr_baseline existed). Worth revisiting once enough
+    # runs have been analysed to see whether these trip too often/rarely.
+    "onset_gct_pct":    5.0,   # GCT drift from early-run baseline (%)
+    "onset_stride_pct": 3.0,   # stride shrinkage from early-run baseline (%)
+    "onset_balance_pct": 1.5,  # GCT balance drift from 50/50 or from early baseline (percentage points)
 }
 
 COLORS = ["#58a6ff", "#f78166", "#34d399", "#fbbf24", "#bc8cff", "#ff7b72"]
@@ -425,6 +432,83 @@ def detect_breakpoint(points):
 
 
 # ── RUNNING DYNAMICS ANALYSIS ─────────────────────────────────────────────────
+def detect_fatigue_onset(laps):
+    """Walk the run km-by-km (not just early-vs-late) to find the FIRST
+    point any mechanical signal crosses its fatigue threshold, relative to
+    this run's own early-baseline (first third of laps, same window
+    analyse_dynamics uses elsewhere). This is the actual point of this
+    function: "GCT drifted 11%" only tells you the overall change; this
+    tells you it started at km 7.4, which is the more useful coaching
+    framing -- mechanics degrading before performance visibly collapses.
+
+    Returns None if nothing crosses any threshold (i.e. mechanically
+    controlled the whole way, same spirit as compute_metrics' existing
+    "fully_controlled" pace/HR breakpoint result).
+    """
+    if not laps or len(laps) < 4:
+        return None  # not enough laps for a meaningful early baseline + later detection
+
+    def lap_avg(laps_subset, key):
+        vals = [l[key] for l in laps_subset if l.get(key) is not None]
+        return round(sum(vals) / len(vals), 2) if vals else None
+
+    n = len(laps)
+    third = max(1, n // 3)
+    baseline_laps = laps[:third]
+
+    gct_base = lap_avg(baseline_laps, "gct_ms")
+    stride_base = lap_avg(baseline_laps, "stride_m")
+    bal_base = lap_avg(baseline_laps, "gct_balance_left")
+
+    onsets = []  # (km, signal, detail) for every signal that crosses, at its first crossing km
+
+    if gct_base:
+        for lap in laps[third:]:
+            gct = lap.get("gct_ms")
+            if gct is None:
+                continue
+            drift_pct = (gct - gct_base) / gct_base * 100
+            if drift_pct >= CONFIG["onset_gct_pct"]:
+                onsets.append((lap["cum_km"], "GCT", f"+{drift_pct:.1f}% vs early baseline"))
+                break
+
+    if stride_base:
+        for lap in laps[third:]:
+            stride = lap.get("stride_m")
+            if stride is None:
+                continue
+            collapse_pct = (stride_base - stride) / stride_base * 100
+            if collapse_pct >= CONFIG["onset_stride_pct"]:
+                onsets.append((lap["cum_km"], "Stride", f"-{collapse_pct:.1f}% vs early baseline"))
+                break
+
+    if bal_base:
+        for lap in laps[third:]:
+            bal = lap.get("gct_balance_left")
+            if bal is None:
+                continue
+            drift = abs(bal - bal_base)
+            if drift >= CONFIG["onset_balance_pct"]:
+                onsets.append((lap["cum_km"], "Balance", f"{drift:.1f}pt drift vs early baseline"))
+                break
+
+    if not onsets:
+        return None
+
+    onsets.sort(key=lambda o: o[0])  # earliest km first
+    first_km = onsets[0][0]
+    # Other signals that crossed at or very near the same point are worth
+    # reporting too -- a single km-wide window groups "happened together"
+    # without over-claiming false precision about which signal is truly first.
+    concurrent = [o for o in onsets if abs(o[0] - first_km) < 1.0]
+    return {
+        "onset_km": first_km,
+        "primary_signal": onsets[0][1],
+        "primary_detail": onsets[0][2],
+        "signals": [{"signal": o[1], "km": o[0], "detail": o[2]} for o in concurrent],
+    }
+
+
 def analyse_dynamics(laps, bp_idx_lap=None):
     """
     Analyse GCT, balance drift, cadence, and vertical oscillation across laps.
@@ -625,6 +709,7 @@ def analyse_dynamics(laps, bp_idx_lap=None):
         "frs": frs,
         "frs_components": frs_components,
         "fatigue_curve": fatigue_curve,
+        "fatigue_onset": detect_fatigue_onset(laps),
         "laps": laps,
         "has_dynamics": any(l.get("gct_ms") for l in laps),
     }
@@ -794,21 +879,35 @@ def fmt_pace(p):
 
 
 # ── HTML GENERATION ───────────────────────────────────────────────────────────
+def _fatigue_curve_header(runs):
+    """Two-row header: km spans both rows; each run gets its own labeled
+    group of 6 metric columns via colspan, instead of one flat header row
+    that only matched the first run's columns (and was off by one even
+    for that run, due to the per-row run-label cell with no header)."""
+    metric_labels = ["GCT (ms)", "Balance (L%)", "Stride (m)", "Cadence", "HR", "Power (W)"]
+    top = "<th rowspan=\"2\">km</th>" + "".join(
+        f"<th colspan=\"6\">{r['label'][:16]}</th>" for r in runs
+    )
+    bottom = "".join(f"<th>{lbl}</th>" for _ in runs for lbl in metric_labels)
+    return f"<tr>{top}</tr><tr>{bottom}</tr>"
+
+
 def _fatigue_curve_rows(runs):
-    """Build HTML rows for the mechanical fatigue curve table, one row per km."""
+    """Build HTML rows for the mechanical fatigue curve table, one row per
+    km. No per-row run-label cell -- that's now conveyed by the header's
+    colspan grouping instead, which is also what fixes the column count
+    actually matching the header."""
     all_kms = sorted(set(
         c["km"]
         for r in runs
         for c in r["dynamics"].get("fatigue_curve", [])
     ))
-    keys = ["km", "gct", "balance", "stride", "cadence", "hr", "power"]
     rows = []
     for lap_km in all_kms:
         cells = f"<td style='color:var(--muted,#8b949e)'>{lap_km}</td>"
         for r in runs:
             curve = r["dynamics"].get("fatigue_curve", [])
             row_data = next((c for c in curve if c["km"] == lap_km), {})
-            cells += f"<td style='font-size:10px;color:var(--muted,#8b949e)'>{r['label'][:8]}</td>"
             for k in ["gct", "balance", "stride", "cadence", "hr", "power"]:
                 v = row_data.get(k)
                 cells += f"<td>{v if v is not None else '--'}</td>"
@@ -890,6 +989,20 @@ def build_comparison_section(runs):
   {r["dynamics"].get("mech_fatigue_detail") or "No GCT balance data available for this run."}
 </div>''' for r in runs if r["dynamics"].get("mech_fatigue_detail") is not None)}
 
+<!-- FATIGUE ONSET -->
+{"".join(f'''
+<div class="mech-flag">
+  <strong style="color:#fbbf24">{r["label"]}</strong>
+  ⚠️ Fatigue started at km {r["dynamics"]["fatigue_onset"]["onset_km"]} —
+  {(" + ".join(s["signal"] for s in r["dynamics"]["fatigue_onset"]["signals"]))}
+  ({r["dynamics"]["fatigue_onset"]["primary_detail"]})
+</div>''' for r in runs if r["dynamics"].get("fatigue_onset"))}
+{"".join(f'''
+<div class="mech-ok">
+  <strong style="color:#34d399">{r["label"]}</strong>
+  ✓ Mechanically controlled the whole way — no signal crossed its fatigue threshold.
+</div>''' for r in runs if r["dynamics"].get("has_dynamics") and not r["dynamics"].get("fatigue_onset"))}
+
 <!-- FATIGUE RESISTANCE SCORES -->
 {"".join(f'''
 <div class="card" style="margin-bottom:12px">
@@ -961,9 +1074,7 @@ def build_comparison_section(runs):
   <h2>Mechanical Fatigue Curve — km by km</h2>
   <table style="font-size:11px;min-width:500px">
     <thead>
-      <tr>
-        <th>km</th><th>GCT (ms)</th><th>Balance (L%)</th><th>Stride (m)</th><th>Cadence</th><th>HR</th><th>Power (W)</th>
-      </tr>
+      {_fatigue_curve_header(runs)}
     </thead>
     <tbody>
       {_fatigue_curve_rows(runs)}
