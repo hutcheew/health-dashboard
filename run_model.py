@@ -873,6 +873,12 @@ def build_comparison_section(runs):
 
     
     section = f"""<div class="rc-section">
+<div id="rc-chart-modal">
+  <div class="rc-modal-inner">
+    <button class="rc-modal-close" aria-label="Close">&times;</button>
+    <canvas id="rc-chart-modal-canvas"></canvas>
+  </div>
+</div>
 <h1>Run Model — Physiology + Mechanics</h1>
 <div class="sub">HR threshold: {threshold} bpm · Max HR: {mhr} bpm · GCT balance drift flag: ±{CONFIG["gct_balance_drift_flag"]}% · Injury side: {INJURY_SIDE}</div>
 
@@ -1129,6 +1135,39 @@ if (D.scatter.length >= 2) {{
     }}
   }});
 }}
+
+// Tap-to-expand: every chart in this section opens larger in a modal when
+// tapped, rather than staying cramped at its small inline size -- mainly
+// for narrow phone screens, where the inline 2-column charts especially
+// can be hard to read precisely.
+const modal = document.getElementById('rc-chart-modal');
+const modalCanvas = document.getElementById('rc-chart-modal-canvas');
+function rcOpenChart(canvasId) {{
+  const original = Chart.getChart(canvasId);
+  if (!original || !modal || !modalCanvas) return;
+  const existingModalChart = Chart.getChart(modalCanvas);
+  if (existingModalChart) existingModalChart.destroy();
+  new Chart(modalCanvas, {{
+    type: original.config.type,
+    data: original.config.data,
+    options: Object.assign({{}}, original.config.options, {{ responsive: true, maintainAspectRatio: false }}),
+  }});
+  modal.classList.add('rc-modal-open');
+}}
+function rcCloseChart() {{
+  if (!modal) return;
+  modal.classList.remove('rc-modal-open');
+  const existingModalChart = Chart.getChart(modalCanvas);
+  if (existingModalChart) existingModalChart.destroy();
+}}
+document.querySelectorAll('.rc-section canvas:not(#rc-chart-modal-canvas)').forEach(c => {{
+  c.addEventListener('click', () => rcOpenChart(c.id));
+}});
+if (modal) {{
+  modal.addEventListener('click', (e) => {{ if (e.target === modal) rcCloseChart(); }});
+}}
+const closeBtn = document.querySelector('#rc-chart-modal .rc-modal-close');
+if (closeBtn) closeBtn.addEventListener('click', rcCloseChart);
 }})();
 </script>
 
@@ -1159,6 +1198,15 @@ EMBEDDED_CSS = """
 .rc-section .mech-flag{background:#1f1a14;border-left:3px solid #fbbf24;border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#f5dfa0;}
 .rc-section .mech-ok{background:#131f18;border-left:3px solid var(--green);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#a3e4c3;}
 .rc-section .note{font-size:11px;color:var(--text3);margin-top:8px;font-style:italic;}
+.rc-section canvas{cursor:zoom-in;}
+@media (max-width:600px){
+  .rc-section .grid2{grid-template-columns:1fr;}
+}
+#rc-chart-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:16px;}
+#rc-chart-modal.rc-modal-open{display:flex;}
+#rc-chart-modal .rc-modal-inner{background:var(--surface);border-radius:10px;padding:16px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;}
+#rc-chart-modal .rc-modal-close{align-self:flex-end;background:none;border:none;color:var(--text3);font-size:24px;line-height:1;cursor:pointer;padding:0 0 8px 0;}
+#rc-chart-modal canvas{cursor:default;flex:1;min-height:0;}
 """
 
 
@@ -1198,6 +1246,15 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 .mech-flag{background:#1f1a14;border-left:3px solid #fbbf24;border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#f5dfa0;}
 .mech-ok{background:#131f18;border-left:3px solid var(--ok);border-radius:6px;padding:10px 14px;margin:0 0 10px 0;font-size:12px;color:#a3e4c3;}
 .note{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic;}
+canvas{cursor:zoom-in;}
+@media (max-width:600px){
+  .grid2{grid-template-columns:1fr;}
+}
+#rc-chart-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:16px;}
+#rc-chart-modal.rc-modal-open{display:flex;}
+#rc-chart-modal .rc-modal-inner{background:var(--surface);border-radius:10px;padding:16px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;}
+#rc-chart-modal .rc-modal-close{align-self:flex-end;background:none;border:none;color:var(--muted);font-size:24px;line-height:1;cursor:pointer;padding:0 0 8px 0;}
+#rc-chart-modal canvas{cursor:default;flex:1;min-height:0;}
 </style>
 </head>
 <body>
