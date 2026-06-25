@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Health">
 <link rel="manifest" href="manifest.json">
-<title>Nat's Health Dashboard — 2026-06-25</title>
+<title>Nat's Health Dashboard — 2026-06-26</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -397,8 +397,8 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-logo">NAT / HEALTH</div>
-  <div class="topbar-date">2026-06-25</div>
-  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 12:28</div>
+  <div class="topbar-date">2026-06-26</div>
+  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 19:36</div>
   <div class="topbar-right">
     <div class="status-dot"></div>
     <div class="status-text">LIVE</div>
@@ -423,22 +423,22 @@
 <div class="tab-panel active" id="panel-overview">
 
   <!-- TRAINING DECISION ENGINE -->
-  <div class="decision-card" style="--decision-color:#4f8ef7;border-color:#4f8ef733">
-    <div class="decision-status" style="color:#4f8ef7">🔵 TRAIN EASY</div>
-    <div class="decision-sub">TRAINING DECISION · 2026-06-25 · Week 8/28 — Return to Run</div>
+  <div class="decision-card" style="--decision-color:#f26565;border-color:#f2656533">
+    <div class="decision-status" style="color:#f26565">🔴 REST DAY</div>
+    <div class="decision-sub">TRAINING DECISION · 2026-06-26 · Week 8/28 — Return to Run</div>
     <div class="decision-body">
       <div class="decision-factors">
         <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Why</div>
-        <div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Sleep good</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Readiness moderate (70/100)</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>HRV moderate (32ms)</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Achilles risk moderate</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Training load balanced (TSB -5.1)</div>
-        <div class="avoid-list">✗ Avoid today: Tempo runs · Intervals · Long run</div>
+        <div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Sleep good</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>HRV moderate (31ms)</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Achilles risk moderate</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>Training load balanced (TSB -5.1)</div><div class="factor"><div class="factor-dot" style="background:#f26565"></div>Readiness low (37/100)</div>
+        <div class="avoid-list">✗ Avoid today: Running · High intensity · Long sessions</div>
       </div>
       <div class="decision-rec">
         <div class="rec-label">Recommended Session</div>
-        <div class="rec-row"><span class="rec-key">Type</span><span class="rec-val">Easy aerobic run</span></div>
-        <div class="rec-row"><span class="rec-key">Distance</span><span class="rec-val">4–8 km</span></div>
-        <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">5:40–6:10/km</span></div>
-        <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val"><145 bpm</span></div>
-        <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">Morning · 13.7°C</span></div>
+        <div class="rec-row"><span class="rec-key">Type</span><span class="rec-val">Rest, gentle walk, or mobility work</span></div>
+        <div class="rec-row"><span class="rec-key">Distance</span><span class="rec-val">--</span></div>
+        <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">--</span></div>
+        <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val">--</span></div>
+        <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">Morning · 12.7°C</span></div>
       </div>
     </div>
   </div>
@@ -490,40 +490,40 @@
     <div class="section-header"><div class="section-title">Today's Vitals</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Readiness</div>
-        <div class="stat-value">70</div>
-        <div class="stat-unit">Moderate</div>
-        <div class="stat-sub">Good Sleep History</div>
+        <div class="stat-value">37</div>
+        <div class="stat-unit">Low</div>
+        <div class="stat-sub">High Recovery Needs</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Sleep Score</div>
-        <div class="stat-value">77</div>
+        <div class="stat-value">79</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV Avg 7d</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">31</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Resting HR</div>
-        <div class="stat-value">52</div>
+        <div class="stat-value">54</div>
         <div class="stat-unit">bpm</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Body Battery</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">67</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Recovery</div>
-        <div class="stat-value sm">1</div>
+        <div class="stat-value sm">2525</div>
         <div class="stat-unit">min</div>
       </div>
     </div>
@@ -574,46 +574,38 @@
     <div class="stat-grid">
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
-              <div class="stat-label">Today · 2026-06-25</div>
-              <div class="stat-value sm">🌧️ 13.7°</div>
-              <div class="stat-unit">6.5° low · Light drizzle</div>
-              <div class="stat-sub">💧3% · 💨7.7 km/h</div>
+              <div class="stat-label">Today · 2026-06-26</div>
+              <div class="stat-value sm">☁️ 12.7°</div>
+              <div class="stat-unit">6.0° low · Overcast</div>
+              <div class="stat-sub">💧0% · 💨7.8 km/h</div>
             </div>
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
-              <div class="stat-label">Tomorrow · 2026-06-26</div>
-              <div class="stat-value sm">☁️ 12.6°</div>
-              <div class="stat-unit">5.6° low · Overcast</div>
-              <div class="stat-sub">💧0% · 💨8.4 km/h</div>
-            </div>
-            <div class="stat">
-              <div class="stat-accent" style="background:var(--blue)"></div>
-              <div class="stat-label">Day +2 · 2026-06-27</div>
+              <div class="stat-label">Tomorrow · 2026-06-27</div>
               <div class="stat-value sm">☁️ 11.5°</div>
-              <div class="stat-unit">4.8° low · Overcast</div>
-              <div class="stat-sub">💧0% · 💨6.8 km/h</div>
+              <div class="stat-unit">5.1° low · Overcast</div>
+              <div class="stat-sub">💧0% · 💨6.3 km/h</div>
+            </div>
+            <div class="stat">
+              <div class="stat-accent" style="background:var(--blue)"></div>
+              <div class="stat-label">Day +2 · 2026-06-28</div>
+              <div class="stat-value sm">☁️ 15.6°</div>
+              <div class="stat-unit">2.7° low · Overcast</div>
+              <div class="stat-sub">💧5% · 💨8.4 km/h</div>
             </div></div>
     
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;margin-bottom:10px;">
-      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window Tomorrow — 2026-06-26</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window Tomorrow — 2026-06-27</div>
       <div style="font-size:20px;font-weight:600;color:var(--green);margin-bottom:4px;">Morning</div>
-      <div style="font-size:11px;color:var(--text3);">Morning: 7.8°C 0% rain · Afternoon: 9.6°C 0% rain</div>
+      <div style="font-size:11px;color:var(--text3);">Morning: 6.0°C 0% rain · Afternoon: 8.7°C 0% rain</div>
     </div>
     <div class="tbl-wrap">
       <table class="tbl">
         <thead><tr><th>Day</th><th>Temp</th><th>Rain</th><th>Best Window</th><th>Conditions</th><th>Status</th></tr></thead>
         <tbody>
             <tr>
-              <td style="font-weight:500">Thu 06-25</td>
-              <td>🌧️ 13.7° / 6.5°</td>
-              <td>💧3%</td>
-              <td style="color:var(--green);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">7.4°C 0% rain</td>
-              <td style="color:var(--green)">Good</td>
-            </tr>
-            <tr>
               <td style="font-weight:500">Fri 06-26</td>
-              <td>☁️ 12.6° / 5.6°</td>
+              <td>☁️ 12.7° / 6.0°</td>
               <td>💧0%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
               <td style="color:var(--text3)">7.8°C 0% rain</td>
@@ -621,7 +613,7 @@
             </tr>
             <tr>
               <td style="font-weight:500">Sat 06-27</td>
-              <td>☁️ 11.5° / 4.8°</td>
+              <td>☁️ 11.5° / 5.1°</td>
               <td>💧0%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
               <td style="color:var(--text3)">6.0°C 0% rain</td>
@@ -629,35 +621,43 @@
             </tr>
             <tr>
               <td style="font-weight:500">Sun 06-28</td>
-              <td>☁️ 15.3° / 3.2°</td>
-              <td>💧9%</td>
+              <td>☁️ 15.6° / 2.7°</td>
+              <td>💧5%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">3.7°C 0% rain</td>
+              <td style="color:var(--text3)">3.2°C 0% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr>
             <tr>
               <td style="font-weight:500">Mon 06-29</td>
-              <td>🌧️ 13.2° / 7.5°</td>
-              <td>💧39%</td>
+              <td>🌧️ 13.5° / 7.2°</td>
+              <td>💧55%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
               <td style="color:var(--text3)">10.6°C 22% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr>
             <tr>
               <td style="font-weight:500">Tue 06-30</td>
-              <td>🌧️ 13.9° / 10.6°</td>
-              <td>💧48%</td>
+              <td>☁️ 14.9° / 11.0°</td>
+              <td>💧55%</td>
               <td style="color:var(--green);font-weight:500">Afternoon</td>
-              <td style="color:var(--text3)">12.2°C 22% rain</td>
+              <td style="color:var(--text3)">13.0°C 25% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr>
             <tr>
               <td style="font-weight:500">Wed 07-01</td>
-              <td>🌧️ 13.9° / 10.6°</td>
+              <td>🌧️ 13.8° / 10.9°</td>
               <td>💧64%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">11.3°C 30% rain</td>
+              <td style="color:var(--text3)">12.1°C 28% rain</td>
               <td style="color:var(--red)">Rain 64%</td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Thu 07-02</td>
+              <td>🌧️ 10.7° / 7.0°</td>
+              <td>💧71%</td>
+              <td style="color:var(--yellow);font-weight:500">Morning</td>
+              <td style="color:var(--text3)">10.2°C 46% rain</td>
+              <td style="color:var(--red)">Rain 71%</td>
             </tr></tbody>
       </table>
     </div>
@@ -669,13 +669,13 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Load Ratio (ACR)</div>
-        <div class="stat-value" style="color:var(--red)">2.27</div>
+        <div class="stat-value" style="color:var(--red)">2.02</div>
         <div class="stat-unit">🔴 Too high >1.3</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Acute Load (7d)</div>
-        <div class="stat-value sm">45.2</div>
+        <div class="stat-value sm">40.2</div>
         <div class="stat-unit">stress units</div>
       </div>
       <div class="stat">
@@ -712,14 +712,14 @@
     <div class="section-header"><div class="section-title">Recovery Score</div></div>
     <div style="display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:start">
       <div class="stat" style="text-align:center">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Recovery</div>
-        <div class="stat-value" style="font-size:42px;color:var(--yellow)">53</div>
-        <div class="stat-unit" style="color:var(--yellow)">moderate</div>
+        <div class="stat-value" style="font-size:42px;color:var(--red)">48</div>
+        <div class="stat-unit" style="color:var(--red)">poor</div>
       </div>
       <div class="chart-box">
         <div class="chart-label">Factors</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">HRV (32ms) <span style="color:var(--text3);font-size:10px">35%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">6 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Sleep (77/100, 6.7h) <span style="color:var(--text3);font-size:10px">30%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">23 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Resting HR (52 bpm) <span style="color:var(--text3);font-size:10px">20%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">14 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Readiness (70/100) <span style="color:var(--text3);font-size:10px">15%</span></span><span style="color:var(--green);font-family:JetBrains Mono,monospace">10 pts</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">HRV (31ms) <span style="color:var(--text3);font-size:10px">35%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">5 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Sleep (79/100, 7.0h) <span style="color:var(--text3);font-size:10px">30%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">24 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Resting HR (54 bpm) <span style="color:var(--text3);font-size:10px">20%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">13 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Readiness (37/100) <span style="color:var(--text3);font-size:10px">15%</span></span><span style="color:var(--red);font-family:JetBrains Mono,monospace">6 pts</span></div>
       </div>
     </div>
   </div>
@@ -1050,7 +1050,7 @@
 <tr><td>Session density</td><td style="color:#4ade80">1 big sessions in 5 days ✓</td></tr>
 <tr><td>Cadence trend</td><td style="color:#facc15">↓2.4% slight drop</td></tr>
 <tr><td>GCT increase >5%</td><td style="color:#f87171">↑7.0% vs baseline (250→268ms)</td></tr>
-<tr><td>Previous Achilles injury</td><td style="color:#f87171">Left insertional (onset 2026-01-17, 159d ago)</td></tr>
+<tr><td>Previous Achilles injury</td><td style="color:#f87171">Left insertional (onset 2026-01-17, 160d ago)</td></tr>
 <tr><td>Mileage change</td><td style="color:#4ade80">-53% vs last week ✓</td></tr>
 </tbody>
       </table>
@@ -1244,37 +1244,37 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Total Sleep</div>
-        <div class="stat-value">6.7</div>
+        <div class="stat-value">7.0</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Deep Sleep</div>
-        <div class="stat-value">1.1</div>
+        <div class="stat-value">0.9</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">REM Sleep</div>
-        <div class="stat-value">1.4</div>
+        <div class="stat-value">1.7</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--text3)"></div>
         <div class="stat-label">Light Sleep</div>
-        <div class="stat-value">4.2</div>
+        <div class="stat-value">4.3</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Awake</div>
-        <div class="stat-value">0.3</div>
+        <div class="stat-value">0.2</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Avg SpO2</div>
-        <div class="stat-value">99.0</div>
+        <div class="stat-value">98.0</div>
         <div class="stat-unit">%</div>
       </div>
       <div class="stat">
@@ -1286,7 +1286,7 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--orange)"></div>
         <div class="stat-label">Sleep Stress</div>
-        <div class="stat-value">22.0</div>
+        <div class="stat-value">24.0</div>
         <div class="stat-unit">avg stress</div>
       </div>
     </div>
@@ -1302,39 +1302,39 @@
     <div class="section-header"><div class="section-title">Recovery Metrics</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Training Readiness</div>
-        <div class="stat-value">70</div>
-        <div class="stat-unit">Moderate</div>
+        <div class="stat-value">37</div>
+        <div class="stat-unit">Low</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Sleep Score</div>
-        <div class="stat-value">77</div>
+        <div class="stat-value">79</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV 7d Avg</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">31</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Resting HR</div>
-        <div class="stat-value">52</div>
+        <div class="stat-value">54</div>
         <div class="stat-unit">bpm</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--yellow)"></div>
+        <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Body Battery</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">67</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Recovery Time</div>
-        <div class="stat-value sm">1</div>
+        <div class="stat-value sm">2525</div>
         <div class="stat-unit">min</div>
       </div>
     </div>
@@ -1346,25 +1346,25 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV 7d Average</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">31</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Last Reading</div>
-        <div class="stat-value">34</div>
-        <div class="stat-unit">ms · 04:50</div>
+        <div class="stat-value">21</div>
+        <div class="stat-unit">ms · 04:55</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Peak Last Night</div>
-        <div class="stat-value">46</div>
+        <div class="stat-value">38</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Low Last Night</div>
-        <div class="stat-value">17</div>
+        <div class="stat-value">16</div>
         <div class="stat-unit">ms</div>
       </div>
     </div>
@@ -1382,24 +1382,24 @@
 <div class="tab-panel" id="panel-bp">
 
   <div class="section">
-    <div class="section-header"><div class="section-title">Latest Reading — 2026-06-25 05:28</div></div>
+    <div class="section-header"><div class="section-title">Latest Reading — 2026-06-26 05:24</div></div>
     <div class="stat-grid">
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Systolic</div>
-        <div class="stat-value">113</div>
+        <div class="stat-value">114</div>
         <div class="stat-unit">mmHg</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Diastolic</div>
-        <div class="stat-value">75</div>
+        <div class="stat-value">74</div>
         <div class="stat-unit">mmHg</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Pulse</div>
-        <div class="stat-value">59</div>
+        <div class="stat-value">60</div>
         <div class="stat-unit">bpm</div>
       </div>
     </div>
@@ -1421,6 +1421,12 @@
       <table class="tbl">
         <thead><tr><th>Date/Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th><th>Status</th></tr></thead>
         <tbody>
+          <tr>
+            <td>2026-06-26 05:24</td>
+            <td style="color:var(--green)">114</td>
+            <td style="color:var(--green)">74</td>
+            <td>60</td>
+          </tr>
           <tr>
             <td>2026-06-25 05:28</td>
             <td style="color:var(--green)">113</td>
@@ -1474,12 +1480,6 @@
             <td style="color:var(--red)">130</td>
             <td style="color:var(--green)">73</td>
             <td>64</td>
-          </tr>
-          <tr>
-            <td>2026-06-16 04:20</td>
-            <td style="color:var(--yellow)">124</td>
-            <td style="color:var(--yellow)">82</td>
-            <td>62</td>
           </tr></tbody>
       </table>
     </div>
@@ -1502,7 +1502,7 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Endurance Score</div>
-        <div class="stat-value">6535</div>
+        <div class="stat-value">6531</div>
         <div class="stat-unit">Well Trained 6500+</div>
       </div>
       <div class="stat">
@@ -1527,7 +1527,7 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">5K</div>
-        <div class="stat-value sm">22:43</div>
+        <div class="stat-value sm">22:44</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
@@ -1537,13 +1537,13 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Half Marathon</div>
-        <div class="stat-value sm">1:43:54</div>
+        <div class="stat-value sm">1:43:56</div>
       </div>
       <div class="stat" style="grid-column:span 2">
         <div class="stat-accent" style="background:var(--orange)"></div>
         <div class="stat-label">Marathon Prediction</div>
-        <div class="stat-value sm" style="color:var(--orange)">3:44:57</div>
-        <div class="stat-unit">+44:57 vs sub-3:00</div>
+        <div class="stat-value sm" style="color:var(--orange)">3:45:05</div>
+        <div class="stat-unit">+45:05 vs sub-3:00</div>
       </div>
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;">
@@ -1628,6 +1628,28 @@
   ✓ 
   Balance stable (50.7% → 49.0%, drift 1.8%)
 </div>
+
+<!-- FATIGUE ONSET -->
+
+<div class="mech-flag">
+  <strong style="color:#fbbf24">2026-06-25 (5.0km)</strong>
+  ⚠️ Fatigue started at km 2.94 —
+  Stride
+  (-15.1% vs early baseline)
+</div>
+<div class="mech-flag">
+  <strong style="color:#fbbf24">2025-06-26 (5.0km)</strong>
+  ⚠️ Fatigue started at km 3.0 —
+  Stride
+  (-3.5% vs early baseline)
+</div>
+<div class="mech-flag">
+  <strong style="color:#fbbf24">2024-06-21 (5.0km)</strong>
+  ⚠️ Fatigue started at km 5.01 —
+  Balance
+  (2.3pt drift vs early baseline)
+</div>
+
 
 <!-- FATIGUE RESISTANCE SCORES -->
 
@@ -1730,32 +1752,30 @@
   <h2>Mechanical Fatigue Curve — km by km</h2>
   <table style="font-size:11px;min-width:500px">
     <thead>
-      <tr>
-        <th>km</th><th>GCT (ms)</th><th>Balance (L%)</th><th>Stride (m)</th><th>Cadence</th><th>HR</th><th>Power (W)</th>
-      </tr>
+      <tr><th rowspan="2">km</th><th colspan="6">2026-06-25 (5.0k</th><th colspan="6">2025-06-26 (5.0k</th><th colspan="6">2024-06-21 (5.0k</th></tr><tr><th>GCT (ms)</th><th>Balance (L%)</th><th>Stride (m)</th><th>Cadence</th><th>HR</th><th>Power (W)</th><th>GCT (ms)</th><th>Balance (L%)</th><th>Stride (m)</th><th>Cadence</th><th>HR</th><th>Power (W)</th><th>GCT (ms)</th><th>Balance (L%)</th><th>Stride (m)</th><th>Cadence</th><th>HR</th><th>Power (W)</th></tr>
     </thead>
     <tbody>
-      <tr><td style='color:var(--muted,#8b949e)'>1.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>246.9</td><td>50.2</td><td>105.18</td><td>179.4</td><td>133.0</td><td>318.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>236.5</td><td>50.7</td><td>112.42</td><td>183.5</td><td>134.0</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>239.7</td><td>50.5</td><td>113.46</td><td>181.0</td><td>142.0</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>1.52</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>250.4</td><td>50.5</td><td>97.21</td><td>180.1</td><td>141.0</td><td>304.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>1.54</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>501.4</td><td>50.3</td><td>86.99</td><td>123.9</td><td>138.0</td><td>89.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>1.89</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>241.7</td><td>49.8</td><td>111.4</td><td>184.3</td><td>156.0</td><td>425.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>2.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>242.0</td><td>51.1</td><td>107.62</td><td>183.7</td><td>138.0</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>244.0</td><td>50.9</td><td>108.63</td><td>179.6</td><td>149.0</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>2.24</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>294.6</td><td>50.2</td><td>87.59</td><td>143.5</td><td>130.0</td><td>181.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>2.59</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>239.8</td><td>48.9</td><td>112.12</td><td>184.5</td><td>154.0</td><td>435.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>2.94</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>269.3</td><td>50.2</td><td>84.94</td><td>143.7</td><td>134.0</td><td>183.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>3.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>243.9</td><td>51.5</td><td>106.15</td><td>183.0</td><td>139.0</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>247.4</td><td>51.3</td><td>107.76</td><td>178.1</td><td>150.0</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>3.29</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>232.0</td><td>48.6</td><td>115.73</td><td>185.5</td><td>158.0</td><td>451.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>3.64</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>265.6</td><td>50.1</td><td>84.33</td><td>145.6</td><td>138.0</td><td>184.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>3.99</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>228.6</td><td>48.7</td><td>116.78</td><td>183.3</td><td>161.0</td><td>443.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>244.4</td><td>51.4</td><td>102.88</td><td>182.9</td><td>140.0</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>246.1</td><td>51.4</td><td>108.08</td><td>178.8</td><td>152.0</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.34</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>265.3</td><td>50.4</td><td>85.44</td><td>142.6</td><td>139.0</td><td>174.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.69</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>187.2</td><td>46.7</td><td>135.67</td><td>195.1</td><td>165.0</td><td>530.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.71</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>213.0</td><td>46.2</td><td>144.82</td><td>178.8</td><td>184.0</td><td>483.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.72</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>269.5</td><td>46.8</td><td>123.15</td><td>172.0</td><td>184.0</td><td>423.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.73</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>277.5</td><td>47.9</td><td>87.25</td><td>175.5</td><td>180.0</td><td>226.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>4.87</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>267.6</td><td>50.0</td><td>77.94</td><td>171.9</td><td>166.0</td><td>232.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>5.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>243.2</td><td>51.3</td><td>101.32</td><td>183.9</td><td>140.0</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>229.3</td><td>49.5</td><td>122.91</td><td>181.7</td><td>166.0</td><td>--</td></tr>
-<tr><td style='color:var(--muted,#8b949e)'>5.01</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2026-06-</td><td>266.9</td><td>50.7</td><td>78.69</td><td>173.4</td><td>142.0</td><td>246.0</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2025-06-</td><td>245.0</td><td>51.3</td><td>94.85</td><td>186.0</td><td>143.0</td><td>--</td><td style='font-size:10px;color:var(--muted,#8b949e)'>2024-06-</td><td>223.0</td><td>48.4</td><td>132.2</td><td>184.5</td><td>180.0</td><td>--</td></tr>
+      <tr><td style='color:var(--muted,#8b949e)'>1.0</td><td>246.9</td><td>50.2</td><td>105.18</td><td>179.4</td><td>133.0</td><td>318.0</td><td>236.5</td><td>50.7</td><td>112.42</td><td>183.5</td><td>134.0</td><td>--</td><td>239.7</td><td>50.5</td><td>113.46</td><td>181.0</td><td>142.0</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>1.52</td><td>250.4</td><td>50.5</td><td>97.21</td><td>180.1</td><td>141.0</td><td>304.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>1.54</td><td>501.4</td><td>50.3</td><td>86.99</td><td>123.9</td><td>138.0</td><td>89.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>1.89</td><td>241.7</td><td>49.8</td><td>111.4</td><td>184.3</td><td>156.0</td><td>425.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>2.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>242.0</td><td>51.1</td><td>107.62</td><td>183.7</td><td>138.0</td><td>--</td><td>244.0</td><td>50.9</td><td>108.63</td><td>179.6</td><td>149.0</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>2.24</td><td>294.6</td><td>50.2</td><td>87.59</td><td>143.5</td><td>130.0</td><td>181.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>2.59</td><td>239.8</td><td>48.9</td><td>112.12</td><td>184.5</td><td>154.0</td><td>435.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>2.94</td><td>269.3</td><td>50.2</td><td>84.94</td><td>143.7</td><td>134.0</td><td>183.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>3.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>243.9</td><td>51.5</td><td>106.15</td><td>183.0</td><td>139.0</td><td>--</td><td>247.4</td><td>51.3</td><td>107.76</td><td>178.1</td><td>150.0</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>3.29</td><td>232.0</td><td>48.6</td><td>115.73</td><td>185.5</td><td>158.0</td><td>451.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>3.64</td><td>265.6</td><td>50.1</td><td>84.33</td><td>145.6</td><td>138.0</td><td>184.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>3.99</td><td>228.6</td><td>48.7</td><td>116.78</td><td>183.3</td><td>161.0</td><td>443.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>244.4</td><td>51.4</td><td>102.88</td><td>182.9</td><td>140.0</td><td>--</td><td>246.1</td><td>51.4</td><td>108.08</td><td>178.8</td><td>152.0</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.34</td><td>265.3</td><td>50.4</td><td>85.44</td><td>142.6</td><td>139.0</td><td>174.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.69</td><td>187.2</td><td>46.7</td><td>135.67</td><td>195.1</td><td>165.0</td><td>530.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.71</td><td>213.0</td><td>46.2</td><td>144.82</td><td>178.8</td><td>184.0</td><td>483.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.72</td><td>269.5</td><td>46.8</td><td>123.15</td><td>172.0</td><td>184.0</td><td>423.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.73</td><td>277.5</td><td>47.9</td><td>87.25</td><td>175.5</td><td>180.0</td><td>226.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>4.87</td><td>267.6</td><td>50.0</td><td>77.94</td><td>171.9</td><td>166.0</td><td>232.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>5.0</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td><td>243.2</td><td>51.3</td><td>101.32</td><td>183.9</td><td>140.0</td><td>--</td><td>229.3</td><td>49.5</td><td>122.91</td><td>181.7</td><td>166.0</td><td>--</td></tr>
+<tr><td style='color:var(--muted,#8b949e)'>5.01</td><td>266.9</td><td>50.7</td><td>78.69</td><td>173.4</td><td>142.0</td><td>246.0</td><td>245.0</td><td>51.3</td><td>94.85</td><td>186.0</td><td>143.0</td><td>--</td><td>223.0</td><td>48.4</td><td>132.2</td><td>184.5</td><td>180.0</td><td>--</td></tr>
     </tbody>
   </table>
   <p class="note" style="margin-top:8px">Rising GCT + falling stride = mechanical fatigue. Balance drifting from 50% = side compensation.</p>
@@ -1962,7 +1982,7 @@ if (closeBtn) closeBtn.addEventListener('click', rcCloseChart);
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
-    GENERATED 2026-06-25 12:28 · GARMIN + WITHINGS
+    GENERATED 2026-06-25 19:36 · GARMIN + WITHINGS
   </span>
 </div>
 
@@ -2012,8 +2032,8 @@ new Chart(document.getElementById('weeklyComboChart'), {
 new Chart(document.getElementById('hrvChart'), {
   type: 'line',
   data: {
-    labels: ["22:05", "22:20", "22:35", "22:50", "23:05", "23:20", "23:35", "23:50", "00:05", "00:20", "00:35", "00:50", "01:05", "01:20", "01:35", "01:50", "02:05", "02:20", "02:35", "02:50", "03:05", "03:20", "03:35", "03:50", "04:05", "04:20", "04:35", "04:50"],
-    datasets: [{ data: [17, 20, 31, 29, 22, 26, 34, 19, 33, 22, 42, 25, 25, 20, 32, 26, 26, 46, 28, 38, 45, 30, 25, 26, 40, 29, 28, 34], borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
+    labels: ["21:55", "22:10", "22:25", "22:40", "22:55", "23:10", "23:25", "23:40", "23:55", "00:10", "00:25", "00:40", "00:55", "01:10", "01:25", "01:40", "01:55", "02:10", "02:25", "02:40", "02:55", "03:10", "03:25", "03:40", "03:55", "04:10", "04:25", "04:40", "04:55"],
+    datasets: [{ data: [17, 17, 16, 21, 31, 31, 27, 24, 20, 31, 17, 17, 33, 36, 38, 22, 21, 29, 29, 37, 36, 30, 21, 24, 30, 28, 34, 28, 21], borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
       tension: 0.3, fill: true, pointRadius: 2 }]
   },
   options: { ...base }
@@ -2021,12 +2041,12 @@ new Chart(document.getElementById('hrvChart'), {
 
 // HRV + Sleep Stage Overlay
 (function() {
-  const hrvTimes = ["22:05", "22:20", "22:35", "22:50", "23:05", "23:20", "23:35", "23:50", "00:05", "00:20", "00:35", "00:50", "01:05", "01:20", "01:35", "01:50", "02:05", "02:20", "02:35", "02:50", "03:05", "03:20", "03:35", "03:50", "04:05", "04:20", "04:35", "04:50"];
-  const hrvVals  = [17, 20, 31, 29, 22, 26, 34, 19, 33, 22, 42, 25, 25, 20, 32, 26, 26, 46, 28, 38, 45, 30, 25, 26, 40, 29, 28, 34];
-  const deepData  = [null, 20, null, null, 22, null, null, 19, 33, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-  const lightData = [17, null, 31, 29, null, 26, 34, null, null, 22, 42, 25, 25, 20, 32, 26, null, null, null, 38, 45, 30, 25, null, null, null, 28, 34];
-  const remData   = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-  const awakeData = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 26, 46, 28, null, null, null, null, 26, 40, 29, null, null];
+  const hrvTimes = ["21:55", "22:10", "22:25", "22:40", "22:55", "23:10", "23:25", "23:40", "23:55", "00:10", "00:25", "00:40", "00:55", "01:10", "01:25", "01:40", "01:55", "02:10", "02:25", "02:40", "02:55", "03:10", "03:25", "03:40", "03:55", "04:10", "04:25", "04:40", "04:55"];
+  const hrvVals  = [17, 17, 16, 21, 31, 31, 27, 24, 20, 31, 17, 17, 33, 36, 38, 22, 21, 29, 29, 37, 36, 30, 21, 24, 30, 28, 34, 28, 21];
+  const deepData  = [null, 17, 16, null, null, null, null, 24, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+  const lightData = [17, null, null, 21, 31, 31, 27, null, 20, 31, 17, null, null, 36, 38, 22, 21, 29, null, null, 36, 30, 21, null, 30, null, 34, 28, 21];
+  const remData   = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+  const awakeData = [null, null, null, null, null, null, null, null, null, null, null, 17, 33, null, null, null, null, null, 29, 37, null, null, null, 24, null, 28, null, null, null];
 
   // Max HRV for band height
   const maxHrv = Math.max(...hrvVals.filter(v => v)) * 1.1;
@@ -2188,11 +2208,11 @@ new Chart(document.getElementById('gctTrendChart'), {
 new Chart(document.getElementById('bpChart'), {
   type: 'line',
   data: {
-    labels: ["2026-06-14", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-20", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25"],
+    labels: ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-20", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26"],
     datasets: [
-      { label: 'Systolic',  data: [131, 131, 124, 130, 135, 128, 127, 121, 115, 121, 115, 113],  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 },
-      { label: 'Diastolic', data: [83, 81, 82, 73, 74, 89, 78, 76, 79, 81, 74, 75], borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 },
-      { label: 'Pulse',     data: [58, 60, 62, 64, 67, 54, 60, 57, 57, 61, 57, 59],     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] },
+      { label: 'Systolic',  data: [131, 124, 130, 135, 128, 127, 121, 115, 121, 115, 113, 114],  borderColor: C.red,    tension:0.3, fill:false, pointRadius:3 },
+      { label: 'Diastolic', data: [81, 82, 73, 74, 89, 78, 76, 79, 81, 74, 75, 74], borderColor: C.orange, tension:0.3, fill:false, pointRadius:3 },
+      { label: 'Pulse',     data: [60, 62, 64, 67, 54, 60, 57, 57, 61, 57, 59, 60],     borderColor: C.muted,  tension:0.3, fill:false, pointRadius:3, borderDash:[4,4] },
     ]
   },
   options: { ...base, plugins: { legend: { display:true, labels: { color:C.muted, font:{size:10} } } } }
@@ -2218,7 +2238,7 @@ new Chart(document.getElementById('sleepStagesChart'), {
   data: {
     labels: ['Deep', 'Light', 'REM', 'Awake'],
     datasets: [{ 
-      data: [1.1, 4.2, 1.4, 0.3],
+      data: [0.9, 4.3, 1.7, 0.2],
       backgroundColor: [C.blue, C.muted, C.cyan, C.yellow],
       borderWidth: 0,
       hoverOffset: 4,
@@ -2232,8 +2252,8 @@ new Chart(document.getElementById('sleepStagesChart'), {
 
 // PWA — Body Battery Push Notification
 (function() {
-  const bodyBattery = 32;
-  const readinessScore = 70;
+  const bodyBattery = 67;
+  const readinessScore = 37;
 
   // Register service worker for PWA
   if ('serviceWorker' in navigator) {
@@ -2424,7 +2444,7 @@ loadTodayCheckin();
 renderCheckinTrend();
 
 // ── EXPORT ──
-const dashboardData = {"generated": "2026-06-25 12:28", "training": {"week": 8, "phase": "Return to Run", "week_in_phase": 4, "phase_total": 4, "days_to_race": 109, "phase_target_km": "30-40", "this_week_km": 18.0, "last_week_km": 38.3}, "readiness": {"score": 70, "level": "MODERATE", "sleep_score": 77, "hrv_weekly_avg": 32, "resting_hr": 52, "body_battery": 32, "recovery_time": 1, "acwr": 0.95}, "achilles": {"score": 35, "level": "medium", "factors": [{"label": "Morning stiffness", "value": "1/10 \u2713", "level": "low", "points": 0}, {"label": "First-steps pain", "value": "0/10 \u2713", "level": "low", "points": 0}, {"label": "Post-run pain", "value": "0/10 \u2713", "level": "low", "points": 0}, {"label": "Seated calf raises", "value": "Done \u2713", "level": "low", "points": 0}, {"label": "Long run >16km", "value": "17.0km", "level": "medium", "points": 10}, {"label": "Long run HR", "value": "HR 147.0 \u2713", "level": "low", "points": 0}, {"label": "Session density", "value": "1 big sessions in 5 days \u2713", "level": "low", "points": 0}, {"label": "Cadence trend", "value": "\u21932.4% slight drop", "level": "medium", "points": 0}, {"label": "GCT increase >5%", "value": "\u21917.0% vs baseline (250\u2192268ms)", "level": "high", "points": 10}, {"label": "Previous Achilles injury", "value": "Left insertional (onset 2026-01-17, 159d ago)", "level": "high", "points": 15}, {"label": "Mileage change", "value": "-53% vs last week \u2713", "level": "low", "points": 0}]}, "last_run": {"date": "2026-06-25", "distance_km": 5.0, "avg_pace_min_km": 6.08, "avg_hr": 143.0, "cadence": 166, "gct_balance_left_pct": 49.0, "gct_balance_right_pct": 51.0, "avg_gct_ms": 267.7, "laps": [{"km": 1, "pace": 5.25, "hr": 133.0, "gct": 246.9, "gct_balance": 50.2, "cadence": 0}, {"km": 2, "pace": 5.79, "hr": 141.0, "gct": 250.4, "gct_balance": 50.5, "cadence": 0}, {"km": 3, "pace": 17.2, "hr": 138.0, "gct": 501.4, "gct_balance": 50.3, "cadence": 0}, {"km": 4, "pace": 4.85, "hr": 156.0, "gct": 241.7, "gct_balance": 49.8, "cadence": 0}, {"km": 5, "pace": 8.17, "hr": 130.0, "gct": 294.6, "gct_balance": 50.2, "cadence": 0}, {"km": 6, "pace": 4.64, "hr": 154.0, "gct": 239.8, "gct_balance": 48.9, "cadence": 0}, {"km": 7, "pace": 8.32, "hr": 134.0, "gct": 269.3, "gct_balance": 50.2, "cadence": 0}, {"km": 8, "pace": 4.53, "hr": 158.0, "gct": 232.0, "gct_balance": 48.6, "cadence": 0}, {"km": 9, "pace": 8.38, "hr": 138.0, "gct": 265.6, "gct_balance": 50.1, "cadence": 0}, {"km": 10, "pace": 4.55, "hr": 161.0, "gct": 228.6, "gct_balance": 48.7, "cadence": 0}, {"km": 11, "pace": 8.57, "hr": 139.0, "gct": 265.3, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 3.63, "hr": 165.0, "gct": 187.2, "gct_balance": 46.7, "cadence": 0}, {"km": 13, "pace": 4.79, "hr": 184.0, "gct": 213.0, "gct_balance": 46.2, "cadence": 0}, {"km": 14, "pace": 9.11, "hr": 184.0, "gct": 269.5, "gct_balance": 46.8, "cadence": 0}, {"km": 15, "pace": 8.79, "hr": 183.0, "gct": 280.5, "gct_balance": 47.5, "cadence": 0}, {"km": 16, "pace": 11.79, "hr": 182.0, "gct": 280.0, "gct_balance": 47.8, "cadence": 0}, {"km": 17, "pace": 5.23, "hr": 180.0, "gct": 277.5, "gct_balance": 47.9, "cadence": 0}, {"km": 18, "pace": 15.14, "hr": 180.0, "gct": 276.0, "gct_balance": 48.2, "cadence": 0}, {"km": 19, "pace": 7.53, "hr": 166.0, "gct": 267.6, "gct_balance": 50.0, "cadence": 0}, {"km": 20, "pace": 7.23, "hr": 142.0, "gct": 266.9, "gct_balance": 50.7, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-25", "distance_km": 5.0, "avg_pace": 6.08, "avg_hr": 143.0, "gct_balance_left": 49.0, "gct_balance_right": 51.0}, {"date": "2026-06-24", "distance_km": 7.0, "avg_pace": 5.81, "avg_hr": 143.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-23", "distance_km": 6.0, "avg_pace": 5.78, "avg_hr": 143.0, "gct_balance_left": 50.7, "gct_balance_right": 49.3}, {"date": "2026-06-21", "distance_km": 17.0, "avg_pace": 5.92, "avg_hr": 147.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-19", "distance_km": 5.1, "avg_pace": 5.66, "avg_hr": 146.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-06-18", "distance_km": 5.0, "avg_pace": 5.82, "avg_hr": 149.0, "gct_balance_left": 50.3, "gct_balance_right": 49.7}, {"date": "2026-06-16", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-15", "distance_km": 5.2, "avg_pace": 5.68, "avg_hr": 145.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}], "blood_pressure": [{"date": "2026-06-25 05:28", "diastolic": 75, "systolic": 113, "pulse": 59}, {"date": "2026-06-24 04:32", "diastolic": 74, "systolic": 115, "pulse": 57}, {"date": "2026-06-23 04:42", "diastolic": 81, "systolic": 121, "pulse": 61}, {"date": "2026-06-22 05:30", "diastolic": 79, "systolic": 115, "pulse": 57}, {"date": "2026-06-21 07:01", "diastolic": 76, "systolic": 121, "pulse": 57}, {"date": "2026-06-20 19:57", "diastolic": 78, "systolic": 127, "pulse": 60}, {"date": "2026-06-20 09:08", "diastolic": 89, "systolic": 128, "pulse": 54}, {"date": "2026-06-18 04:40", "diastolic": 74, "systolic": 135, "pulse": 67}, {"date": "2026-06-17 04:28", "diastolic": 73, "systolic": 130, "pulse": 64}, {"date": "2026-06-16 04:20", "diastolic": 82, "systolic": 124, "pulse": 62}], "checkins": [{"date": "2026-06-25", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-25T01:51:14.471Z"}, {"date": "2026-06-24", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-24T05:52:35.799Z"}, {"date": "2026-06-23", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-06-24T02:03:30.230Z"}, {"date": "2026-06-22", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 1, "calf_raises": true, "source": "browser", "saved_at": "2026-06-22T08:19:36.539Z"}, {"date": "2026-06-21", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-21T04:23:41.234Z"}], "latest_checkin": {"date": "2026-06-25", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-25T01:51:14.471Z"}};
+const dashboardData = {"generated": "2026-06-25 19:36", "training": {"week": 8, "phase": "Return to Run", "week_in_phase": 4, "phase_total": 4, "days_to_race": 109, "phase_target_km": "30-40", "this_week_km": 18.0, "last_week_km": 38.3}, "readiness": {"score": 37, "level": "LOW", "sleep_score": 79, "hrv_weekly_avg": 31, "resting_hr": 54, "body_battery": 67, "recovery_time": 2525, "acwr": 0.9}, "achilles": {"score": 35, "level": "medium", "factors": [{"label": "Morning stiffness", "value": "1/10 \u2713", "level": "low", "points": 0}, {"label": "First-steps pain", "value": "0/10 \u2713", "level": "low", "points": 0}, {"label": "Post-run pain", "value": "0/10 \u2713", "level": "low", "points": 0}, {"label": "Seated calf raises", "value": "Done \u2713", "level": "low", "points": 0}, {"label": "Long run >16km", "value": "17.0km", "level": "medium", "points": 10}, {"label": "Long run HR", "value": "HR 147.0 \u2713", "level": "low", "points": 0}, {"label": "Session density", "value": "1 big sessions in 5 days \u2713", "level": "low", "points": 0}, {"label": "Cadence trend", "value": "\u21932.4% slight drop", "level": "medium", "points": 0}, {"label": "GCT increase >5%", "value": "\u21917.0% vs baseline (250\u2192268ms)", "level": "high", "points": 10}, {"label": "Previous Achilles injury", "value": "Left insertional (onset 2026-01-17, 160d ago)", "level": "high", "points": 15}, {"label": "Mileage change", "value": "-53% vs last week \u2713", "level": "low", "points": 0}]}, "last_run": {"date": "2026-06-25", "distance_km": 5.0, "avg_pace_min_km": 6.08, "avg_hr": 143.0, "cadence": 166, "gct_balance_left_pct": 49.0, "gct_balance_right_pct": 51.0, "avg_gct_ms": 267.7, "laps": [{"km": 1, "pace": 5.25, "hr": 133.0, "gct": 246.9, "gct_balance": 50.2, "cadence": 0}, {"km": 2, "pace": 5.79, "hr": 141.0, "gct": 250.4, "gct_balance": 50.5, "cadence": 0}, {"km": 3, "pace": 17.2, "hr": 138.0, "gct": 501.4, "gct_balance": 50.3, "cadence": 0}, {"km": 4, "pace": 4.85, "hr": 156.0, "gct": 241.7, "gct_balance": 49.8, "cadence": 0}, {"km": 5, "pace": 8.17, "hr": 130.0, "gct": 294.6, "gct_balance": 50.2, "cadence": 0}, {"km": 6, "pace": 4.64, "hr": 154.0, "gct": 239.8, "gct_balance": 48.9, "cadence": 0}, {"km": 7, "pace": 8.32, "hr": 134.0, "gct": 269.3, "gct_balance": 50.2, "cadence": 0}, {"km": 8, "pace": 4.53, "hr": 158.0, "gct": 232.0, "gct_balance": 48.6, "cadence": 0}, {"km": 9, "pace": 8.38, "hr": 138.0, "gct": 265.6, "gct_balance": 50.1, "cadence": 0}, {"km": 10, "pace": 4.55, "hr": 161.0, "gct": 228.6, "gct_balance": 48.7, "cadence": 0}, {"km": 11, "pace": 8.57, "hr": 139.0, "gct": 265.3, "gct_balance": 50.4, "cadence": 0}, {"km": 12, "pace": 3.63, "hr": 165.0, "gct": 187.2, "gct_balance": 46.7, "cadence": 0}, {"km": 13, "pace": 4.79, "hr": 184.0, "gct": 213.0, "gct_balance": 46.2, "cadence": 0}, {"km": 14, "pace": 9.11, "hr": 184.0, "gct": 269.5, "gct_balance": 46.8, "cadence": 0}, {"km": 15, "pace": 8.79, "hr": 183.0, "gct": 280.5, "gct_balance": 47.5, "cadence": 0}, {"km": 16, "pace": 11.79, "hr": 182.0, "gct": 280.0, "gct_balance": 47.8, "cadence": 0}, {"km": 17, "pace": 5.23, "hr": 180.0, "gct": 277.5, "gct_balance": 47.9, "cadence": 0}, {"km": 18, "pace": 15.14, "hr": 180.0, "gct": 276.0, "gct_balance": 48.2, "cadence": 0}, {"km": 19, "pace": 7.53, "hr": 166.0, "gct": 267.6, "gct_balance": 50.0, "cadence": 0}, {"km": 20, "pace": 7.23, "hr": 142.0, "gct": 266.9, "gct_balance": 50.7, "cadence": 0}]}, "recent_runs": [{"date": "2026-06-25", "distance_km": 5.0, "avg_pace": 6.08, "avg_hr": 143.0, "gct_balance_left": 49.0, "gct_balance_right": 51.0}, {"date": "2026-06-24", "distance_km": 7.0, "avg_pace": 5.81, "avg_hr": 143.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-23", "distance_km": 6.0, "avg_pace": 5.78, "avg_hr": 143.0, "gct_balance_left": 50.7, "gct_balance_right": 49.3}, {"date": "2026-06-21", "distance_km": 17.0, "avg_pace": 5.92, "avg_hr": 147.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}, {"date": "2026-06-19", "distance_km": 5.1, "avg_pace": 5.66, "avg_hr": 146.0, "gct_balance_left": 50.2, "gct_balance_right": 49.8}, {"date": "2026-06-18", "distance_km": 5.0, "avg_pace": 5.82, "avg_hr": 149.0, "gct_balance_left": 50.3, "gct_balance_right": 49.7}, {"date": "2026-06-16", "distance_km": 6.0, "avg_pace": 5.84, "avg_hr": 148.0, "gct_balance_left": 50.6, "gct_balance_right": 49.4}, {"date": "2026-06-15", "distance_km": 5.2, "avg_pace": 5.68, "avg_hr": 145.0, "gct_balance_left": 49.9, "gct_balance_right": 50.1}], "blood_pressure": [{"date": "2026-06-26 05:24", "diastolic": 74, "systolic": 114, "pulse": 60}, {"date": "2026-06-25 05:28", "diastolic": 75, "systolic": 113, "pulse": 59}, {"date": "2026-06-24 04:32", "diastolic": 74, "systolic": 115, "pulse": 57}, {"date": "2026-06-23 04:42", "diastolic": 81, "systolic": 121, "pulse": 61}, {"date": "2026-06-22 05:30", "diastolic": 79, "systolic": 115, "pulse": 57}, {"date": "2026-06-21 07:01", "diastolic": 76, "systolic": 121, "pulse": 57}, {"date": "2026-06-20 19:57", "diastolic": 78, "systolic": 127, "pulse": 60}, {"date": "2026-06-20 09:08", "diastolic": 89, "systolic": 128, "pulse": 54}, {"date": "2026-06-18 04:40", "diastolic": 74, "systolic": 135, "pulse": 67}, {"date": "2026-06-17 04:28", "diastolic": 73, "systolic": 130, "pulse": 64}], "checkins": [{"date": "2026-06-25", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-25T01:51:14.471Z"}, {"date": "2026-06-24", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-24T05:52:35.799Z"}, {"date": "2026-06-23", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-06-24T02:03:30.230Z"}, {"date": "2026-06-22", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 1, "calf_raises": true, "source": "browser", "saved_at": "2026-06-22T08:19:36.539Z"}, {"date": "2026-06-21", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-21T04:23:41.234Z"}], "latest_checkin": {"date": "2026-06-25", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-06-25T01:51:14.471Z"}};
 
 function exportJSON() {
   const json = JSON.stringify(dashboardData, null, 2);
