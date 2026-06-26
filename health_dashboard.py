@@ -4289,11 +4289,32 @@ renderCheckinTrend();
 // ── EXPORT ──
 const dashboardData = {export_data};
 
-function exportJSON() {{
+async function exportJSON() {{
   const json = JSON.stringify(dashboardData, null, 2);
   const filename = `health_${{dashboardData.generated.replace(/[: ]/g,'-')}}.json`;
 
-  // Use data URI — works on iOS Safari and all mobile browsers
+  // Prefer the native share sheet where available -- far more reliable on
+  // mobile than data-URI + download attribute, which mobile browsers
+  // (especially Android) support inconsistently. This also replaces the
+  // old iOS-specific setTimeout+window.open fallback, which had its own
+  // problem: a window.open() called from inside a setTimeout is no longer
+  // tied to the original tap as far as the browser's popup blocker is
+  // concerned, so Safari would often silently block it.
+  if (navigator.share && navigator.canShare) {{
+    try {{
+      const file = new File([json], filename, {{ type: 'application/json' }});
+      if (navigator.canShare({{ files: [file] }})) {{
+        await navigator.share({{ files: [file], title: filename }});
+        return;
+      }}
+    }} catch (e) {{
+      // User cancelled the share sheet, or share failed for some other
+      // reason -- fall through to the download approach below rather
+      // than leaving the export silently incomplete.
+    }}
+  }}
+
+  // Desktop / fallback path (confirmed working on laptop already)
   const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
   const a = document.createElement('a');
   a.href = dataUri;
@@ -4301,13 +4322,6 @@ function exportJSON() {{
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-
-  // iOS Safari fallback — open in new tab if download didn't trigger
-  setTimeout(() => {{
-    if (navigator.userAgent.match(/iP(hone|ad)/i)) {{
-      window.open(dataUri, '_blank');
-    }}
-  }}, 500);
 }}
 
 function openClaude() {{
