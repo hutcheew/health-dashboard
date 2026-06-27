@@ -57,9 +57,9 @@
     "date": "2026-06-27",
     "stiffness": 0,
     "first_steps_pain": 0,
-    "post_run_pain": 0,
+    "post_run_pain": 8,
     "calf_raises": true,
     "source": "browser",
-    "saved_at": "2026-06-27T00:55:14.495Z"
+    "saved_at": "2026-06-27T01:34:41.561Z"
   }
 ]
