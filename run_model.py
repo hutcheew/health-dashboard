@@ -265,8 +265,6 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
             continue
 
         pace    = round(1000 / speed / 60, 3) if speed and speed > 0.5 else None
-        spd_mpm = (1000 / pace) if pace and pace > 0 else None
-        mech_eff_stream = round(spd_mpm / power, 4) if spd_mpm and power and power > 0 else None
 
         points.append({
             "t": float(time_sec),
@@ -274,7 +272,6 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
             "pace": pace,
             "dist_km": round(dist_m / 1000, 3) if dist_m else None,
             "power": round(float(power), 1) if power else None,
-            "mech_eff_stream": mech_eff_stream,
         })
 
     if points and all(p["dist_km"] is None for p in points):
@@ -300,9 +297,14 @@ def fetch_lap_dynamics(garmin, activity_id, debug=False):
     """
     try:
         splits = garmin.get_activity_splits(activity_id)
-    except Exception as e:
+    except (ConnectionError, TimeoutError, OSError, ValueError) as e:
+        # Network/API errors are expected and recoverable — return empty laps
         print(f"    ⚠️  Could not fetch lap splits: {e}")
         return []
+    except Exception as e:
+        # Unexpected errors (KeyError, TypeError etc.) re-raise so bugs surface
+        print(f"    ❌  Unexpected error fetching lap splits: {type(e).__name__}: {e}")
+        raise
 
     laps = splits.get("lapDTOs", [])
 
@@ -396,6 +398,12 @@ def rolling_avg(series, window_sec, times):
     return result
 
 
+def lap_avg(laps_subset, key):
+    """Average a numeric field across a list of laps, ignoring None values."""
+    vals = [l[key] for l in laps_subset if l.get(key) is not None]
+    return round(sum(vals) / len(vals), 2) if vals else None
+
+
 def smooth_stream(points):
     times = [p["t"] for p in points]
     smooth_hr   = rolling_avg([p["hr"]   for p in points], CONFIG["hr_smoothing_sec"],   times)
@@ -447,10 +455,6 @@ def detect_fatigue_onset(laps):
     """
     if not laps or len(laps) < 4:
         return None  # not enough laps for a meaningful early baseline + later detection
-
-    def lap_avg(laps_subset, key):
-        vals = [l[key] for l in laps_subset if l.get(key) is not None]
-        return round(sum(vals) / len(vals), 2) if vals else None
 
     n = len(laps)
     third = max(1, n // 3)
@@ -523,10 +527,6 @@ def analyse_dynamics(laps, bp_idx_lap=None):
     if not laps:
         return {}
 
-    def lap_avg(laps_subset, key):
-        vals = [l[key] for l in laps_subset if l.get(key) is not None]
-        return round(sum(vals) / len(vals), 2) if vals else None
-
     n = len(laps)
     third = max(1, n // 3)
     early = laps[:third]
@@ -543,21 +543,24 @@ def analyse_dynamics(laps, bp_idx_lap=None):
     bal_drift = round(bal_late - bal_early, 2) if bal_early is not None and bal_late is not None else None
 
     # Mechanical fatigue flag
-    # For left Achilles: flag if late-run balance shifts LEFT loading UP
-    # (body compensating by loading injured side more when fatigued)
-    # or shifts DOWN significantly (offloading the injured side, also compensation)
+    # Mechanical fatigue flag
+    # Uses INJURY_SIDE so changing the constant to "right" flips the
+    # algorithmic interpretation, not just the display subtitle.
+    # positive bal_drift = left loaded MORE late-run
+    injured_loading = bal_drift if INJURY_SIDE == "left" else -bal_drift
+
     mech_fatigue_flag = None
     mech_fatigue_detail = None
     if bal_drift is not None:
         drift_abs = abs(bal_drift)
         if drift_abs >= CONFIG["gct_balance_drift_flag"]:
             direction = "↑" if bal_drift > 0 else "↓"
-            side = "more" if bal_drift > 0 else "less"
+            side = "more" if (injured_loading is not None and injured_loading > 0) else "less"
             mech_fatigue_flag = True
             mech_fatigue_detail = (
-                f"Left loading drifted {direction} {drift_abs:.1f}% "
+                f"{INJURY_SIDE.capitalize()} loading drifted {direction} {drift_abs:.1f}% "
                 f"({bal_early:.1f}% → {bal_late:.1f}%) — "
-                f"body loading left side {side} when fatigued. "
+                f"body loading {INJURY_SIDE} side {side} when fatigued. "
                 f"{'⚠️ Achilles compensation pattern.' if drift_abs >= CONFIG['gct_balance_drift_flag'] * 1.5 else 'Monitor closely.'}"
             )
         else:
@@ -853,12 +856,13 @@ def downsample(points, every_sec=None):
 
 
 def normalize_dist(points):
+    """Add dist_pct (0–100% of total distance) to each point in-place.
+    Mutates the list — does not return it, to make the side-effect explicit."""
     total = points[-1].get("dist_km") if points else None
     if not total:
-        return points
+        return
     for p in points:
         p["dist_pct"] = round((p.get("dist_km") or 0) / total * 100, 1)
-    return points
 
 
 def align_to_breakpoint(points, bp_idx, window_km):
@@ -893,12 +897,12 @@ def _fatigue_curve_header(runs):
 
 
 def _fatigue_curve_rows(runs):
-    """Build HTML rows for the mechanical fatigue curve table, one row per
-    km. No per-row run-label cell -- that's now conveyed by the header's
-    colspan grouping instead, which is also what fixes the column count
-    actually matching the header."""
+    """Build HTML rows for the mechanical fatigue curve table, one row per km.
+    Rounds cum_km to 2dp before deduplication — raw float arithmetic on
+    cumulative sums can produce near-identical values like 1.0 and 1.0000001
+    that set() treats as distinct, creating spurious duplicate rows."""
     all_kms = sorted(set(
-        c["km"]
+        round(c["km"], 2)
         for r in runs
         for c in r["dynamics"].get("fatigue_curve", [])
     ))
@@ -907,7 +911,7 @@ def _fatigue_curve_rows(runs):
         cells = f"<td style='color:var(--muted,#8b949e)'>{lap_km}</td>"
         for r in runs:
             curve = r["dynamics"].get("fatigue_curve", [])
-            row_data = next((c for c in curve if c["km"] == lap_km), {})
+            row_data = next((c for c in curve if round(c["km"], 2) == lap_km), {})
             for k in ["gct", "balance", "stride", "cadence", "hr", "power"]:
                 v = row_data.get(k)
                 cells += f"<td>{v if v is not None else '--'}</td>"
@@ -1335,6 +1339,24 @@ def build_html(runs, out_path):
 <meta charset="UTF-8">
 <title>Run Model — Physiology + Mechanics</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// Offline fallback — if the CDN didn't load (no network, or run_model.html
+// opened from the filesystem without internet), replace Chart with a stub
+// that renders a clear error message instead of silently blank canvases.
+if (typeof Chart === "undefined") {
+  window.Chart = function(canvas, cfg) {
+    var ctx = canvas.getContext ? canvas.getContext("2d") : null;
+    if (ctx) {
+      ctx.fillStyle = "#8b949e";
+      ctx.font = "12px sans-serif";
+      ctx.fillText("Chart.js unavailable (offline?)", 10, canvas.height / 2);
+    }
+  };
+  Chart.getChart = function() { return null; };
+  Chart.register = function() {};
+  console.warn("Chart.js CDN unavailable — charts will not render. Open this file while online, or serve it from a local server.");
+}
+</script>
 <style>
 :root {--bg:#0e1116;--surface:#161b22;--surface2:#1f2630;--border:#21262d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--warn:#f78166;--ok:#34d399;}
 *{box-sizing:border-box;margin:0;padding:0;}
