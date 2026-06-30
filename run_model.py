@@ -29,6 +29,7 @@ from collections import deque
 from datetime import date, timedelta
 
 from health_dashboard import get_garmin, HISTORY_FILE
+from run_classifier import analyze_run, DEFAULT_PROFILE
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 CONFIG = {
@@ -236,6 +237,7 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
     spd_key   = next((k for k in ["directGradeAdjustedSpeed", "directSpeed"] if k in idx), None)
     dist_key  = next((k for k in ["sumDistance", "directDistance"] if k in idx), None)
     power_key = next((k for k in ["directPower", "power"] if k in idx), None)
+    elev_key  = next((k for k in ["directElevation", "elevation"] if k in idx), None)
 
     if not hr_key:
         raise ValueError(f"No HR metric found. Available: {list(idx.keys())}")
@@ -255,11 +257,24 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
             v = vals[i]
             return v if v is not None and v > 0 else None
 
+        def get_elev(key):
+            # Elevation can legitimately be 0 or negative (sea level, valley
+            # before a climb) -- the shared get() above filters out any
+            # value <=0, which would corrupt exactly the low points of a
+            # climb that hill-repeat detection needs intact.
+            if key is None:
+                return None
+            i = idx.get(key)
+            if i is None or i >= len(vals):
+                return None
+            return vals[i]
+
         time_sec = get(time_key)
         hr       = get(hr_key)
         speed    = get(spd_key)
         dist_m   = get(dist_key)
         power    = get(power_key)
+        elev_m   = get_elev(elev_key)
 
         if time_sec is None:
             continue
@@ -274,6 +289,7 @@ def fetch_activity_stream(garmin, activity_id, debug=False):
             "pace": pace,
             "dist_km": round(dist_m / 1000, 3) if dist_m else None,
             "power": round(float(power), 1) if power else None,
+            "elevation": float(elev_m) if elev_m is not None else None,
         })
 
     if points and all(p["dist_km"] is None for p in points):
@@ -955,271 +971,92 @@ def _fatigue_curve_rows(runs):
 
 def classify_workout(points, laps, metrics, activity):
     """
-    Multi-signal workout classification engine.
+    Replaces the previous in-house multi-signal classifier with
+    run_classifier.py's analyze_run() (the more rigorous, externally-built
+    module -- point-level hill-repeat shape detection with real climb/
+    recovery validation, corroborated interval detection, and a properly
+    validated confidence score, rather than the simpler lap-grade-average
+    approach this used to have).
 
-    Takes the same data already computed for every run and returns:
-      type:       one of EASY | RECOVERY | TEMPO | LONG_RUN | INTERVAL |
-                         HILL_REPEAT | PROGRESSION | FARTLEK | UNKNOWN
-      confidence: 0.0 – 1.0
-      reasons:    list of plain-English strings explaining the decision
-      emoji:      single emoji for quick display
+    This is an ADAPTER, not a rewrite of the rendering code: it converts
+    run_model's data shapes into what analyze_run() expects, then reshapes
+    the result back into the {type, label, confidence, reasons, emoji,
+    signals} shape build_comparison_section()'s HTML already renders --
+    so the dashboard template didn't need to change.
 
-    Design principles:
-    - Uses HR *and* power *and* elevation and pace variability so e.g.
-      a marathon pace run (high steady power, low variability) isn't
-      confused with an interval session.
-    - Rules are ordered from most-specific to least-specific so the
-      classifier commits early on strong signals and only falls through
-      to generic types when nothing distinctive is found.
-    - Every rule produces an explicit confidence value and reason strings
-      so the dashboard can explain *why* it classified the run.
+    Known unit conversions handled here (verified, not assumed):
+    - pace: run_model stores decimal MINUTES/km (e.g. 5.92); run_classifier
+      expects SECONDS/km (its own test data and docstring confirm this).
+      Converted via *60 below.
+    - elevation: now extracted directly in fetch_activity_stream() (it
+      wasn't pulled before -- needed specifically for run_classifier's
+      point-level hill-repeat shape detection, which is the main reason
+      for this swap).
+    - aerobic_te / anaerobic_te: NOT verified against this user's real
+      Garmin activity dict yet (no prior code in this file referenced
+      these fields). Pulled defensively via .get() with a 0 default, and
+      surfaced under --debug so a real run can confirm the actual field
+      name rather than guessing -- same lesson as the vertical-oscillation
+      and stride-length field-name bugs found earlier in this project.
     """
-    if not points or not laps:
-        return {"type": "UNKNOWN", "label": "Unclassified", "confidence": 0.0, "reasons": ["Insufficient data"], "emoji": "❓", "signals": {}}
+    if not points:
+        return {"type": "UNKNOWN", "label": "Unclassified", "confidence": 0.0,
+                "reasons": ["Insufficient data"], "emoji": "\u2753", "signals": {}}
 
-    reasons = []
-    evidence_for = {}  # type -> list of (weight, reason)
+    hr_series    = [p.get("hr_smooth") or p.get("hr") for p in points]
+    elev_series  = [p.get("elevation") for p in points]
+    pace_series_min_per_km = [p.get("pace_smooth") or p.get("pace") for p in points]
+    # Convert decimal-minutes/km -> seconds/km; keep None as None rather
+    # than letting it silently become 0 (0 sec/km would look like an
+    # impossibly fast "surge" to the interval detector).
+    pace_series_sec_per_km = [v * 60 if v is not None else None for v in pace_series_min_per_km]
+    power_series = [p.get("power") for p in points]
+    has_real_power = any(v is not None and v > 0 for v in power_series)
 
-    def vote(wtype, weight, reason):
-        evidence_for.setdefault(wtype, []).append((weight, reason))
+    distance_km = metrics.get("total_dist_km") or 0
 
-    # ── EXTRACT FEATURES ─────────────────────────────────────────────────────
+    activity_for_classifier = {
+        "distance":  distance_km,
+        "hr":        [v if v is not None else 0 for v in hr_series],
+        "pace":      [v if v is not None else 0 for v in pace_series_sec_per_km],
+        "power":     [v if v is not None else 0 for v in power_series] if has_real_power else None,
+        "elevation": [v if v is not None else 0 for v in elev_series],
+        # Not verified against a real Garmin activity dict yet -- see
+        # docstring above. Defaults to 0 (no aerobic/anaerobic signal)
+        # rather than crashing if the key doesn't exist or is named
+        # differently in practice.
+        "aerobic_te":   (activity or {}).get("aerobicTrainingEffect", 0) or 0,
+        "anaerobic_te": (activity or {}).get("anaerobicTrainingEffect", 0) or 0,
+        "max_hr": DEFAULT_PROFILE.max_hr,  # profile.max_hr takes priority in extract_features anyway
+    }
 
-    total_duration_min = points[-1]["t"] / 60 if points else 0
-    total_dist_km = metrics.get("total_dist_km") or 0
-
-    # HR features
-    hr_vals = [p["hr_smooth"] for p in points if p.get("hr_smooth")]
-    avg_hr    = sum(hr_vals) / len(hr_vals) if hr_vals else 0
-    hr_std    = (sum((h - avg_hr)**2 for h in hr_vals) / len(hr_vals))**0.5 if hr_vals else 0
-    hr_cv     = hr_std / avg_hr if avg_hr > 0 else 0  # coefficient of variation
-
-    # HR zone distribution
-    # Using absolute HR anchors based on your empirical data (185 logged runs):
-    #   Easy runs avg HR ~142, marathon HR ~166-167, threshold ~150-155
-    # These anchor-based zones are more reliable than %max_hr since your
-    # actual max during races is 166-167, not 190 (the 190 CONFIG value is
-    # a conservative ceiling for HR reserve calculation, not a zone boundary)
-    max_hr = CONFIG["max_hr"]
-    Z1_MAX = 130  # very easy / recovery
-    Z2_MAX = 148  # easy aerobic (your typical easy run sits in this range)
-    Z3_MAX = 158  # moderate / marathon pace
-    Z4_MAX = 168  # threshold / hard
-    # Z5 = above 168
-
-    z1_pct = sum(1 for h in hr_vals if h < Z1_MAX)         / len(hr_vals) * 100 if hr_vals else 0
-    z2_pct = sum(1 for h in hr_vals if Z1_MAX <= h < Z2_MAX) / len(hr_vals) * 100 if hr_vals else 0
-    z3_pct = sum(1 for h in hr_vals if Z2_MAX <= h < Z3_MAX) / len(hr_vals) * 100 if hr_vals else 0
-    z4_pct = sum(1 for h in hr_vals if Z3_MAX <= h < Z4_MAX) / len(hr_vals) * 100 if hr_vals else 0
-    z5_pct = sum(1 for h in hr_vals if h >= Z4_MAX)          / len(hr_vals) * 100 if hr_vals else 0
-    low_hr_pct = z1_pct + z2_pct  # Z1+Z2 = below aerobic threshold
-
-    # Pace features
-    pace_vals = [p["pace_smooth"] for p in points if p.get("pace_smooth") and p["pace_smooth"] < 12]
-    avg_pace  = sum(pace_vals) / len(pace_vals) if pace_vals else 0
-    pace_std  = (sum((p - avg_pace)**2 for p in pace_vals) / len(pace_vals))**0.5 if pace_vals else 0
-    pace_cv   = pace_std / avg_pace if avg_pace > 0 else 0
-
-    # First half vs second half (for progression detection)
-    mid = len(points) // 2
-    first_half_pace  = sum(p["pace_smooth"] for p in points[:mid] if p.get("pace_smooth")) / max(mid, 1)
-    second_half_pace = sum(p["pace_smooth"] for p in points[mid:] if p.get("pace_smooth")) / max(mid, 1)
-
-    # Power features (from activity summary if lap data has it)
-    power_vals = [p["power"] for p in points if p.get("power") and p["power"] > 0]
-    avg_power_run = sum(power_vals) / len(power_vals) if power_vals else None
-    pvi_run = metrics.get("pvi")
-    np_ap_ratio = pvi_run  # same thing
-
-    # Elevation features (from laps)
-    total_elev_gain = sum(l.get("elev_gain_m", 0) for l in laps)
-    elev_per_km = total_elev_gain / total_dist_km if total_dist_km > 0 else 0
-
-    # Cadence variability
-    cad_vals = [l["cadence"] for l in laps if l.get("cadence")]
-    cad_std = (sum((c - sum(cad_vals)/len(cad_vals))**2 for c in cad_vals) / len(cad_vals))**0.5 if len(cad_vals) > 1 else 0
-
-    # HR decoupling (drift) — from existing metrics
-    hr_drift = metrics.get("decoupling") or 0
-
-    # ── INTERVAL DETECTION ───────────────────────────────────────────────────
-    # Find "work blocks": sustained periods where HR or power spikes
-    # significantly above the run average, separated by recoveries
-    HIGH_HR_THRESH  = avg_hr + hr_std * 0.7
-    LOW_HR_THRESH   = avg_hr - hr_std * 0.5
-    MIN_BLOCK_SEC   = 90
-    MIN_RECOV_SEC   = 30
-
-    high_blocks  = []
-    recov_blocks = []
-    in_high = False
-    block_start = None
-
-    for i, p in enumerate(points):
-        hr = p.get("hr_smooth")
-        if hr is None:
-            continue
-        if hr >= HIGH_HR_THRESH and not in_high:
-            in_high = True
-            block_start = p["t"]
-        elif hr < LOW_HR_THRESH and in_high:
-            duration = p["t"] - block_start
-            if duration >= MIN_BLOCK_SEC:
-                high_blocks.append({"start": block_start, "end": p["t"], "duration": duration})
-            in_high = False
-            block_start = p["t"]
-    if in_high and block_start:
-        duration = points[-1]["t"] - block_start
-        if duration >= MIN_BLOCK_SEC:
-            high_blocks.append({"start": block_start, "end": points[-1]["t"], "duration": duration})
-
-    n_intervals = len(high_blocks)
-    avg_interval_sec = sum(b["duration"] for b in high_blocks) / n_intervals if n_intervals > 0 else 0
-
-    # Check for recovery drops between high blocks
-    has_recoveries = False
-    if len(high_blocks) >= 2:
-        for j in range(len(high_blocks) - 1):
-            gap = high_blocks[j+1]["start"] - high_blocks[j]["end"]
-            if gap >= MIN_RECOV_SEC:
-                has_recoveries = True
-                break
-
-    # ── HILL REPEAT DETECTION ────────────────────────────────────────────────
-    # High-grade laps + effort spike + recovery pattern
-    steep_laps = [l for l in laps if abs(l.get("avg_grade_pct") or 0) >= 3.0
-                  and (l.get("duration_sec") or 0) < 180]
-    hill_repeats_detected = len(steep_laps) >= 3 and has_recoveries
-
-    # ── APPLY DECISION LOGIC (ordered most-specific → least-specific) ─────────
-
-    # 1. Hill Repeats — most distinctive pattern
-    if hill_repeats_detected:
-        vote("HILL_REPEAT", 1.0, f"{len(steep_laps)} steep laps (≥3% grade, <3min) with recovery periods")
-        if elev_per_km > 15:
-            vote("HILL_REPEAT", 0.5, f"High elevation: {round(elev_per_km)}m gain/km")
-        if n_intervals >= 3:
-            vote("HILL_REPEAT", 0.4, f"{n_intervals} HR spikes matching repeat structure")
-
-    # 2. Intervals — repeated hard blocks with clear recoveries
-    if n_intervals >= 3 and has_recoveries and not hill_repeats_detected:
-        vote("INTERVAL", 1.0, f"{n_intervals} high-intensity blocks detected")
-        if avg_interval_sec > 0:
-            vote("INTERVAL", 0.5, f"Avg work duration: {round(avg_interval_sec)}s")
-        if np_ap_ratio and np_ap_ratio > 1.08:
-            vote("INTERVAL", 0.4, f"NP/AP ratio {np_ap_ratio:.3f} — variable effort confirmed")
-        if z4_pct + z5_pct > 30:
-            vote("INTERVAL", 0.4, f"{round(z4_pct+z5_pct)}% of run in Z4-Z5")
-
-    # 3. Tempo — high intensity, very steady, continuous
-    is_steady = (np_ap_ratio or 0) < 1.06 and pace_cv < 0.04
-    is_high_intensity = (z3_pct + z4_pct) > 40 and avg_hr >= CONFIG["tempo_hr_min"]
-    if is_high_intensity and is_steady and n_intervals < 3 and total_duration_min > 15:
-        vote("TEMPO", 1.0, f"{round(z3_pct+z4_pct)}% of run in Z3-Z4 with steady output")
-        if np_ap_ratio:
-            vote("TEMPO", 0.5, f"NP/AP {np_ap_ratio:.3f} — very controlled pacing")
-        if total_duration_min > 25:
-            vote("TEMPO", 0.3, f"Continuous {round(total_duration_min)}min at threshold")
-
-    # 4. Progression — second half meaningfully faster
-    if first_half_pace > 0 and second_half_pace > 0:
-        speed_ratio = first_half_pace / second_half_pace  # >1 means 2nd half faster
-        if speed_ratio >= 1.05:
-            vote("PROGRESSION", 1.0, f"Second half {round((speed_ratio-1)*100)}% faster than first")
-            if (z3_pct + z4_pct) < 50:
-                vote("PROGRESSION", 0.4, "HR remained controlled throughout")
-
-    # 5. Long Run — duration + steady aerobic effort
-    if total_duration_min >= 75:
-        vote("LONG_RUN", 1.0, f"Duration {round(total_duration_min)}min")
-        if np_ap_ratio and np_ap_ratio < 1.08:
-            vote("LONG_RUN", 0.5, f"NP/AP {np_ap_ratio:.3f} — aerobically steady")
-        if abs(hr_drift) < 8:
-            vote("LONG_RUN", 0.4, f"HR drift {hr_drift}% — good aerobic durability")
-
-    # 6. Recovery Run — HR below aerobic threshold, slow pace
-    is_very_low_intensity = low_hr_pct > 70 and avg_hr < 135
-    is_slow = avg_pace > CONFIG["easy_pace_threshold"]
-    if is_very_low_intensity and is_slow and total_dist_km < 12:
-        vote("RECOVERY", 1.0, f"{round(low_hr_pct)}% of run below Z2, avg HR {round(avg_hr)} bpm")
-        vote("RECOVERY", 0.5, f"Avg pace {fmt_pace(avg_pace)} — slower than normal easy")
-
-    # 7. Easy Run — below threshold, steady, not recovery
-    is_low_intensity = low_hr_pct > 55 and avg_hr < max_hr * 0.75
-    if is_low_intensity and is_steady and not is_very_low_intensity:
-        vote("EASY", 1.0, f"{round(low_hr_pct)}% of run in Z1-Z2")
-        if np_ap_ratio and np_ap_ratio < 1.06:
-            vote("EASY", 0.5, f"NP/AP {np_ap_ratio:.3f} — aerobic base work")
-
-    # 8. Fartlek — high variability but not structured enough for intervals
-    if n_intervals >= 2 and not has_recoveries and hr_cv > 0.06:
-        vote("FARTLEK", 0.8, f"Variable HR (CV={hr_cv:.2f}) without clear structured recovery")
-        if pace_cv > 0.06:
-            vote("FARTLEK", 0.4, f"Variable pace (CV={pace_cv:.2f}) — unstructured surges")
-
-    # ── PICK WINNER ───────────────────────────────────────────────────────────
-    if not evidence_for:
-        return {"type": "UNKNOWN", "label": "Unclassified", "confidence": 0.0, "reasons": ["No clear pattern detected"], "emoji": "❓", "signals": {}}
-
-    # Score each type: sum of weights
-    scores = {t: sum(w for w, _ in ev) for t, ev in evidence_for.items()}
-    best_type = max(scores, key=scores.get)
-    total_weight = scores[best_type]
-
-    # Confidence: normalise against a "perfect" score of ~2.0
-    # (a type that hits all its signals gets ~2.0 combined weight)
-    raw_confidence = min(0.98, total_weight / 2.2)
-
-    # Penalise if another type is close (ambiguous run)
-    sorted_scores = sorted(scores.values(), reverse=True)
-    if len(sorted_scores) >= 2 and sorted_scores[1] / sorted_scores[0] > 0.65:
-        raw_confidence *= 0.85  # ambiguous signal
-        reasons.append(f"Note: also shows characteristics of {sorted(scores, key=scores.get, reverse=True)[1]}")
-
-    type_reasons = [r for _, r in evidence_for[best_type]]
-    type_reasons.extend(reasons)
+    result = analyze_run(activity_for_classifier, profile=DEFAULT_PROFILE)
 
     EMOJIS = {
-        "EASY":        "🟢",
-        "RECOVERY":    "🔵",
-        "TEMPO":       "🟡",
-        "LONG_RUN":    "🟣",
-        "INTERVAL":    "🔴",
-        "HILL_REPEAT": "⛰️",
-        "PROGRESSION": "📈",
-        "FARTLEK":     "🌀",
-        "UNKNOWN":     "❓",
-    }
-    LABELS = {
-        "EASY":        "Easy Run",
-        "RECOVERY":    "Recovery Run",
-        "TEMPO":       "Tempo / Threshold",
-        "LONG_RUN":    "Long Run",
-        "INTERVAL":    "Interval Session",
-        "HILL_REPEAT": "Hill Repeats",
-        "PROGRESSION": "Progression Run",
-        "FARTLEK":     "Fartlek",
-        "UNKNOWN":     "Unclassified",
+        "Recovery": "\U0001F535", "Easy/Base": "\U0001F7E2", "Long Run": "\U0001F7E3",
+        "Progression": "\U0001F4C8", "Tempo": "\U0001F7E1", "Threshold": "\U0001F7E0",
+        "VO2 Max": "\U0001F534", "Anaerobic": "\U0001F7E4", "Hill Run": "\u26F0\uFE0F",
+        "Hill Repeats": "\U0001F3D4\uFE0F", "Race": "\U0001F3C1", "Marathon Pace": "\U0001F3C3",
+        "Unknown": "\u2753",
     }
 
     return {
-        "type":       best_type,
-        "label":      LABELS[best_type],
-        "confidence": round(raw_confidence, 2),
-        "reasons":    type_reasons[:4],  # cap at 4 for display
-        "emoji":      EMOJIS[best_type],
-        "signals": {
-            "avg_hr":       round(avg_hr, 1),
-            "low_hr_pct":   round(low_hr_pct, 1),
-            "z4_z5_pct":    round(z4_pct + z5_pct, 1),
-            "pace_cv":      round(pace_cv, 3),
-            "hr_cv":        round(hr_cv, 3),
-            "np_ap_ratio":  np_ap_ratio,
-            "n_intervals":  n_intervals,
-            "total_elev_m": round(total_elev_gain, 1),
-            "duration_min": round(total_duration_min, 1),
-        },
+        "type": result["run_type"],
+        "label": result["run_type"],
+        # run_classifier reports confidence on a 0-100 scale; this
+        # dashboard's existing rendering compares against 0.80/0.60 on a
+        # 0-1 scale -- converting here keeps the HTML template unchanged.
+        "confidence": (result.get("confidence") or 0) / 100,
+        "reasons": result.get("debug", {}).get("reasons", []),
+        "emoji": EMOJIS.get(result["run_type"], "\u2753"),
+        "signals": result.get("debug", {}).get("features", {}),
+        # Full result kept available for anything that wants the richer
+        # output (coach_summary, hill_repeats detail, junk_mile flag, etc.)
+        # without forcing every caller to know run_classifier's schema.
+        "classifier_debug": result,
     }
+
+
 
 
 def build_comparison_section(runs):
