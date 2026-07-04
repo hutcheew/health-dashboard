@@ -8848,7 +8848,7 @@
       "resting_hr": 53,
       "hrv": 31,
       "sleep_score": 76,
-      "body_battery": 34,
+      "body_battery": 20,
       "ran_today": false,
       "last_run": {
         "date": "2026-07-03",
@@ -8856,10 +8856,10 @@
         "pace": 5.81,
         "avg_hr": 141.0
       },
-      "checkin_stiffness": null,
-      "checkin_first_steps_pain": null,
-      "checkin_post_run_pain": null,
-      "checkin_calf_raises": null
+      "checkin_stiffness": 1,
+      "checkin_first_steps_pain": 0,
+      "checkin_post_run_pain": 0,
+      "checkin_calf_raises": true
     },
     "scores": {
       "readiness": 58,
