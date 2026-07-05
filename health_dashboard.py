@@ -4098,9 +4098,14 @@ new Chart(document.getElementById('sleepStagesChart'), {{
   const bodyBattery = {body_battery if isinstance(body_battery, int) else 'null'};
   const readinessScore = {readiness_score if isinstance(readiness_score, int) else 'null'};
 
-  // Register service worker for PWA
+  // Unregister any existing service worker — cache control is now handled
+  // via the _headers file (GitHub Pages). Keeping a SW active can cause
+  // stale-content issues on mobile where DevTools aren't available to
+  // manually unregister it.
   if ('serviceWorker' in navigator) {{
-    navigator.serviceWorker.register('sw.js').catch(() => {{}});
+    navigator.serviceWorker.getRegistration().then(r => {{
+      if (r) r.unregister();
+    }});
   }}
 
   // Request notification permission and alert on low body battery
