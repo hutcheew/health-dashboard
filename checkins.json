@@ -127,11 +127,11 @@
   },
   {
     "date": "2026-07-05",
-    "stiffness": 1,
+    "stiffness": 0,
     "first_steps_pain": 0,
     "post_run_pain": 0,
     "calf_raises": true,
     "source": "browser",
-    "saved_at": "2026-07-05T09:06:01.844Z"
+    "saved_at": "2026-07-06T00:51:50.056Z"
   }
 ]
