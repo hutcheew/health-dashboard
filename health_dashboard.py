@@ -51,7 +51,7 @@ def fetch_garmin_data(garmin):
 
     # Recent activities — fetch 20 to get enough history for load calculations
     activities = garmin.get_activities(0, 20)
-    runs = [a for a in activities if a.get("activityType", {}).get("typeKey") == "running"]
+    runs = [a for a in activities if a.get("activityType", {}).get("typeKey") in ("running", "treadmill_running")]
     data["runs"] = []
     for r in runs[:10]:
         aid = r["activityId"]
@@ -2083,11 +2083,18 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         recent_runs_export.append({
             "date": r["date"],
             "distance_km": r["distance"],
+            "duration_min": r.get("duration"),
             "avg_pace": r["avg_pace"],
             "avg_hr": r["avg_hr"],
+            "cadence": r.get("cadence"),
+            "calories": r.get("calories"),
+            "elevation_m": r.get("elevation"),
             "gct_balance_left": round(sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
             "gct_balance_right": round(100-sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
+            "laps": r["laps"],
         })
+
+    garmin_readiness = garmin_data.get("readiness", {})
 
     export_data = json.dumps({
         "generated": datetime.now().strftime('%Y-%m-%d %H:%M'),
@@ -2101,16 +2108,73 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             "this_week_km": achilles.get("this_week_km"),
             "last_week_km": achilles.get("last_week_km"),
         },
+        "load": {
+            "acute_km": load_data.get("acute"),
+            "chronic_km": load_data.get("chronic"),
+            "acr": load_data.get("acr"),
+            "acr_status": load_data.get("acr_status"),
+            "easy_pct": load_data.get("easy_pct"),
+            "moderate_pct": load_data.get("mod_pct"),
+            "hard_pct": load_data.get("hard_pct"),
+            "btb_risk": load_data.get("btb_risk"),
+        },
+        "tissue_capacity": {
+            "score": tissue_capacity.get("score"),
+            "level": tissue_capacity.get("level"),
+            "limiting_factor": tissue_capacity.get("limiting_factor"),
+        },
+        "monotony": {
+            "score": monotony.get("score"),
+            "level": monotony.get("level"),
+        },
         "readiness": {
-            "score": readiness.get("score"),
-            "level": readiness.get("level"),
-            "sleep_score": readiness.get("sleep_score"),
+            "score": garmin_readiness.get("score"),
+            "level": garmin_readiness.get("level"),
+            "sleep_score": garmin_readiness.get("sleep_score"),
             "hrv_weekly_avg": hrv.get("weekly_avg"),
             "resting_hr": resting_hr,
+            "min_hr": garmin_data.get("min_hr"),
+            "max_hr": garmin_data.get("max_hr"),
             "body_battery": body_battery,
-            "recovery_time": readiness.get("recovery_time"),
-            "acwr": readiness.get("acwr"),
+            "recovery_time": garmin_readiness.get("recovery_time"),
+            "acwr": garmin_readiness.get("acwr"),
+            "feedback": garmin_readiness.get("feedback"),
         },
+        "hrv": {
+            "weekly_avg": hrv.get("weekly_avg"),
+            "daily_times": hrv.get("times", []),
+            "daily_values": hrv.get("values", []),
+        },
+        "sleep": {
+            "duration_hrs": sleep.get("duration_hrs"),
+            "deep_hrs": sleep.get("deep_hrs"),
+            "light_hrs": sleep.get("light_hrs"),
+            "rem_hrs": sleep.get("rem_hrs"),
+            "awake_hrs": sleep.get("awake_hrs"),
+            "score": sleep.get("score"),
+            "avg_spo2": sleep.get("avg_spo2"),
+            "avg_respiration": sleep.get("avg_respiration"),
+            "avg_stress": sleep.get("avg_stress"),
+            "levels": sleep.get("levels", []),
+        },
+        "vo2max": garmin_data.get("vo2max"),
+        "race_predictions": garmin_data.get("race_predictions", {}),
+        "endurance_score": garmin_data.get("endurance_score", {}),
+        "running_tolerance": garmin_data.get("running_tolerance", {}),
+        "training_load_balance": garmin_data.get("training_load", {}),
+        "intensity_minutes": garmin_data.get("intensity_minutes", {}),
+        "intervals_icu": {
+            "ctl": latest_ctl.get("ctl"),
+            "atl": latest_ctl.get("atl"),
+            "tsb": latest_ctl.get("tsb"),
+            "ctl_atl_history": intervals.get("ctl_atl", []) if intervals else [],
+        } if intervals else None,
+        "recovery": {
+            "score": recovery.get("score"),
+            "level": recovery.get("level"),
+            "factors": recovery.get("factors", []),
+        },
+        "why_today": why_today,
         "achilles": {
             "score": achilles.get("score"),
             "level": achilles.get("level"),
@@ -2119,17 +2183,21 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         "last_run": {
             "date": last_run.get("date"),
             "distance_km": last_run.get("distance"),
+            "duration_min": last_run.get("duration"),
             "avg_pace_min_km": last_run.get("avg_pace"),
             "avg_hr": last_run.get("avg_hr"),
             "cadence": last_run.get("cadence"),
+            "calories": last_run.get("calories"),
+            "elevation_m": last_run.get("elevation"),
             "gct_balance_left_pct": last_gct_balance,
             "gct_balance_right_pct": last_gct_balance_r,
             "avg_gct_ms": last_gct_avg,
+            "avg_power": None,
             "laps": last_run.get("laps", []),
         },
         "recent_runs": recent_runs_export,
-        "blood_pressure": bp_readings[:10],
-        "checkins": checkins[:14],
+        "blood_pressure": bp_readings[:20],
+        "checkins": checkins[:30],
         "latest_checkin": latest_checkin,
     }, default=str)
 
