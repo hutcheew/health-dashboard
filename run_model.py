@@ -100,7 +100,8 @@ def find_latest_run_date(garmin=None, lookback_days=21):
     today = date.today()
     for offset in range(lookback_days + 1):
         d = today - timedelta(days=offset)
-        activities = garmin.get_activities_by_date(d.isoformat(), d.isoformat(), "running")
+        d_str = d.isoformat()
+        activities = get_all_runs(garmin, d_str, d_str)
         if activities:
             return d
     raise SystemExit(f"No runs found in the last {lookback_days} days via score_history or Garmin.")
@@ -154,6 +155,14 @@ def get_score_history_entry(d_str):
 
 
 # ── GARMIN FETCH ──────────────────────────────────────────────────────────────
+def get_all_runs(garmin, start_date, end_date):
+    """Fetch both outdoor and treadmill runs from Garmin for a date range."""
+    runs = []
+    for act_type in ("running", "treadmill_running"):
+        runs.extend(garmin.get_activities_by_date(start_date, end_date, act_type))
+    return runs
+
+
 def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_km, window_days=21):
     """
     Find the best comparison run near anchor_date (e.g. ~1 year before the
@@ -171,7 +180,7 @@ def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_k
     """
     start = (anchor_date - timedelta(days=window_days)).isoformat()
     end = (anchor_date + timedelta(days=window_days)).isoformat()
-    activities = garmin.get_activities_by_date(start, end, "running")
+    activities = get_all_runs(garmin, start, end)
     if not activities:
         return None, None
 
@@ -220,7 +229,7 @@ def compute_ytd_mileage(garmin, through_date):
 def find_run_on_date(garmin, d, max_lookahead=7):
     for offset in range(max_lookahead + 1):
         d_str = (d + timedelta(days=offset)).isoformat()
-        activities = garmin.get_activities_by_date(d_str, d_str, "running")
+        activities = get_all_runs(garmin, d_str, d_str)
         if activities:
             run = max(activities, key=lambda a: a.get("distance", 0))
             actual = d + timedelta(days=offset)

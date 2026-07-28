@@ -66,16 +66,36 @@ def fetch_garmin_data(garmin):
                 "gct": round(lap.get("groundContactTime", 0), 1),
                 "gct_balance": round(lap.get("groundContactBalanceLeft", 50), 1),
                 "cadence": round(lap.get("averageRunningCadenceInStepsPerMinute", 0)),
+                "power": lap.get("averagePower"),
+                "vert_osc": lap.get("averageVerticalOscillation"),
+                "stride_length": lap.get("averageStrideLength"),
             })
+        avg_speed = r.get("averageSpeed")
+        max_speed = r.get("maxSpeed")
         data["runs"].append({
             "date": r["startTimeLocal"][:10],
+            "type": r.get("activityType", {}).get("typeKey", "running"),
             "distance": round(r.get("distance", 0) / 1000, 1),
             "duration": round(r.get("duration", 0) / 60, 1),
+            "moving_duration": round(r.get("movingDuration", 0) / 60, 1) if r.get("movingDuration") else None,
             "avg_hr": r.get("averageHR"),
-            "avg_pace": round(1000 / r.get("averageSpeed", 1) / 60, 2) if r.get("averageSpeed") else None,
+            "max_hr": r.get("maxHR"),
+            "avg_pace": round(1000 / avg_speed / 60, 2) if avg_speed else None,
+            "max_pace": round(1000 / max_speed / 60, 2) if max_speed else None,
             "cadence": round(r.get("averageRunningCadenceInStepsPerMinute", 0)),
+            "avg_stride_length": r.get("avgStrideLength"),
             "calories": r.get("calories"),
             "elevation": round(r.get("elevationGain", 0) or 0),
+            "max_elevation": r.get("elevationHighest"),
+            "min_elevation": r.get("elevationLow"),
+            "avg_cadence": r.get("averageRunCadence"),
+            "avg_gct": r.get("averageGroundContactTime"),
+            "gct_balance": r.get("groundContactBalanceLeft"),
+            "avg_power": r.get("averagePower"),
+            "max_power": r.get("maxPower"),
+            "training_effect_aerobic": r.get("aerobicTrainingEffect"),
+            "training_effect_anaerobic": r.get("anaerobicTrainingEffect"),
+            "avg_temperature": r.get("averageTemperature"),
             "laps": lap_data,
         })
 
@@ -278,6 +298,93 @@ def fetch_garmin_data(garmin):
         }
     except:
         data["sleep"] = {}
+
+    # Daily stress — stress score + time in stress/rest/low periods
+    try:
+        stress = garmin.get_stress_data(TODAY)
+        data["stress"] = {
+            "overall": stress.get("overallStressLevel"),
+            "rest": stress.get("restStressDuration"),
+            "low": stress.get("lowStressDuration"),
+            "med": stress.get("medStressDuration"),
+            "high": stress.get("highStressDuration"),
+        }
+    except:
+        data["stress"] = {}
+
+    # Respiration data — overnight breathing rate trend
+    try:
+        resp = garmin.get_respiration_data(TODAY)
+        daily_resp = resp.get("dailyAvg", resp.get("averageRespiration"))
+        data["respiration"] = {
+            "avg": daily_resp,
+        }
+    except:
+        data["respiration"] = {}
+
+    # SpO2 — overnight blood oxygen average
+    try:
+        spo2 = garmin.get_spo2_data(TODAY)
+        data["spo2"] = {
+            "avg": spo2.get("avgSpO2") or spo2.get("averageSpO2"),
+            "min": spo2.get("minSpO2"),
+            "max": spo2.get("maxSpO2"),
+        }
+    except:
+        data["spo2"] = {}
+
+    # Body composition — weight, body fat, BMI
+    try:
+        bc = garmin.get_body_composition(TODAY, TODAY)
+        entries = bc.get("bodyCompositionHistoryList", [])
+        if entries:
+            latest = entries[-1]
+            data["body_composition"] = {
+                "weight_kg": latest.get("weight"),
+                "body_fat_pct": latest.get("bodyFat"),
+                "muscle_mass_kg": latest.get("muscleMass"),
+                "bone_mass_kg": latest.get("boneMass"),
+                "bmi": latest.get("bmi"),
+            }
+        else:
+            data["body_composition"] = {}
+    except:
+        data["body_composition"] = {}
+
+    # Daily steps — today and recent days
+    try:
+        steps = garmin.get_daily_steps(TODAY)
+        today_steps = steps.get("totalSteps") or steps.get("steps")
+        data["steps"] = {
+            "today": today_steps,
+            "goal": steps.get("stepGoal"),
+        }
+    except:
+        data["steps"] = {}
+
+    # Floors climbed
+    try:
+        floors = garmin.get_floors(TODAY)
+        data["floors"] = {
+            "today": floors.get("floorsAscended"),
+            "goal": floors.get("floorsAscendedGoal"),
+        }
+    except:
+        data["floors"] = {}
+
+    # Resting HR trend — last 7 days for chart
+    try:
+        rhr = garmin.get_rhr_day(TODAY)
+        rhr_list = rhr.get("hrzDTOs", rhr.get("restingHRList", []))
+        if isinstance(rhr_list, list) and rhr_list:
+            data["resting_hr_trend"] = [
+                {"date": e.get("timestampLocal", "")[:10], "rhr": e.get("value") or e.get("restingHR")}
+                for e in rhr_list[-7:] if e.get("value") or e.get("restingHR")
+            ]
+        else:
+            data["resting_hr_trend"] = []
+    except:
+        data["resting_hr_trend"] = []
 
     return data
 
@@ -2082,15 +2189,27 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     for r in runs[:8]:
         recent_runs_export.append({
             "date": r["date"],
+            "type": r.get("type", "running"),
             "distance_km": r["distance"],
             "duration_min": r.get("duration"),
+            "moving_duration_min": r.get("moving_duration"),
             "avg_pace": r["avg_pace"],
+            "max_pace": r.get("max_pace"),
             "avg_hr": r["avg_hr"],
+            "max_hr": r.get("max_hr"),
             "cadence": r.get("cadence"),
+            "avg_stride_length": r.get("avg_stride_length"),
             "calories": r.get("calories"),
             "elevation_m": r.get("elevation"),
-            "gct_balance_left": round(sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
-            "gct_balance_right": round(100-sum(l["gct_balance"] for l in r["laps"])/len(r["laps"]),1) if r["laps"] else None,
+            "max_elevation": r.get("max_elevation"),
+            "min_elevation": r.get("min_elevation"),
+            "avg_gct_ms": r.get("avg_gct"),
+            "gct_balance_left": r.get("gct_balance"),
+            "avg_power": r.get("avg_power"),
+            "max_power": r.get("max_power"),
+            "training_effect_aerobic": r.get("training_effect_aerobic"),
+            "training_effect_anaerobic": r.get("training_effect_anaerobic"),
+            "avg_temperature": r.get("avg_temperature"),
             "laps": r["laps"],
         })
 
@@ -2182,23 +2301,40 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         },
         "last_run": {
             "date": last_run.get("date"),
+            "type": last_run.get("type", "running"),
             "distance_km": last_run.get("distance"),
             "duration_min": last_run.get("duration"),
+            "moving_duration_min": last_run.get("moving_duration"),
             "avg_pace_min_km": last_run.get("avg_pace"),
+            "max_pace_min_km": last_run.get("max_pace"),
             "avg_hr": last_run.get("avg_hr"),
+            "max_hr": last_run.get("max_hr"),
             "cadence": last_run.get("cadence"),
+            "avg_stride_length": last_run.get("avg_stride_length"),
             "calories": last_run.get("calories"),
             "elevation_m": last_run.get("elevation"),
-            "gct_balance_left_pct": last_gct_balance,
-            "gct_balance_right_pct": last_gct_balance_r,
-            "avg_gct_ms": last_gct_avg,
-            "avg_power": None,
+            "max_elevation": last_run.get("max_elevation"),
+            "min_elevation": last_run.get("min_elevation"),
+            "gct_balance_left_pct": last_run.get("gct_balance"),
+            "avg_gct_ms": last_run.get("avg_gct"),
+            "avg_power": last_run.get("avg_power"),
+            "max_power": last_run.get("max_power"),
+            "training_effect_aerobic": last_run.get("training_effect_aerobic"),
+            "training_effect_anaerobic": last_run.get("training_effect_anaerobic"),
+            "avg_temperature": last_run.get("avg_temperature"),
             "laps": last_run.get("laps", []),
         },
         "recent_runs": recent_runs_export,
         "blood_pressure": bp_readings[:20],
         "checkins": checkins[:30],
         "latest_checkin": latest_checkin,
+        "stress": garmin_data.get("stress", {}),
+        "respiration": garmin_data.get("respiration", {}),
+        "spo2": garmin_data.get("spo2", {}),
+        "body_composition": garmin_data.get("body_composition", {}),
+        "steps": garmin_data.get("steps", {}),
+        "floors": garmin_data.get("floors", {}),
+        "resting_hr_trend": garmin_data.get("resting_hr_trend", []),
     }, default=str)
 
     # ── COACH PANEL DATA ─────────────────────────────────────────────────────
