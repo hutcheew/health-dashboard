@@ -50,6 +50,16 @@ CONFIG = {
     "onset_gct_pct":    5.0,   # GCT drift from early-run baseline (%)
     "onset_stride_pct": 3.0,   # stride shrinkage from early-run baseline (%)
     "onset_balance_pct": 1.5,  # GCT balance drift from 50/50 or from early baseline (percentage points)
+    # Mechanical Fatigue Index (MFI) — reference maxima for normalisation
+    "mfi_gct_max_ms":      30,   # 30ms GCT drift = score 1.0 (max penalty)
+    "mfi_stride_max_pct":   5,   #  5% stride collapse = score 1.0
+    "mfi_cadence_max_spm":  8,   #  8 spm cadence drop = score 1.0
+    "mfi_balance_max_pct":  4,   #  4% balance drift = score 1.0
+    "mfi_power_max_pct":   10,   # 10% power drop = score 1.0
+    # Progression detection — pace/power must improve by this % over ≥3 km
+    "prog_pace_pct":      12,    # % pace improvement (pace = min/km, so decrease = improvement)
+    "prog_power_pct":     12,    # % power increase
+    "prog_min_km":         3,    # minimum consecutive km showing improvement
 }
 
 COLORS = ["#58a6ff", "#f78166", "#34d399", "#fbbf24", "#bc8cff", "#ff7b72"]
@@ -547,6 +557,202 @@ def detect_fatigue_onset(laps):
     }
 
 
+# ── PROGRESSION DETECTION ────────────────────────────────────────────────────
+def detect_progression_run(laps):
+    """Detect intentional pace transitions (e.g. progression / fast-finish runs).
+
+    Scans consecutive km splits for sustained pace improvement (pace goes
+    *down* in min/km) or sustained power increase.  Returns None for
+    non-progression runs, or a dict describing the detected phases.
+
+    The algorithm:
+      1. Walk km-by-km looking for the longest streak where pace improves
+         (or power increases) by >= the CONFIG threshold relative to the
+         previous km.
+      2. If that streak is >= prog_min_km km, treat the run as a
+         progression run.
+      3. Split into easy phase (everything before the streak starts) and
+         fast phase (the streak itself).  The tail after the streak
+         (cooldown) is included in the fast phase if it's short (<3 km),
+         otherwise treated separately.
+    """
+    if not laps or len(laps) < 4:
+        return None
+
+    pace_pct = CONFIG["prog_pace_pct"] / 100
+    power_pct = CONFIG["prog_power_pct"] / 100
+    min_km = CONFIG["prog_min_km"]
+
+    pace_streak, power_streak = 0, 0
+    pace_start, power_start = None, None
+
+    for i in range(1, len(laps)):
+        prev_pace = laps[i - 1].get("avg_pace")
+        curr_pace = laps[i].get("avg_pace")
+        prev_power = laps[i - 1].get("avg_power")
+        curr_power = laps[i].get("avg_power")
+
+        # Pace improves = value decreases (min/km)
+        if (prev_pace and curr_pace and prev_pace > 0
+                and (prev_pace - curr_pace) / prev_pace >= pace_pct):
+            if pace_streak == 0:
+                pace_start = i
+            pace_streak += 1
+        else:
+            pace_streak = 0
+
+        # Power improves = value increases
+        if (prev_power and curr_power and prev_power > 0
+                and (curr_power - prev_power) / prev_power >= power_pct):
+            if power_streak == 0:
+                power_start = i
+            power_streak += 1
+        else:
+            power_streak = 0
+
+    is_prog = pace_streak >= min_km or power_streak >= min_km
+    if not is_prog:
+        return None
+
+    # Pick the dominant signal (longer streak wins, ties go to pace)
+    if pace_streak >= power_streak and pace_start is not None:
+        streak_start = pace_start
+        streak_len = pace_streak
+        signal = "pace"
+    elif power_start is not None:
+        streak_start = power_start
+        streak_len = power_streak
+        signal = "power"
+    else:
+        return None
+
+    easy_laps = laps[:streak_start]
+    fast_laps = laps[streak_start:streak_start + streak_len]
+    cooldown_laps = laps[streak_start + streak_len:]
+
+    return {
+        "is_progression": True,
+        "signal": signal,
+        "streak_km": streak_len,
+        "streak_start_km": fast_laps[0]["cum_km"] if fast_laps else None,
+        "easy_laps": easy_laps,
+        "fast_laps": fast_laps,
+        "cooldown_laps": cooldown_laps,
+        "easy_pace_avg": lap_avg(easy_laps, "avg_pace"),
+        "fast_pace_avg": lap_avg(fast_laps, "avg_pace"),
+        "easy_hr_avg": lap_avg(easy_laps, "avg_hr"),
+        "fast_hr_avg": lap_avg(fast_laps, "avg_hr"),
+    }
+
+
+# ── MECHANICAL FATIGUE INDEX ─────────────────────────────────────────────────
+def compute_mfi(laps_subset):
+    """Compute the Mechanical Fatigue Index for a set of laps.
+
+    MFI = weighted sum of normalised deltas across five signals:
+
+        0.35 × ΔGCT  +  0.25 × ΔStride  +  0.20 × ΔCadence
+      + 0.10 × ΔBalance  +  0.10 × ΔPower
+
+    Each delta is computed early-third vs late-third of the subset and
+    normalised to 0-1 using the CONFIG reference maxima, then scaled
+    to 0-100.
+
+    Returns a dict with the score, classification, and individual
+    component deltas for narrative rendering.
+    """
+    if not laps_subset or len(laps_subset) < 4:
+        return None
+
+    n = len(laps_subset)
+    third = max(1, n // 3)
+    early = laps_subset[:third]
+    late = laps_subset[-third:]
+
+    def delta_early_late(key, ref_max):
+        e = lap_avg(early, key)
+        l = lap_avg(late, key)
+        if e is None or l is None or ref_max == 0:
+            return None
+        return min(1.0, max(0.0, abs(l - e) / ref_max))
+
+    # GCT: increase = fatigue → positive delta
+    gct_raw = lap_avg(late, "gct_ms")
+    gct_early_raw = lap_avg(early, "gct_ms")
+    gct_d = delta_early_late("gct_ms", CONFIG["mfi_gct_max_ms"])
+
+    # Stride: decrease = fatigue → use absolute drop
+    stride_e = lap_avg(early, "stride_m")
+    stride_l = lap_avg(late, "stride_m")
+    if stride_e and stride_l and stride_e > 0:
+        stride_d = min(1.0, max(0.0, (stride_e - stride_l) / stride_e /
+                                 (CONFIG["mfi_stride_max_pct"] / 100)))
+    else:
+        stride_d = None
+
+    # Cadence: decrease = fatigue → use absolute drop
+    cad_e = lap_avg(early, "cadence")
+    cad_l = lap_avg(late, "cadence")
+    if cad_e and cad_l:
+        cad_d = min(1.0, max(0.0, abs(cad_e - cad_l) /
+                             CONFIG["mfi_cadence_max_spm"]))
+    else:
+        cad_d = None
+
+    # Balance: drift from 50% = fatigue
+    bal_e = lap_avg(early, "gct_balance_left")
+    bal_l = lap_avg(late, "gct_balance_left")
+    if bal_e is not None and bal_l is not None:
+        bal_d = min(1.0, max(0.0, abs(bal_l - bal_e) /
+                             CONFIG["mfi_balance_max_pct"]))
+    else:
+        bal_d = None
+
+    # Power: decrease = fatigue
+    pwr_e = lap_avg(early, "avg_power")
+    pwr_l = lap_avg(late, "avg_power")
+    if pwr_e and pwr_l and pwr_e > 0:
+        pwr_d = min(1.0, max(0.0, (pwr_e - pwr_l) / pwr_e /
+                             (CONFIG["mfi_power_max_pct"] / 100)))
+    else:
+        pwr_d = None
+
+    weights = {"gct": 0.35, "stride": 0.25, "cadence": 0.20,
+               "balance": 0.10, "power": 0.10}
+    deltas = {"gct": gct_d, "stride": stride_d, "cadence": cad_d,
+              "balance": bal_d, "power": pwr_d}
+
+    available = {k: v for k, v in deltas.items() if v is not None}
+    if not available:
+        return None
+
+    # Re-normalise weights so they sum to 1 across available components
+    total_weight = sum(weights[k] for k in available)
+    score = sum(deltas[k] * weights[k] / total_weight * 100
+                for k in available)
+    score = round(score, 1)
+
+    if score < 20:
+        label = "No mechanical fatigue"
+    elif score < 40:
+        label = "Mild fatigue"
+    elif score < 60:
+        label = "Moderate fatigue"
+    else:
+        label = "High fatigue / injury risk"
+
+    return {
+        "mfi_score": score,
+        "mfi_label": label,
+        "mfi_gct_delta_ms": round(gct_raw - gct_early_raw, 1) if gct_raw and gct_early_raw else None,
+        "mfi_stride_delta_pct": round((stride_e - stride_l) / stride_e * 100, 1) if stride_e and stride_l and stride_e > 0 else None,
+        "mfi_cadence_delta": round(cad_l - cad_e, 1) if cad_e and cad_l else None,
+        "mfi_balance_delta_pct": round(bal_l - bal_e, 2) if bal_e is not None and bal_l is not None else None,
+        "mfi_power_delta_pct": round((pwr_l - pwr_e) / pwr_e * 100, 1) if pwr_e and pwr_l and pwr_e > 0 else None,
+        "mfi_components": {k: round(v * 100, 1) for k, v in available.items()},
+    }
+
+
 def analyse_dynamics(laps, bp_idx_lap=None):
     """
     Analyse GCT, balance drift, cadence, and vertical oscillation across laps.
@@ -716,6 +922,14 @@ def analyse_dynamics(laps, bp_idx_lap=None):
             "power":   lap.get("avg_power"),
         })
 
+    # Mechanical Fatigue Index (MFI) — full run
+    mfi = compute_mfi(laps)
+
+    # Progression detection + phase-aware MFI
+    progression = detect_progression_run(laps)
+    mfi_easy = compute_mfi(progression["easy_laps"]) if progression else None
+    mfi_fast = compute_mfi(progression["fast_laps"]) if progression else None
+
     return {
         "gct_early_ms": gct_early,
         "gct_late_ms":  gct_late,
@@ -749,6 +963,10 @@ def analyse_dynamics(laps, bp_idx_lap=None):
         "frs_components": frs_components,
         "fatigue_curve": fatigue_curve,
         "fatigue_onset": detect_fatigue_onset(laps),
+        "mfi": mfi,
+        "progression": progression,
+        "mfi_easy": mfi_easy,
+        "mfi_fast": mfi_fast,
         "laps": laps,
         "has_dynamics": any(l.get("gct_ms") for l in laps),
     }
@@ -1114,6 +1332,93 @@ def build_comparison_section(runs):
     threshold = CONFIG["hr_threshold"]
     mhr       = CONFIG["max_hr"]
 
+    # Helpers to avoid {}/dict() literals inside f-string expressions (Python <3.12)
+    def _mfi(r):   return r["dynamics"].get("mfi") or {}
+    def _prog(r):  return r["dynamics"].get("progression") or {}
+
+    # Precompute MFI cards (avoids nested f-string parse issues with dict literals)
+    def _mfi_color(score):
+        if score is None: return "var(--text2,#8b949e)"
+        return "#34d399" if score < 20 else "#fbbf24" if score < 60 else "#f78166"
+
+    def _mfi_suffix(val, unit):
+        return "" if val is None else unit
+
+    def _mfi_card(r):
+        m = _mfi(r)
+        score = m.get("mfi_score")
+        if not m:
+            return ""
+        comp = lambda k, u="": f"{m.get(k, '--')}{_mfi_suffix(m.get(k), u)}"
+        return f'''<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2,#8b949e);margin-bottom:4px">Mechanical Fatigue Index — {r["label"]}</div>
+      <div style="font-size:28px;font-weight:700;color:{_mfi_color(score)}">{score if score is not None else "--"}</div>
+      <div style="font-size:11px;color:var(--text2,#8b949e);margin-top:2px">{m.get("mfi_label","No dynamics data")}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:11px;color:var(--text2,#8b949e)">
+      <div>GCT <span style="color:var(--text,#e6edf3)">{comp("mfi_gct_delta_ms","ms")}</span></div>
+      <div>Stride <span style="color:var(--text,#e6edf3)">{comp("mfi_stride_delta_pct","%")}</span></div>
+      <div>Cadence <span style="color:var(--text,#e6edf3)">{comp("mfi_cadence_delta"," spm")}</span></div>
+      <div>Balance <span style="color:var(--text,#e6edf3)">{comp("mfi_balance_delta_pct","%")}</span></div>
+      <div>Power <span style="color:var(--text,#e6edf3)">{comp("mfi_power_delta_pct","%")}</span></div>
+    </div>
+  </div>
+  <div style="margin-top:10px;padding:8px 12px;background:var(--surface2,#1f2630);border-radius:6px;font-size:11px;color:var(--text3,#8b949e);line-height:1.5">
+    MFI weights: GCT 35%, Stride 25%, Cadence 20%, Balance 10%, Power 10%. Score &lt;20 = no fatigue, 20–40 = mild, 40–60 = moderate, &gt;60 = high / injury risk.
+  </div>
+</div>'''
+
+    mfi_cards_html = "".join(_mfi_card(r) for r in runs if r["dynamics"].get("mfi"))
+
+    def _mfi_phase_color(score):
+        if score is None: return "var(--text2,#8b949e)"
+        return "#34d399" if score < 20 else "#fbbf24" if score < 40 else "#f78166"
+
+    def _progression_card(r):
+        p = r["dynamics"]["progression"]
+        me = r["dynamics"].get("mfi_easy")
+        mf = r["dynamics"].get("mfi_fast")
+        phase_html = ""
+        if me and mf:
+            es = me.get("mfi_score")
+            fs = mf.get("mfi_score")
+            phase_html = f'''<div style="margin-top:12px;padding:10px 14px;background:var(--surface2,#1f2630);border-radius:8px;font-size:12px;color:var(--text2,#8b949e);line-height:1.6">
+    <strong style="color:{r["color"]}">Phase-aware MFI:</strong>
+    Easy phase
+    <strong style="color:{_mfi_phase_color(es)}">{es if es is not None else "--"}</strong>
+    ({me.get("mfi_label","--")})
+    → Fast phase
+    <strong style="color:{_mfi_phase_color(fs)}">{fs if fs is not None else "--"}</strong>
+    ({mf.get("mfi_label","--")})
+    {f" — {p['streak_km']} km fast finish with controlled mechanics" if fs is not None and fs < 40 else " — fatigue accumulating in fast-finish phase"}
+  </div>'''
+        return f'''<div class="card" style="margin-bottom:14px;border-left:3px solid {r["color"]}">
+  <h2>Progression Run Detected — {r["label"]}</h2>
+  <div style="font-size:12px;color:var(--text2,#8b949e);line-height:1.6">
+    Sustained {p["signal"]} improvement over
+    <strong>{p["streak_km"]} km</strong>
+    starting at km {p["streak_start_km"]}.
+    Analysing easy phase and fast-finish phase separately.
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;font-size:12px">
+    <div style="background:var(--surface2,#1f2630);border-radius:8px;padding:12px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#8b949e);margin-bottom:6px">Easy phase ({len(p["easy_laps"])} km)</div>
+      <div style="font-size:18px;font-weight:600;color:{r["color"]}">{fmt_pace(p["easy_pace_avg"])}</div>
+      <div style="font-size:11px;color:var(--muted,#8b949e)">avg HR: {p["easy_hr_avg"] or "--"} bpm</div>
+    </div>
+    <div style="background:var(--surface2,#1f2630);border-radius:8px;padding:12px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#8b949e);margin-bottom:6px">Fast phase ({len(p["fast_laps"])} km)</div>
+      <div style="font-size:18px;font-weight:600;color:{r["color"]}">{fmt_pace(p["fast_pace_avg"])}</div>
+      <div style="font-size:11px;color:var(--muted,#8b949e)">avg HR: {p["fast_hr_avg"] or "--"} bpm</div>
+    </div>
+  </div>
+  {phase_html}
+</div>'''
+
+    prog_cards_html = "".join(_progression_card(r) for r in runs if r["dynamics"].get("progression"))
+
     
     section = f"""<div class="rc-section">
 <div id="rc-chart-modal">
@@ -1140,6 +1445,9 @@ def build_comparison_section(runs):
     </div>''' for r in runs)}
   </div>
 </div>
+
+<!-- PROGRESSION DETECTION -->
+{prog_cards_html}
 
 <!-- MECHANICAL FATIGUE FLAGS -->
 {"".join(f'''
@@ -1180,6 +1488,9 @@ def build_comparison_section(runs):
     </div>
   </div>
 </div>''' for r in runs if r["dynamics"].get("frs") is not None)}
+
+<!-- MECHANICAL FATIGUE INDEX -->
+{mfi_cards_html}
 
 <!-- METRICS TABLE -->
 <div class="card">
@@ -1222,10 +1533,19 @@ def build_comparison_section(runs):
       {row("Stride collapse",           lambda r: f"{r['dynamics']['stride_collapse_pct']:+.1f}%" if r['dynamics'].get('stride_collapse_pct') is not None else "--")}
       {row("Cadence drop",              lambda r: f"{r['dynamics']['cadence_drop']:+.1f} spm" if r['dynamics'].get('cadence_drop') is not None else "--")}
       {row("Vert. ratio change",        lambda r: f"{r['dynamics']['vert_ratio_change_pct']:+.2f}%" if r['dynamics'].get('vert_ratio_change_pct') is not None else "--")}
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Mechanical Fatigue Index (MFI)</td></tr>
+      {row("MFI score",                 lambda r: f"{r['dynamics'].get('mfi',{}).get('mfi_score','--')} {'🟢' if (r['dynamics'].get('mfi') or {}).get('mfi_score', 100) < 20 else '🟡' if (r['dynamics'].get('mfi') or {}).get('mfi_score', 100) < 40 else '🔴'}" if r['dynamics'].get('mfi') else "--")}
+      {row("GCT Δ",                     lambda r: f"{r['dynamics']['mfi']['mfi_gct_delta_ms']:+.1f}ms" if r['dynamics'].get('mfi') and r['dynamics']['mfi'].get('mfi_gct_delta_ms') is not None else "--")}
+      {row("Stride Δ",                  lambda r: f"{r['dynamics']['mfi']['mfi_stride_delta_pct']:+.1f}%" if r['dynamics'].get('mfi') and r['dynamics']['mfi'].get('mfi_stride_delta_pct') is not None else "--")}
+      {row("Cadence Δ",                 lambda r: f"{r['dynamics']['mfi']['mfi_cadence_delta']:+.1f} spm" if r['dynamics'].get('mfi') and r['dynamics']['mfi'].get('mfi_cadence_delta') is not None else "--")}
+      {row("Balance Δ",                 lambda r: f"{r['dynamics']['mfi']['mfi_balance_delta_pct']:+.1f}%" if r['dynamics'].get('mfi') and r['dynamics']['mfi'].get('mfi_balance_delta_pct') is not None else "--")}
+      {row("Power Δ",                   lambda r: f"{r['dynamics']['mfi']['mfi_power_delta_pct']:+.1f}%" if r['dynamics'].get('mfi') and r['dynamics']['mfi'].get('mfi_power_delta_pct') is not None else "--")}
+      <tr class="rc-section-header"><td colspan="{1 + len(runs)}">Progression</td></tr>
+      {row("Progression run",           lambda r: f"✓ {r['dynamics']['progression']['streak_km']} km fast finish (km {r['dynamics']['progression']['streak_start_km']})" if r['dynamics'].get('progression') else "—")}
       {row("HR crossings",              lambda r: str(r['metrics']['crossings']))}
     </tbody>
   </table>
-  <p class="note">Aerobic EI = speed/HR (cardiovascular). Mechanical EI = speed/power (economy). PVI 1.00–1.05 = steady pacing. FRS = Fatigue Resistance Score (GCT 30%, stride 20%, HR 40%, balance 10%). GCT balance: 50% = symmetry. Left = Achilles side.</p>
+  <p class="note">Aerobic EI = speed/HR (cardiovascular). Mechanical EI = speed/power (economy). PVI 1.00–1.05 = steady pacing. FRS = Fatigue Resistance Score (GCT 30%, stride 20%, HR 40%, balance 10%). MFI = Mechanical Fatigue Index (GCT 35%, stride 25%, cadence 20%, balance 10%, power 10%). GCT balance: 50% = symmetry. Left = Achilles side.</p>
 </div>
 
 <!-- MECHANICAL FATIGUE CURVE -->
