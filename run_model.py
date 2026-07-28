@@ -156,11 +156,13 @@ def get_score_history_entry(d_str):
 
 # ── GARMIN FETCH ──────────────────────────────────────────────────────────────
 def get_all_runs(garmin, start_date, end_date):
-    """Fetch both outdoor and treadmill runs from Garmin for a date range."""
-    runs = []
-    for act_type in ("running", "treadmill_running"):
-        runs.extend(garmin.get_activities_by_date(start_date, end_date, act_type))
-    return runs
+    """Fetch outdoor and treadmill runs from Garmin for a date range.
+
+    Garmin's /activities/search endpoint only accepts top-level activity
+    types — "treadmill_running" is a subtype and causes a 400 error.
+    "running" already includes both outdoor and treadmill runs in results.
+    """
+    return garmin.get_activities_by_date(start_date, end_date, "running")
 
 
 def find_similar_run_near(garmin, anchor_date, target_weekday, target_distance_km, window_days=21):
