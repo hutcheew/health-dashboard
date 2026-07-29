@@ -299,10 +299,10 @@
   {
     "date": "2026-07-29",
     "stiffness": 1,
-    "first_steps_pain": 5,
+    "first_steps_pain": 0,
     "post_run_pain": 0,
     "calf_raises": true,
     "source": "browser",
-    "saved_at": "2026-07-29T09:49:00.623Z"
+    "saved_at": "2026-07-29T09:49:09.123Z"
   }
 ]
