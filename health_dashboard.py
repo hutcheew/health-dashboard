@@ -13,7 +13,7 @@ Requires:
     pip install garminconnect withings-api python-dotenv requests
 """
 
-import os, json, requests
+import os, json, requests, math
 from datetime import datetime, timedelta, date, timezone
 from zoneinfo import ZoneInfo
 MELB_TZ = ZoneInfo("Australia/Melbourne")
@@ -1517,15 +1517,39 @@ def compute_achilles_score(runs, phase_info, as_of=None):
             else:
                 factors.append({"label": "GCT", "value": f"{recent_gct_avg:.0f}ms (baseline {baseline_gct:.0f}ms) ✓", "level": "low", "points": 0})
 
-    # ── Flag 6: Previous Achilles injury (gated on actual onset date) ──────────
-    # Only applies from INJURY_DATE forward — unconditionally applying this
-    # broke backfilling, since pre-injury days got penalized for an injury
-    # that hadn't happened yet. No decay yet (still flat +15 once active) —
-    # that's a deliberate follow-up, not done here.
+    # ── Flag 6: Previous Achilles injury (time-decayed by symptom-free streak) ──
     if today >= INJURY_DATE:
-        score += 15
         days_since = (today - INJURY_DATE).days
-        factors.append({"label": "Previous Achilles injury", "value": f"Left insertional (onset {INJURY_DATE.isoformat()}, {days_since}d ago)", "level": "high", "points": 15})
+
+        # Count consecutive symptom-free check-in days from score_history
+        clean_streak = 0
+        try:
+            if os.path.exists(HISTORY_FILE):
+                with open(HISTORY_FILE, encoding="utf-8") as f:
+                    sh = json.load(f)
+                sh_sorted = sorted(sh, key=lambda x: x.get("date", ""), reverse=True)
+                for h in sh_sorted:
+                    s = int(h.get("inputs", {}).get("checkin_stiffness", 10) or 10)
+                    fsp = int(h.get("inputs", {}).get("checkin_first_steps_pain", 10) or 10)
+                    prp = int(h.get("inputs", {}).get("checkin_post_run_pain", 10) or 10)
+                    if s <= 2 and fsp <= 2 and prp <= 2:
+                        clean_streak += 1
+                    else:
+                        break
+        except Exception:
+            pass  # no score history — fall through to flat penalty
+
+        # Exponential decay: penalty halves after ~90 clean days
+        decay = math.exp(-clean_streak / 90)
+        injury_penalty = round(15 * decay, 1)
+        score += injury_penalty
+
+        factors.append({
+            "label": "Previous Achilles injury",
+            "value": f"Left insertional ({days_since}d ago, {clean_streak}d symptom-free '→' {decay:.2f} decay → {injury_penalty} pts)",
+            "level": "high" if injury_penalty >= 10 else "medium" if injury_penalty >= 5 else "low",
+            "points": injury_penalty,
+        })
 
     # ── Week-on-week mileage ──────────────────────────────────────────────────
     if last_week_km > 0:
