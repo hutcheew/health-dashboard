@@ -4717,7 +4717,7 @@ def main():
             for cr in comparison_runs:
                 dyn = dict(cr["dynamics"])
                 dyn.pop("laps", None)
-                dyn.pop("fatigue_curve", None)
+
                 # Also strip progression's lap lists
                 if dyn.get("progression"):
                     dyn["progression"] = {k: v for k, v in dyn["progression"].items()
