@@ -2044,7 +2044,7 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
     }
 
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None, comparison_section_html="", embedded_css=""):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None, comparison_section_html="", embedded_css="", comparison_runs_export=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -2359,6 +2359,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         "steps": garmin_data.get("steps", {}),
         "floors": garmin_data.get("floors", {}),
         "resting_hr_trend": garmin_data.get("resting_hr_trend", []),
+        "comparison_runs": comparison_runs_export or [],
     }, default=str)
 
     # ── COACH PANEL DATA ─────────────────────────────────────────────────────
@@ -4675,6 +4676,7 @@ def main():
     print("Building run comparison section (latest vs 1y vs 2y ago)...")
     comparison_section_html = ""
     comparison_css = ""
+    comparison_runs_export = None
     try:
         # Deferred import: run_model.py imports get_garmin/HISTORY_FILE FROM
         # this module, so importing it at module top-level here would be
@@ -4686,6 +4688,25 @@ def main():
         if comparison_runs:
             comparison_section_html = build_comparison_section(comparison_runs)
             print(f"  Built comparison with {len(comparison_runs)} run(s)")
+
+            # Build export-friendly version (strip raw points/dynamics->laps)
+            comparison_runs_export = []
+            for cr in comparison_runs:
+                dyn = dict(cr["dynamics"])
+                dyn.pop("laps", None)
+                dyn.pop("fatigue_curve", None)
+                # Also strip progression's lap lists
+                if dyn.get("progression"):
+                    dyn["progression"] = {k: v for k, v in dyn["progression"].items()
+                                          if k not in ("easy_laps", "fast_laps", "cooldown_laps")}
+                comparison_runs_export.append({
+                    "label": cr["label"],
+                    "date": cr["label"].split("(")[0].strip() if cr.get("label") else None,
+                    "classification": cr.get("classification"),
+                    "metrics": cr["metrics"],
+                    "dynamics": dyn,
+                    "ytd_km": cr.get("ytd_km"),
+                })
         else:
             print("  No comparable runs found -- skipping this section for today")
     except Exception as e:
@@ -4696,7 +4717,8 @@ def main():
                          load_data=load_data, recovery=recovery, injury_contributors=injury_contributors,
                          tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today,
                          checkins=checkins, comparison_section_html=comparison_section_html,
-                         embedded_css=comparison_css)
+                         embedded_css=comparison_css,
+                         comparison_runs_export=comparison_runs_export)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
