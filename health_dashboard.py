@@ -2359,7 +2359,6 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
         "steps": garmin_data.get("steps", {}),
         "floors": garmin_data.get("floors", {}),
         "resting_hr_trend": garmin_data.get("resting_hr_trend", []),
-        "comparison_runs": comparison_runs_export or [],
     }, default=str)
 
     # ── COACH PANEL DATA ─────────────────────────────────────────────────────
@@ -4052,6 +4051,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <!-- EXPORT -->
 <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
+  {"<button class='btn btn-outline' onclick='exportComparison()'>🏃 Export Comparison</button>" if comparison_runs_export else ""}
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
     GENERATED {datetime.now().strftime('%Y-%m-%d %H:%M')} · GARMIN + WITHINGS
@@ -4552,6 +4552,29 @@ async function exportJSON() {{
   const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
   const a = document.createElement('a');
   a.href = dataUri;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}}
+
+const comparisonData = {json.dumps(comparison_runs_export or [])};
+
+async function exportComparison() {{
+  if (!comparisonData.length) return;
+  const json = JSON.stringify(comparisonData, null, 2);
+  const filename = `comparison_{datetime.now().strftime('%Y-%m-%d')}.json`;
+  if (navigator.share && navigator.canShare) {{
+    try {{
+      const file = new File([json], filename, {{ type: 'application/json' }});
+      if (navigator.canShare({{ files: [file] }})) {{
+        await navigator.share({{ files: [file], title: filename }});
+        return;
+      }}
+    }} catch (e) {{}}
+  }}
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([json], {{type:'application/json'}}));
   a.download = filename;
   document.body.appendChild(a);
   a.click();
