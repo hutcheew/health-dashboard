@@ -349,5 +349,14 @@
     "calf_raises": true,
     "source": "browser",
     "saved_at": "2026-08-05T04:08:56.149Z"
+  },
+  {
+    "date": "2026-08-06",
+    "stiffness": 1,
+    "first_steps_pain": 0,
+    "post_run_pain": 0,
+    "calf_raises": true,
+    "source": "browser",
+    "saved_at": "2026-08-06T09:10:08.029Z"
   }
 ]
