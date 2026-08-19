@@ -10366,7 +10366,7 @@
       "resting_hr": 58,
       "hrv": 27,
       "sleep_score": 59,
-      "body_battery": 35,
+      "body_battery": 29,
       "ran_today": false,
       "last_run": {
         "date": "2026-08-14",
@@ -10380,8 +10380,8 @@
       "checkin_calf_raises": null
     },
     "scores": {
-      "readiness": 37,
-      "recovery": 37,
+      "readiness": 16,
+      "recovery": 33,
       "achilles": 45.0,
       "tissue_capacity": 36,
       "monotony": 13,
