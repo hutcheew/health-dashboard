@@ -11067,10 +11067,10 @@
         "pace": 5.43,
         "avg_hr": 139.0
       },
-      "checkin_stiffness": null,
-      "checkin_first_steps_pain": null,
-      "checkin_post_run_pain": null,
-      "checkin_calf_raises": null
+      "checkin_stiffness": 0,
+      "checkin_first_steps_pain": 0,
+      "checkin_post_run_pain": 0,
+      "checkin_calf_raises": true
     },
     "scores": {
       "readiness": 66,
