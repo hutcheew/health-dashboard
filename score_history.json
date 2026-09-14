@@ -11250,5 +11250,38 @@
       "load_tolerance": 1.0,
       "injury_penalty": 15.0
     }
+  },
+  {
+    "date": "2026-09-15",
+    "inputs": {
+      "resting_hr": 51,
+      "hrv": null,
+      "sleep_score": null,
+      "body_battery": 51,
+      "ran_today": false,
+      "last_run": {
+        "date": "2026-09-12",
+        "distance": 23.0,
+        "pace": 5.29,
+        "avg_hr": 153.0
+      },
+      "checkin_stiffness": null,
+      "checkin_first_steps_pain": null,
+      "checkin_post_run_pain": null,
+      "checkin_calf_raises": null
+    },
+    "scores": {
+      "readiness": null,
+      "recovery": 53,
+      "achilles": 50.0,
+      "tissue_capacity": 52,
+      "monotony": 47,
+      "acr": 1.85
+    },
+    "injury_model_shadow": {
+      "state": "ACTIVE_INJURY",
+      "load_tolerance": 1.0,
+      "injury_penalty": 15.0
+    }
   }
 ]
