@@ -11598,7 +11598,13 @@
       "checkin_stiffness": null,
       "checkin_first_steps_pain": null,
       "checkin_post_run_pain": null,
-      "checkin_calf_raises": null
+      "checkin_calf_raises": null,
+      "checkin_pain_before": null,
+      "checkin_pain_during": null,
+      "checkin_location": null,
+      "checkin_side": null,
+      "checkin_neurological": null,
+      "checkin_pain_returned": null
     },
     "scores": {
       "readiness": 29,
