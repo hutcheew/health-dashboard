@@ -114,6 +114,10 @@ jobs:
 
           git add index.html
 
+          # Analysis / export dataset (source-of-truth JSON + flat CSVs for
+          # longitudinal analysis). Only added if the generator produced them.
+          git add -f analysis.json activities.csv intervals.csv pain_log.csv 2>/dev/null || true
+
           if [ -f score_history.json ]; then
             git add score_history.json
           fi

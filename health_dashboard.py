@@ -49,11 +49,12 @@ def get_garmin():
 def fetch_garmin_data(garmin):
     data = {}
 
-    # Recent activities — fetch 20 to get enough history for load calculations
-    activities = garmin.get_activities(0, 20)
+    # Recent activities — fetch 40 to build a longitudinal analysis dataset
+    # (the dashboard itself only displays the most recent 10).
+    activities = garmin.get_activities(0, 40)
     runs = [a for a in activities if a.get("activityType", {}).get("typeKey") in ("running", "treadmill_running")]
     data["runs"] = []
-    for r in runs[:10]:
+    for r in runs[:40]:
         aid = r["activityId"]
         splits = garmin.get_activity_splits(aid)
         laps = splits.get("lapDTOs", [])
@@ -98,6 +99,10 @@ def fetch_garmin_data(garmin):
             "avg_temperature": r.get("averageTemperature"),
             "laps": lap_data,
         })
+    # The dashboard's downstream computations assume the last ~10 runs; keep a
+    # wider list separately as the source for the analysis/export dataset.
+    data["runs_all"] = data["runs"][:40]
+    data["runs"] = data["runs"][:10]
 
     # Cycling activities
     cycles = [a for a in activities if a.get("activityType", {}).get("typeKey") == "road_biking"]
@@ -668,11 +673,23 @@ def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monoton
         checkin_first_steps_pain = checkin.get("first_steps_pain")
         checkin_post_run_pain = checkin.get("post_run_pain")
         checkin_calf_raises = checkin.get("calf_raises")
+        checkin_pain_before = checkin.get("pain_before")
+        checkin_pain_during = checkin.get("pain_during")
+        checkin_location = checkin.get("location")
+        checkin_side = checkin.get("side")
+        checkin_neurological = checkin.get("neurological")
+        checkin_pain_returned = checkin.get("pain_returned")
     else:
         checkin_stiffness = existing_inputs.get("checkin_stiffness")
         checkin_first_steps_pain = existing_inputs.get("checkin_first_steps_pain")
         checkin_post_run_pain = existing_inputs.get("checkin_post_run_pain")
         checkin_calf_raises = existing_inputs.get("checkin_calf_raises")
+        checkin_pain_before = existing_inputs.get("checkin_pain_before")
+        checkin_pain_during = existing_inputs.get("checkin_pain_during")
+        checkin_location = existing_inputs.get("checkin_location")
+        checkin_side = existing_inputs.get("checkin_side")
+        checkin_neurological = existing_inputs.get("checkin_neurological")
+        checkin_pain_returned = existing_inputs.get("checkin_pain_returned")
 
     entry = {
         "date": TODAY,
@@ -692,6 +709,12 @@ def save_score_history(garmin_data, achilles, recovery, tissue_capacity, monoton
             "checkin_first_steps_pain": checkin_first_steps_pain,
             "checkin_post_run_pain": checkin_post_run_pain,
             "checkin_calf_raises": checkin_calf_raises,
+            "checkin_pain_before": checkin_pain_before,
+            "checkin_pain_during": checkin_pain_during,
+            "checkin_location": checkin_location,
+            "checkin_side": checkin_side,
+            "checkin_neurological": checkin_neurological,
+            "checkin_pain_returned": checkin_pain_returned,
         },
         "scores": {
             "readiness": readiness.get("score"),
@@ -2131,6 +2154,13 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     checkin_history_json = json.dumps(list(reversed(checkins[-14:])))
     today_iso           = date.today().isoformat()
 
+    # Analysis/export dataset (written at build time next to index.html) —
+    # plain links so the same-origin files can be downloaded or fetched.
+    analysis_links_html = "".join(
+        f"<a class='btn btn-outline' href='{f}' download>📁 {f}</a>"
+        for f in ("activities.csv", "intervals.csv", "pain_log.csv", "analysis.json")
+    )
+
     acr         = load_data.get("acr", 1.0)
     acr_status  = load_data.get("acr_status", "optimal")
     acute_load  = load_data.get("acute", "--")
@@ -3209,6 +3239,14 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             <input type="range" class="checkin-slider" id="stiffness" min="0" max="10" value="0" oninput="updateCheckinPreview()">
           </div>
           <div class="checkin-field">
+            <div class="checkin-label"><span>Pain — before yesterday's run</span><span class="checkin-val" id="pain-before-val">0</span></div>
+            <input type="range" class="checkin-slider" id="pain-before" min="0" max="10" value="0" oninput="updateCheckinPreview()">
+          </div>
+          <div class="checkin-field">
+            <div class="checkin-label"><span>Pain — during yesterday's run</span><span class="checkin-val" id="pain-during-val">0</span></div>
+            <input type="range" class="checkin-slider" id="pain-during" min="0" max="10" value="0" oninput="updateCheckinPreview()">
+          </div>
+          <div class="checkin-field">
             <div class="checkin-label"><span>Pain — first steps</span><span class="checkin-val" id="first-steps-val">0</span></div>
             <input type="range" class="checkin-slider" id="first-steps" min="0" max="10" value="0" oninput="updateCheckinPreview()">
           </div>
@@ -3216,6 +3254,30 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
             <div class="checkin-label"><span>Pain — after yesterday's run</span><span class="checkin-val" id="post-run-val">0</span></div>
             <input type="range" class="checkin-slider" id="post-run" min="0" max="10" value="0" oninput="updateCheckinPreview()">
           </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:11px">
+            <label style="flex:1;min-width:160px"><span style="color:var(--text3)">Location</span>
+              <select id="pain-location" style="display:block;width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px">
+                <option value="">None</option>
+                <option value="left_inner_thigh">Left inner thigh</option>
+                <option value="left_achilles">Left Achilles</option>
+                <option value="lower_back">Lower back</option>
+                <option value="both_thighs">Both thighs</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label style="flex:1;min-width:120px"><span style="color:var(--text3)">Side</span>
+              <select id="pain-side" style="display:block;width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px">
+                <option value="">n/a</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="both">Both</option>
+              </select>
+            </label>
+          </div>
+          <label class="checkin-toggle">
+            <input type="checkbox" id="neuro">
+            Neurological symptoms (tingling / numbness)
+          </label>
           <label class="checkin-toggle">
             <input type="checkbox" id="calf-raises">
             Seated calf raises done today
@@ -4052,6 +4114,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <button class="btn btn-outline" onclick="exportJSON()">⬇ Export JSON</button>
   {"<button class='btn btn-outline' onclick='exportComparison()'>🏃 Export Comparison</button>" if comparison_runs_export else ""}
+  {analysis_links_html}
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
     GENERATED {datetime.now().strftime('%Y-%m-%d %H:%M')} · GARMIN + WITHINGS
@@ -4444,7 +4507,7 @@ function getMergedCheckins() {{
 }}
 
 function updateCheckinPreview() {{
-  ['stiffness', 'first-steps', 'post-run'].forEach(id => {{
+  ['stiffness', 'pain-before', 'pain-during', 'first-steps', 'post-run'].forEach(id => {{
     const el = document.getElementById(id);
     const val = document.getElementById(id + '-val');
     if (el && val) val.textContent = el.value;
@@ -4456,8 +4519,13 @@ function loadTodayCheckin() {{
   const today = merged.find(c => c.date === checkInToday);
   if (!today) return;
   document.getElementById('stiffness').value = today.stiffness ?? 0;
+  document.getElementById('pain-before').value = today.pain_before ?? 0;
+  document.getElementById('pain-during').value = today.pain_during ?? 0;
   document.getElementById('first-steps').value = today.first_steps_pain ?? 0;
   document.getElementById('post-run').value = today.post_run_pain ?? 0;
+  document.getElementById('pain-location').value = today.location ?? '';
+  document.getElementById('pain-side').value = today.side ?? '';
+  document.getElementById('neuro').checked = !!today.neurological;
   document.getElementById('calf-raises').checked = !!today.calf_raises;
   updateCheckinPreview();
   const status = document.getElementById('checkin-status');
@@ -4472,14 +4540,18 @@ function renderCheckinTrend() {{
     el.textContent = 'No check-ins yet — log your first one above.';
     return;
   }}
-  let html = '<table><tr><td>Date</td><td>Stiff</td><td>Steps</td><td>Post</td><td>Raises</td></tr>';
+  let html = '<table><tr><td>Date</td><td>Stiff</td><td>Before</td><td>Dur</td><td>Steps</td><td>Post</td><td>Raises</td></tr>';
   rows.forEach(c => {{
     const s = c.stiffness ?? 0;
+    const b = c.pain_before ?? 0;
+    const d = c.pain_during ?? 0;
     const f = c.first_steps_pain ?? 0;
     const p = c.post_run_pain ?? 0;
     html += `<tr>
       <td>${{c.date === checkInToday ? 'Today' : c.date.slice(5)}}</td>
       <td class="${{painClass(s)}}">${{s}}</td>
+      <td class="${{painClass(b)}}">${{b}}</td>
+      <td class="${{painClass(d)}}">${{d}}</td>
       <td class="${{painClass(f)}}">${{f}}</td>
       <td class="${{painClass(p)}}">${{p}}</td>
       <td>${{c.calf_raises ? '✓' : '—'}}</td>
@@ -4493,8 +4565,13 @@ function saveCheckin() {{
   const entry = {{
     date: checkInToday,
     stiffness: parseInt(document.getElementById('stiffness').value, 10),
+    pain_before: parseInt(document.getElementById('pain-before').value, 10),
+    pain_during: parseInt(document.getElementById('pain-during').value, 10),
     first_steps_pain: parseInt(document.getElementById('first-steps').value, 10),
     post_run_pain: parseInt(document.getElementById('post-run').value, 10),
+    location: document.getElementById('pain-location').value,
+    side: document.getElementById('pain-side').value,
+    neurological: document.getElementById('neuro').checked,
     calf_raises: document.getElementById('calf-raises').checked,
     source: 'browser',
     saved_at: new Date().toISOString(),
@@ -4734,6 +4811,22 @@ def main():
             print("  No comparable runs found -- skipping this section for today")
     except Exception as e:
         print(f"  Run comparison failed (non-fatal, dashboard continues without it): {e}")
+
+    print("Building analysis/export dataset (analysis.json + CSVs)...")
+    try:
+        from analysis_export import build_and_write as build_analysis_dataset
+        dataset = build_analysis_dataset(
+            garmin_data.get("runs_all", garmin_data["runs"]),
+            intervals.get("load_data", []) if intervals else [],
+            checkins,
+            out_dir=".",
+        )
+        print(f"  {dataset['n_runs']} runs, {dataset['n_intervals']} intervals, "
+              f"{dataset['n_checkins']} check-ins")
+        for fname, lines in dataset["files"].items():
+            print(f"  wrote {fname} ({lines} lines)")
+    except Exception as e:
+        print(f"  Analysis dataset failed (non-fatal, dashboard continues): {e}")
 
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,
