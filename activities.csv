@@ -1,4 +1,5 @@
 activity_id,date,garmin_type,session_type,session_confidence,distance_km,duration_min,moving_duration_min,avg_pace_min_km,avg_pace_sec_km,max_pace_min_km,avg_hr,max_hr,elevation_gain_m,avg_gct_ms,gct_balance_left_pct,balance_symmetry_pp,avg_cadence_spm,avg_stride_cm,avg_power_w,max_power_w,aerobic_te,anaerobic_te,avg_temperature_c,calories,training_load,ctl,atl,hr_drift_pct,hr_drift_valid,efficiency_factor,pain_before,pain_stiffness,pain_first_steps,pain_post_run,pain_during
+2026-09-30,2026-09-30,running,fartlek,0.5,5.2,29.3,29.1,5.62,337.2,3.8,141.0,172.0,35,,,,186,94.75999755859375,,508.0,3.0999999046325684,0.6000000238418579,,364.0,22,22.7,14.3,,False,,,,,,
 2026-09-29,2026-09-29,running,fartlek,0.5,3.1,17.9,17.5,5.7,342.0,4.44,134.0,152.0,17,,,,185,93.22999877929688,,404.0,2.5,0.0,,214.0,11,22.7,13.1,,False,,,,,,
 2026-09-28,2026-09-28,treadmill_running,fartlek,0.5,1.4,6.5,6.0,4.76,285.6,4.1,157.0,177.0,0,,,,165,135.65,,436.0,2.4000000953674316,2.5999999046325684,,90.0,8,23.0,13.4,,False,,,,,,
 2026-09-26,2026-09-26,running,fartlek,0.5,5.2,29.1,29.0,5.62,337.2,4.06,143.0,171.0,40,,,,183,97.37999877929688,,502.0,3.0999999046325684,0.20000000298023224,,369.0,23,23.9,16.5,,False,,,,,,
@@ -38,4 +39,3 @@ activity_id,date,garmin_type,session_type,session_confidence,distance_km,duratio
 2026-08-04-2,2026-08-04,running,steady,0.6,10.0,54.6,54.4,5.45,327.0,4.89,140.0,154.0,52,,,,187,97.9,,405.0,3.4000000953674316,0.0,,673.0,,,,,True,,,1,0,0,
 2026-08-03,2026-08-03,treadmill_running,steady,0.6,1.0,4.6,3.4,4.59,275.4,4.69,131.0,150.0,0,,,,147,102.54000244140626,,357.0,1.100000023841858,0.0,,50.0,,,,,True,,,1,0,0,
 2026-08-03-2,2026-08-03,treadmill_running,steady,0.6,4.0,24.0,23.5,6.0,360.0,3.93,121.0,126.0,0,,,,174,127.16999511718751,,445.0,1.5,0.0,,218.0,,,,,True,,,1,0,0,
-2026-07-31,2026-07-31,running,fartlek,0.5,5.2,27.7,27.6,5.37,322.2,3.72,141.0,167.0,32,,,,188,99.00999755859375,,517.0,3.0999999046325684,0.5,,351.0,,,,,False,,,1,0,0,
