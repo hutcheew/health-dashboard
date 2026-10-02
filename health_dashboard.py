@@ -4654,8 +4654,8 @@ function saveJournal(run, prev) {{
     tags: tags,
     saved_at: new Date().toISOString(),
   }};
-  const key = journalKey(entry);
-  const local = getLocalJournal().filter(e => journalKey(e) !== key);
+  const collides = (e) => journalKey(e) === key || e.date === entry.date;
+  const local = getLocalJournal().filter(e => !collides(e));
   local.push(entry);
   localStorage.setItem(JOURNAL_KEY, JSON.stringify(local));
   const status = document.getElementById('journal-save-status');

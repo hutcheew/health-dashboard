@@ -184,9 +184,12 @@ export default {
     // 2. Merge — overwrite the entry matching the same key (date for
     //    checkins, activity_id-or-date for journal), keep everything else.
     const key = kind === "journal" ? (entry.activity_id || entry.date) : entry.date;
-    currentList = currentList.filter((c) =>
-      (kind === "journal" ? (c.activity_id || c.date) : c.date) !== key
-    );
+    const collides = (c) =>
+      kind === "journal"
+        ? (c.activity_id && entry.activity_id && String(c.activity_id) === String(entry.activity_id)) ||
+          (c.date && c.date === entry.date)
+        : c.date === key;
+    currentList = currentList.filter((c) => !collides(c));
     currentList.push(entry);
     currentList.sort((a, b) => (a.date < b.date ? -1 : 1));
 
