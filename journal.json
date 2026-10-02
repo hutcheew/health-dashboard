@@ -15,7 +15,31 @@
     "feel_notes": "Settled into 5:49 pace by the second km; breathing stayed consistent.",
     "worked": "3-step / 2-step breathing pattern early",
     "change": "Get out the door 15 min earlier — first km felt rushed.",
-    "tags": ["steady", "marathon-block"],
+    "tags": [
+      "steady",
+      "marathon-block"
+    ],
     "saved_at": "2026-10-01T18:30:00Z"
+  },
+  {
+    "kind": "journal",
+    "activity_id": 24583060585,
+    "date": "2026-10-03",
+    "rpe": 5,
+    "feel": "Great",
+    "pain": 0,
+    "mood_before": "Fresh",
+    "mood_after": "Energized",
+    "sleep_hours": null,
+    "food_before": "A sip of maple syrup",
+    "nutrition_during": "",
+    "aches": "Left thigh,lower back",
+    "weather_notes": "Windy",
+    "feel_notes": "Felt good legs are lighter",
+    "worked": "3-3 until 8km, 3-2 from 8.5-10km",
+    "change": "",
+    "tags": [],
+    "source": "browser",
+    "saved_at": "2026-10-02T23:22:29.560Z"
   }
 ]
