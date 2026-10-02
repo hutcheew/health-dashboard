@@ -4521,6 +4521,8 @@ const checkInToday = '{today_iso}';
 const JOURNAL_KEY = 'health_dashboard_journal';
 const journalData = {journal_data_json};
 const FEEL_OPTIONS = ['Great', 'Good', 'Normal', 'Tired', 'Heavy', 'Achy'];
+const MOOD_BEFORE_OPTIONS = ['Fresh', 'Good', 'Neutral', 'Tired', 'Low'];
+const MOOD_AFTER_OPTIONS = ['Energized', 'Good', 'Neutral', 'Flat', 'Rough'];
 
 function journalKey(e) {{
   return String(e.activity_id || e.date || '');
@@ -4572,17 +4574,28 @@ function renderJournal() {{
 
 function renderJournalCard(run, entry) {{
   const header = entry
-    ? `<div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--text2)">
-        <div>RPE <strong style="color:var(--text)">${{entry.rpe ?? '—'}}/10</strong></div>
-        <div>Feel <strong style="color:var(--text)">${{entry.feel || '—'}}</strong></div>
-        <div>Pain <strong style="color:var(--text)">${{entry.pain ?? '—'}}/10</strong></div>
-      </div>
-      <div style="margin-top:10px;font-size:12px;line-height:1.6">
-        ${{entry.worked ? '<strong style="color:#34d399">✓ What worked:</strong> ' + escapeHtml(entry.worked) + '<br>' : ''}}
-        ${{entry.change ? '<strong style="color:#fbbf24">→ Change next time:</strong> ' + escapeHtml(entry.change) + '<br>' : ''}}
-        ${{(entry.tags || []).length ? '<div style="margin-top:6px">' + (entry.tags.map(t => '<span class="tag">' + escapeHtml(t) + '</span>').join('')) + '</div>' : ''}}
+    ? `<div style="font-size:12px">
+        <div style="display:flex;flex-wrap:wrap;gap:14px;color:var(--text2);margin-bottom:8px">
+          <div>RPE <strong style="color:var(--text)">${{entry.rpe ?? '—'}}/10</strong></div>
+          <div>Feel <strong style="color:var(--text)">${{entry.feel || '—'}}</strong></div>
+          <div>Pain <strong style="color:var(--text)">${{entry.pain ?? '—'}}/10</strong></div>
+          <div>Mood ${{entry.mood_before && entry.mood_after ? '<strong style="color:var(--text)">' + entry.mood_before + ' → ' + entry.mood_after + '</strong>' : (entry.mood_before || '—')}}</div>
+          ${{entry.sleep_hours !== undefined && entry.sleep_hours !== null ? '<div>Sleep <strong style="color:var(--text)">' + entry.sleep_hours + 'h</strong></div>' : ''}}
+        </div>
+        ${{entry.aches ? '<div style="color:var(--text3);font-size:11px">Aches: ' + escapeHtml(entry.aches) + '</div>' : ''}}
+        ${{entry.food_before || entry.nutrition_during ? '<div style="color:var(--text3);font-size:11px;margin-top:2px">Food: ' + escapeHtml(entry.food_before || '—') + (entry.food_before && entry.nutrition_during ? ' · ' : '') + escapeHtml(entry.nutrition_during || '') + '</div>' : ''}}
+        ${{entry.weather_notes ? '<div style="color:var(--text3);font-size:11px;margin-top:2px">Weather: ' + escapeHtml(entry.weather_notes) + '</div>' : ''}}
+        ${{entry.feel_notes ? '<div style="margin-top:8px;line-height:1.6">' + escapeHtml(entry.feel_notes) + '</div>' : ''}}
+        <div style="margin-top:8px;line-height:1.6">
+          ${{entry.worked ? '<strong style="color:#34d399">✓ What worked:</strong> ' + escapeHtml(entry.worked) + '<br>' : ''}}
+          ${{entry.change ? '<strong style="color:#fbbf24">→ Change next time:</strong> ' + escapeHtml(entry.change) + '<br>' : ''}}
+          ${{(entry.tags || []).length ? '<div style="margin-top:6px">' + (entry.tags.map(t => '<span class="tag">' + escapeHtml(t) + '</span>').join('')) + '</div>' : ''}}
+        </div>
       </div>`
     : '<div style="color:var(--text3);font-size:12px">No reflection on today\\'s/last run yet.</div>';
+
+  const sel = (id, opts, val) => '<select id="' + id + '" style="width:100%;display:block;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px">' +
+    opts.map(o => '<option' + (val === o ? ' selected' : '') + '>' + o + '</option>').join('') + '</select>';
 
   return `<div class="journal-entry" style="font-size:12px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
@@ -4593,11 +4606,31 @@ function renderJournalCard(run, entry) {{
     <div id="journal-form" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px">
         <label><span style="color:var(--text3)">RPE</span><input type="range" id="journal-rpe" min="0" max="10" value="5" style="width:100%;display:block;margin-top:4px"><span id="journal-rpe-val" style="color:var(--text)">5/10</span></label>
-        <label><span style="color:var(--text3)">Feel</span>
-          <select id="journal-feel" style="width:100%;display:block;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px">${{FEEL_OPTIONS.map(f => '<option>' + f + '</option>').join('')}}</select>
-        </label>
+        <label><span style="color:var(--text3)">Overall feel</span>${{sel('journal-feel', FEEL_OPTIONS, entry && entry.feel)}}</label>
         <label><span style="color:var(--text3)">Pain</span><input type="range" id="journal-pain" min="0" max="10" value="0" style="width:100%;display:block;margin-top:4px"><span id="journal-pain-val" style="color:var(--text)">0/10</span></label>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px;margin-top:10px">
+        <label><span style="color:var(--text3)">Mood going into run</span>${{sel('journal-mood-before', MOOD_BEFORE_OPTIONS, entry && entry.mood_before)}}</label>
+        <label><span style="color:var(--text3)">Mood after run</span>${{sel('journal-mood-after', MOOD_AFTER_OPTIONS, entry && entry.mood_after)}}</label>
+        <label><span style="color:var(--text3)">Sleep last night (hrs)</span><input id="journal-sleep" type="number" min="0" max="16" step="0.5" value="${{entry && entry.sleep_hours != null ? entry.sleep_hours : ''}}" placeholder="8" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px;box-sizing:border-box"></label>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;margin-top:10px">
+        <label><span style="color:var(--text3)">Food beforehand</span>
+          <input type="text" id="journal-food-before" value="${{entry && entry.food_before ? escapeHtml(entry.food_before) : ''}}" placeholder="eggs, toast + coffee ~90min before" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+        </label>
+        <label><span style="color:var(--text3)">Nutrition during</span>
+          <input type="text" id="journal-nutrition-during" value="${{entry && entry.nutrition_during ? escapeHtml(entry.nutrition_during) : ''}}" placeholder="water only / gel at 45 min" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+        </label>
+        <label><span style="color:var(--text3)">Aches / Injuries</span>
+          <input type="text" id="journal-aches" value="${{entry && entry.aches ? escapeHtml(entry.aches) : ''}}" placeholder="slight Achilles tightness first km, then fine" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+        </label>
+        <label><span style="color:var(--text3)">Weather</span>
+          <input type="text" id="journal-weather" value="${{entry && entry.weather_notes ? escapeHtml(entry.weather_notes) : ''}}" placeholder="windy N, ~8°C, humid" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+        </label>
+      </div>
+      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">How did the run feel?</span>
+        <textarea id="journal-feel-notes" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="Private notes beyond the quick feel above — pacing, breathing, mindset…">${{entry && entry.feel_notes ? escapeHtml(entry.feel_notes) : ''}}</textarea>
+      </label>
       <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">✓ What worked</span>
         <textarea id="journal-worked" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="3-3 breathing felt great…"></textarea>
       </label>
@@ -4631,6 +4664,22 @@ function prefillJournalForm(run, entry) {{
   }}
   const feel = document.getElementById('journal-feel');
   if (feel && entry.feel) feel.value = entry.feel;
+  const mb = document.getElementById('journal-mood-before');
+  if (mb && entry.mood_before) mb.value = entry.mood_before;
+  const ma = document.getElementById('journal-mood-after');
+  if (ma && entry.mood_after) ma.value = entry.mood_after;
+  const sl = document.getElementById('journal-sleep');
+  if (sl && entry.sleep_hours != null) sl.value = entry.sleep_hours;
+  const fb = document.getElementById('journal-food-before');
+  if (fb) fb.value = entry.food_before || '';
+  const nd = document.getElementById('journal-nutrition-during');
+  if (nd) nd.value = entry.nutrition_during || '';
+  const ac = document.getElementById('journal-aches');
+  if (ac) ac.value = entry.aches || '';
+  const wth = document.getElementById('journal-weather');
+  if (wth) wth.value = entry.weather_notes || '';
+  const fn = document.getElementById('journal-feel-notes');
+  if (fn) fn.value = entry.feel_notes || '';
   const w = document.getElementById('journal-worked');
   if (w) w.value = entry.worked || '';
   const c = document.getElementById('journal-change');
@@ -4640,8 +4689,15 @@ function prefillJournalForm(run, entry) {{
 }}
 
 function saveJournal(run, prev) {{
-  const worked = document.getElementById('journal-worked').value.trim();
-  const change = document.getElementById('journal-change').value.trim();
+  const num = (id) => {{
+    const el = document.getElementById(id);
+    if (!el || el.value === '') return null;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? null : v;
+  }};
+  const txt = (id) => {{ const el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }};
+  const worked = txt('journal-worked');
+  const change = txt('journal-change');
   const tags = document.getElementById('journal-tags').value.split(',').map(s => s.trim()).filter(Boolean);
   const entry = {{
     activity_id: run.activity_id || null,
@@ -4649,6 +4705,14 @@ function saveJournal(run, prev) {{
     rpe: parseInt(document.getElementById('journal-rpe').value, 10),
     feel: document.getElementById('journal-feel').value,
     pain: parseInt(document.getElementById('journal-pain').value, 10),
+    mood_before: document.getElementById('journal-mood-before').value,
+    mood_after: document.getElementById('journal-mood-after').value,
+    sleep_hours: num('journal-sleep'),
+    food_before: txt('journal-food-before'),
+    nutrition_during: txt('journal-nutrition-during'),
+    aches: txt('journal-aches'),
+    weather_notes: txt('journal-weather'),
+    feel_notes: txt('journal-feel-notes'),
     worked: worked,
     change: change,
     tags: tags,

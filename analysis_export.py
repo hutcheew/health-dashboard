@@ -238,6 +238,14 @@ def normalize_activity(run, ictl=None, checkin=None, journal_entry=None):
             "rpe": journal_entry.get("rpe"),
             "feel": journal_entry.get("feel"),
             "pain": journal_entry.get("pain"),
+            "mood_before": journal_entry.get("mood_before"),
+            "mood_after": journal_entry.get("mood_after"),
+            "sleep_hours": journal_entry.get("sleep_hours"),
+            "food_before": journal_entry.get("food_before"),
+            "nutrition_during": journal_entry.get("nutrition_during"),
+            "aches": journal_entry.get("aches"),
+            "weather_notes": journal_entry.get("weather_notes"),
+            "feel_notes": journal_entry.get("feel_notes"),
             "worked": journal_entry.get("worked"),
             "change": journal_entry.get("change"),
             "tags": journal_entry.get("tags") or [],
@@ -318,7 +326,7 @@ ACTIVITIES_COLUMNS = [
     "training_load", "ctl", "atl",
     "hr_drift_pct", "hr_drift_valid", "efficiency_factor",
     "pain_before", "pain_stiffness", "pain_first_steps", "pain_post_run", "pain_during",
-    "rpe", "feel", "journal_pain", "tags",
+    "rpe", "feel", "journal_pain", "mood_before", "mood_after", "sleep_hours", "tags",
 ]
 
 
@@ -367,6 +375,9 @@ def activities_rows(records):
             "rpe": r["journal"]["rpe"],
             "feel": r["journal"]["feel"],
             "journal_pain": r["journal"]["pain"],
+            "mood_before": r["journal"]["mood_before"],
+            "mood_after": r["journal"]["mood_after"],
+            "sleep_hours": r["journal"]["sleep_hours"],
             "tags": ";".join(r["journal"]["tags"] or []),
         })
     return rows
