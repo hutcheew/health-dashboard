@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-02 23:18",
+  "generated": "2026-10-02 23:31",
   "runs": [
     {
       "activity": {
@@ -80,21 +80,21 @@
         "has_checkin": false
       },
       "journal": {
-        "rpe": null,
-        "feel": null,
-        "pain": null,
-        "mood_before": null,
-        "mood_after": null,
+        "rpe": 5,
+        "feel": "Great",
+        "pain": 0,
+        "mood_before": "Fresh",
+        "mood_after": "Energized",
         "sleep_hours": null,
-        "food_before": null,
-        "nutrition_during": null,
-        "aches": null,
-        "weather_notes": null,
-        "feel_notes": null,
-        "worked": null,
-        "change": null,
+        "food_before": "A sip of maple syrup",
+        "nutrition_during": "",
+        "aches": "Left thigh,lower back",
+        "weather_notes": "Windy",
+        "feel_notes": "Felt good legs are lighter",
+        "worked": "3-3 until 8km, 3-2 from 8.5-10km",
+        "change": "",
         "tags": [],
-        "has_entry": false
+        "has_entry": true
       },
       "session_type": {
         "label": "fartlek",
@@ -223,24 +223,21 @@
         "has_checkin": true
       },
       "journal": {
-        "rpe": 6,
-        "feel": "Normal",
-        "pain": 0,
-        "mood_before": "Good",
-        "mood_after": "Good",
-        "sleep_hours": 7.5,
-        "food_before": "Oats + banana + coffee 90 min before",
-        "nutrition_during": "Water only",
-        "aches": "Slight Achilles tightness first km, resolved",
-        "weather_notes": "Mild, light wind ~12\u00b0C",
-        "feel_notes": "Settled into 5:49 pace by the second km; breathing stayed consistent.",
-        "worked": "3-step / 2-step breathing pattern early",
-        "change": "Get out the door 15 min earlier \u2014 first km felt rushed.",
-        "tags": [
-          "steady",
-          "marathon-block"
-        ],
-        "has_entry": true
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
       },
       "session_type": {
         "label": "interval",
