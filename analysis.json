@@ -1,10 +1,153 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-02 16:11",
+  "generated": "2026-10-02 23:18",
   "runs": [
     {
       "activity": {
-        "activity_id": "2026-10-01",
+        "activity_id": 24583060585,
+        "date": "2026-10-03",
+        "garmin_type": "running",
+        "derived": {
+          "avg_pace_sec_km": 319.2,
+          "gct_balance_symmetry_pp": null,
+          "hr_drift_pct": null,
+          "decoupling_pct": null,
+          "efficiency_factor": null,
+          "training_load": null,
+          "ctl": null,
+          "atl": null
+        }
+      },
+      "measured": {
+        "distance_km": 10.0,
+        "duration_min": 53.3,
+        "moving_duration_min": 53.2,
+        "avg_pace_min_km": 5.32,
+        "max_pace_min_km": 3.93,
+        "avg_hr": 149.0,
+        "max_hr": 181.0,
+        "calories": 704.0,
+        "elevation_gain_m": 72,
+        "avg_temperature_c": null,
+        "avg_gct_ms": null,
+        "gct_balance_left_pct": null,
+        "avg_cadence_spm": 186,
+        "avg_stride_cm": 101.05000000000001,
+        "avg_power_w": null,
+        "max_power_w": 530.0,
+        "aerobic_te": 4.199999809265137,
+        "anaerobic_te": 0.0
+      },
+      "cardio": {
+        "avg_hr": 149.0,
+        "max_hr": 181.0,
+        "hr_drift_pct": null,
+        "decoupling_pct": null,
+        "aerobic_te": 4.199999809265137,
+        "anaerobic_te": 0.0
+      },
+      "mechanics": {
+        "avg_gct_ms": null,
+        "gct_change_ms": null,
+        "gct_balance_left_pct": null,
+        "balance_symmetry_pp": null,
+        "avg_cadence_spm": 186,
+        "avg_stride_cm": 101.05000000000001,
+        "stride_change_cm": null
+      },
+      "power": {
+        "avg_power_w": null,
+        "max_power_w": 530.0,
+        "power_cv_pct": null
+      },
+      "load": {
+        "elevation_gain_m": 72,
+        "training_load": null,
+        "ctl": null,
+        "atl": null,
+        "calories": 704.0
+      },
+      "injury": {
+        "pain_before": null,
+        "pain_stiffness": null,
+        "pain_first_steps": null,
+        "pain_post_run": null,
+        "pain_during": null,
+        "location": null,
+        "side": null,
+        "neurological_symptoms": null,
+        "calf_raises_done": null,
+        "has_checkin": false
+      },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
+      "session_type": {
+        "label": "fartlek",
+        "confidence": 0.5,
+        "reason": "moderate lap pace variance (CV 0.14)"
+      },
+      "measurement_quality": {
+        "session_classification": {
+          "value": "fartlek",
+          "confidence": 0.5,
+          "reason": "moderate lap pace variance (CV 0.14)"
+        },
+        "mechanics_change": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.0,
+          "reason": "Per-lap stream analysis not yet run for this activity"
+        },
+        "power_cv": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.0,
+          "reason": "Lap-level power not available for this activity"
+        }
+      },
+      "measurement_quality_derived": {
+        "hr_drift_pct": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.35,
+          "reason": "Non-steady-state session \u2014 aggregate drift is dominated by rep/recovery swings"
+        },
+        "decoupling_pct": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.35,
+          "reason": "Non-steady-state session \u2014 aggregate drift is dominated by rep/recovery swings"
+        },
+        "efficiency_factor": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.35,
+          "reason": "Non-steady-state session \u2014 aggregate drift is dominated by rep/recovery swings"
+        }
+      },
+      "interpretation": {
+        "note": "Drop in stride + rise in GCT = mechanical fatigue accumulation; balance drifting from 50% = side compensation. See dashboard.",
+        "needs_review": false
+      }
+    },
+    {
+      "activity": {
+        "activity_id": 24559171491,
         "date": "2026-10-01",
         "garmin_type": "running",
         "derived": {
@@ -79,6 +222,26 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": 6,
+        "feel": "Normal",
+        "pain": 0,
+        "mood_before": "Good",
+        "mood_after": "Good",
+        "sleep_hours": 7.5,
+        "food_before": "Oats + banana + coffee 90 min before",
+        "nutrition_during": "Water only",
+        "aches": "Slight Achilles tightness first km, resolved",
+        "weather_notes": "Mild, light wind ~12\u00b0C",
+        "feel_notes": "Settled into 5:49 pace by the second km; breathing stayed consistent.",
+        "worked": "3-step / 2-step breathing pattern early",
+        "change": "Get out the door 15 min earlier \u2014 first km felt rushed.",
+        "tags": [
+          "steady",
+          "marathon-block"
+        ],
+        "has_entry": true
+      },
       "session_type": {
         "label": "interval",
         "confidence": 0.6,
@@ -130,7 +293,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-30",
+        "activity_id": 24546415684,
         "date": "2026-09-30",
         "garmin_type": "running",
         "derived": {
@@ -205,6 +368,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -256,7 +436,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-29",
+        "activity_id": 24533585224,
         "date": "2026-09-29",
         "garmin_type": "running",
         "derived": {
@@ -331,6 +511,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -382,7 +579,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-28",
+        "activity_id": 24525150686,
         "date": "2026-09-28",
         "garmin_type": "treadmill_running",
         "derived": {
@@ -457,6 +654,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -508,7 +722,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-26",
+        "activity_id": 24500126411,
         "date": "2026-09-26",
         "garmin_type": "running",
         "derived": {
@@ -583,6 +797,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -634,7 +865,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-23",
+        "activity_id": 24465791655,
         "date": "2026-09-23",
         "garmin_type": "running",
         "derived": {
@@ -709,6 +940,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "hill",
         "confidence": 0.7,
@@ -760,7 +1008,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-23-2",
+        "activity_id": 24461293456,
         "date": "2026-09-23",
         "garmin_type": "running",
         "derived": {
@@ -835,6 +1083,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -886,7 +1151,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-22",
+        "activity_id": 24448031779,
         "date": "2026-09-22",
         "garmin_type": "running",
         "derived": {
@@ -961,6 +1226,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -1012,7 +1294,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-16",
+        "activity_id": 24379873474,
         "date": "2026-09-16",
         "garmin_type": "running",
         "derived": {
@@ -1087,6 +1369,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -1138,7 +1437,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-15",
+        "activity_id": 24366320209,
         "date": "2026-09-15",
         "garmin_type": "running",
         "derived": {
@@ -1213,6 +1512,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "hill",
         "confidence": 0.7,
@@ -1264,7 +1580,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-12",
+        "activity_id": 24326255384,
         "date": "2026-09-12",
         "garmin_type": "running",
         "derived": {
@@ -1339,6 +1655,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -1390,7 +1723,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-10",
+        "activity_id": 24305800935,
         "date": "2026-09-10",
         "garmin_type": "running",
         "derived": {
@@ -1465,6 +1798,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -1516,7 +1866,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-08",
+        "activity_id": 24280290270,
         "date": "2026-09-08",
         "garmin_type": "running",
         "derived": {
@@ -1591,6 +1941,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -1642,7 +2009,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-08-2",
+        "activity_id": 24276169027,
         "date": "2026-09-08",
         "garmin_type": "running",
         "derived": {
@@ -1717,6 +2084,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -1768,7 +2152,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-05",
+        "activity_id": 24240820875,
         "date": "2026-09-05",
         "garmin_type": "running",
         "derived": {
@@ -1843,6 +2227,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -1894,7 +2295,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-02",
+        "activity_id": 24207213055,
         "date": "2026-09-02",
         "garmin_type": "running",
         "derived": {
@@ -1969,6 +2370,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -2020,7 +2438,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-09-01",
+        "activity_id": 24188499823,
         "date": "2026-09-01",
         "garmin_type": "running",
         "derived": {
@@ -2095,6 +2513,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -2146,7 +2581,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-31",
+        "activity_id": 24180227561,
         "date": "2026-08-31",
         "garmin_type": "treadmill_running",
         "derived": {
@@ -2221,6 +2656,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -2272,7 +2724,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-31-2",
+        "activity_id": 24180073949,
         "date": "2026-08-31",
         "garmin_type": "treadmill_running",
         "derived": {
@@ -2347,6 +2799,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -2398,7 +2867,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-29",
+        "activity_id": 24156239957,
         "date": "2026-08-29",
         "garmin_type": "running",
         "derived": {
@@ -2473,6 +2942,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -2524,7 +3010,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-29-2",
+        "activity_id": 24153577764,
         "date": "2026-08-29",
         "garmin_type": "running",
         "derived": {
@@ -2599,6 +3085,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -2650,7 +3153,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-26",
+        "activity_id": 24120388478,
         "date": "2026-08-26",
         "garmin_type": "running",
         "derived": {
@@ -2725,6 +3228,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -2776,7 +3296,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-25",
+        "activity_id": 24106348060,
         "date": "2026-08-25",
         "garmin_type": "running",
         "derived": {
@@ -2851,6 +3371,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -2902,7 +3439,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-23",
+        "activity_id": 24080780274,
         "date": "2026-08-23",
         "garmin_type": "running",
         "derived": {
@@ -2977,6 +3514,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -3028,7 +3582,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-23-2",
+        "activity_id": 24078195210,
         "date": "2026-08-23",
         "garmin_type": "running",
         "derived": {
@@ -3103,6 +3657,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -3154,7 +3725,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-22",
+        "activity_id": 24068410730,
         "date": "2026-08-22",
         "garmin_type": "running",
         "derived": {
@@ -3229,6 +3800,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -3280,7 +3868,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-22-2",
+        "activity_id": 24066055827,
         "date": "2026-08-22",
         "garmin_type": "running",
         "derived": {
@@ -3355,6 +3943,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -3406,7 +4011,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-21",
+        "activity_id": 24057530851,
         "date": "2026-08-21",
         "garmin_type": "running",
         "derived": {
@@ -3481,6 +4086,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -3532,7 +4154,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-21-2",
+        "activity_id": 24053519097,
         "date": "2026-08-21",
         "garmin_type": "running",
         "derived": {
@@ -3607,6 +4229,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -3658,7 +4297,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-20",
+        "activity_id": 24044595892,
         "date": "2026-08-20",
         "garmin_type": "running",
         "derived": {
@@ -3733,6 +4372,23 @@
         "calf_raises_done": null,
         "has_checkin": false
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -3784,7 +4440,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-14",
+        "activity_id": 23966722081,
         "date": "2026-08-14",
         "garmin_type": "running",
         "derived": {
@@ -3859,6 +4515,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -3910,7 +4583,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-12",
+        "activity_id": 23946353502,
         "date": "2026-08-12",
         "garmin_type": "running",
         "derived": {
@@ -3985,6 +4658,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -4036,7 +4726,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-11",
+        "activity_id": 23927879233,
         "date": "2026-08-11",
         "garmin_type": "running",
         "derived": {
@@ -4111,6 +4801,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -4162,7 +4869,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-10",
+        "activity_id": 23919485676,
         "date": "2026-08-10",
         "garmin_type": "treadmill_running",
         "derived": {
@@ -4237,6 +4944,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -4288,7 +5012,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-10-2",
+        "activity_id": 23919277882,
         "date": "2026-08-10",
         "garmin_type": "treadmill_running",
         "derived": {
@@ -4363,6 +5087,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -4414,7 +5155,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-06",
+        "activity_id": 23870964354,
         "date": "2026-08-06",
         "garmin_type": "running",
         "derived": {
@@ -4489,6 +5230,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "fartlek",
         "confidence": 0.5,
@@ -4540,7 +5298,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-05",
+        "activity_id": 23858238911,
         "date": "2026-08-05",
         "garmin_type": "treadmill_running",
         "derived": {
@@ -4615,6 +5373,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -4666,7 +5441,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-04",
+        "activity_id": 23840754799,
         "date": "2026-08-04",
         "garmin_type": "running",
         "derived": {
@@ -4741,6 +5516,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "hill",
         "confidence": 0.7,
@@ -4792,7 +5584,7 @@
     },
     {
       "activity": {
-        "activity_id": "2026-08-04-2",
+        "activity_id": 23840754590,
         "date": "2026-08-04",
         "garmin_type": "running",
         "derived": {
@@ -4867,6 +5659,23 @@
         "calf_raises_done": true,
         "has_checkin": true
       },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
       "session_type": {
         "label": "steady",
         "confidence": 0.6,
@@ -4877,132 +5686,6 @@
           "value": "steady",
           "confidence": 0.6,
           "reason": "low lap pace variance (CV 0.06)"
-        },
-        "mechanics_change": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.0,
-          "reason": "Per-lap stream analysis not yet run for this activity"
-        },
-        "power_cv": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.0,
-          "reason": "Lap-level power not available for this activity"
-        }
-      },
-      "measurement_quality_derived": {
-        "hr_drift_pct": {
-          "value": null,
-          "valid": true,
-          "confidence": 0.85,
-          "reason": "Steady-state session"
-        },
-        "decoupling_pct": {
-          "value": null,
-          "valid": true,
-          "confidence": 0.85,
-          "reason": "Steady-state session"
-        },
-        "efficiency_factor": {
-          "value": null,
-          "valid": true,
-          "confidence": 0.85,
-          "reason": "Steady-state session"
-        }
-      },
-      "interpretation": {
-        "note": "Drop in stride + rise in GCT = mechanical fatigue accumulation; balance drifting from 50% = side compensation. See dashboard.",
-        "needs_review": false
-      }
-    },
-    {
-      "activity": {
-        "activity_id": "2026-08-03",
-        "date": "2026-08-03",
-        "garmin_type": "treadmill_running",
-        "derived": {
-          "avg_pace_sec_km": 275.4,
-          "gct_balance_symmetry_pp": null,
-          "hr_drift_pct": null,
-          "decoupling_pct": null,
-          "efficiency_factor": null,
-          "training_load": null,
-          "ctl": null,
-          "atl": null
-        }
-      },
-      "measured": {
-        "distance_km": 1.0,
-        "duration_min": 4.6,
-        "moving_duration_min": 3.4,
-        "avg_pace_min_km": 4.59,
-        "max_pace_min_km": 4.69,
-        "avg_hr": 131.0,
-        "max_hr": 150.0,
-        "calories": 50.0,
-        "elevation_gain_m": 0,
-        "avg_temperature_c": null,
-        "avg_gct_ms": null,
-        "gct_balance_left_pct": null,
-        "avg_cadence_spm": 147,
-        "avg_stride_cm": 102.54000244140626,
-        "avg_power_w": null,
-        "max_power_w": 357.0,
-        "aerobic_te": 1.100000023841858,
-        "anaerobic_te": 0.0
-      },
-      "cardio": {
-        "avg_hr": 131.0,
-        "max_hr": 150.0,
-        "hr_drift_pct": null,
-        "decoupling_pct": null,
-        "aerobic_te": 1.100000023841858,
-        "anaerobic_te": 0.0
-      },
-      "mechanics": {
-        "avg_gct_ms": null,
-        "gct_change_ms": null,
-        "gct_balance_left_pct": null,
-        "balance_symmetry_pp": null,
-        "avg_cadence_spm": 147,
-        "avg_stride_cm": 102.54000244140626,
-        "stride_change_cm": null
-      },
-      "power": {
-        "avg_power_w": null,
-        "max_power_w": 357.0,
-        "power_cv_pct": null
-      },
-      "load": {
-        "elevation_gain_m": 0,
-        "training_load": null,
-        "ctl": null,
-        "atl": null,
-        "calories": 50.0
-      },
-      "injury": {
-        "pain_before": null,
-        "pain_stiffness": 1,
-        "pain_first_steps": 0,
-        "pain_post_run": 0,
-        "pain_during": null,
-        "location": null,
-        "side": null,
-        "neurological_symptoms": null,
-        "calf_raises_done": true,
-        "has_checkin": true
-      },
-      "session_type": {
-        "label": "steady",
-        "confidence": 0.6,
-        "reason": "low lap pace variance (CV 0.00)"
-      },
-      "measurement_quality": {
-        "session_classification": {
-          "value": "steady",
-          "confidence": 0.6,
-          "reason": "low lap pace variance (CV 0.00)"
         },
         "mechanics_change": {
           "value": null,
