@@ -130,12 +130,24 @@ def _checkin_for_date(checkins, date_iso):
     return {}
 
 
-def normalize_activity(run, ictl=None, checkin=None):
+def _journal_for_run(journal, run):
+    for e in journal or []:
+        if e.get("activity_id") and run.get("activity_id") and str(e["activity_id"]) == str(run["activity_id"]):
+            return e
+    for e in journal or []:
+        if e.get("date") and run.get("date") and e["date"] == run["date"]:
+            return e
+    return {}
+
+
+def normalize_activity(run, ictl=None, checkin=None, journal_entry=None):
     """One raw run dict -> normalized record. ictl = matching intervals.icu
-    load_data row (by date), checkin = matching check-in row (by date)."""
+    load_data row (by date), checkin = matching check-in row (by date),
+    journal_entry = matching run-journal reflection (by activity_id/date)."""
     run = run or {}
     ictl = ictl or {}
     checkin = checkin or {}
+    journal_entry = journal_entry or {}
 
     session_type, session_conf, session_reason = guess_session(run)
 
@@ -222,6 +234,15 @@ def normalize_activity(run, ictl=None, checkin=None):
             "calf_raises_done": checkin.get("calf_raises"),
             "has_checkin": bool(checkin),
         },
+        "journal": {
+            "rpe": journal_entry.get("rpe"),
+            "feel": journal_entry.get("feel"),
+            "pain": journal_entry.get("pain"),
+            "worked": journal_entry.get("worked"),
+            "change": journal_entry.get("change"),
+            "tags": journal_entry.get("tags") or [],
+            "has_entry": bool(journal_entry),
+        },
         "session_type": {
             "label": session_type,
             "confidence": session_conf,
@@ -259,23 +280,24 @@ def normalize_activity(run, ictl=None, checkin=None):
 
 # ── Record building ─────────────────────────────────────────────────────────
 
-def build_records(runs, ictl_load, checkins):
+def build_records(runs, ictl_load, checkins, journal=None):
     records = []
     seen = set()
     for run in runs:
-        base = run.get("date")
-        aid = base
+        base = run.get("activity_id") or run.get("date")
+        aid = str(base)
         n = 2
         while aid in seen:
             aid = f"{base}-{n}"
             n += 1
         seen.add(aid)
         run = dict(run)
-        run["activity_id"] = aid
+        run["activity_id"] = run.get("activity_id") or aid
 
-        ictl = _ictl_for_date(ictl_load, base)
-        checkin = _checkin_for_date(checkins, base)
-        rec = normalize_activity(run, ictl, checkin)
+        ictl = _ictl_for_date(ictl_load, run.get("date"))
+        checkin = _checkin_for_date(checkins, run.get("date"))
+        journal_entry = _journal_for_run(journal, run)
+        rec = normalize_activity(run, ictl, checkin, journal_entry)
         rec["_laps"] = run.get("laps") or []
         records.append(rec)
     return records
@@ -296,6 +318,7 @@ ACTIVITIES_COLUMNS = [
     "training_load", "ctl", "atl",
     "hr_drift_pct", "hr_drift_valid", "efficiency_factor",
     "pain_before", "pain_stiffness", "pain_first_steps", "pain_post_run", "pain_during",
+    "rpe", "feel", "journal_pain", "tags",
 ]
 
 
@@ -341,6 +364,10 @@ def activities_rows(records):
             "pain_first_steps": r["injury"]["pain_first_steps"],
             "pain_post_run": r["injury"]["pain_post_run"],
             "pain_during": r["injury"]["pain_during"],
+            "rpe": r["journal"]["rpe"],
+            "feel": r["journal"]["feel"],
+            "journal_pain": r["journal"]["pain"],
+            "tags": ";".join(r["journal"]["tags"] or []),
         })
     return rows
 
@@ -403,13 +430,13 @@ def pain_log_rows(checkins):
 
 # ── Dataset builder ─────────────────────────────────────────────────────────
 
-def build_and_write(runs, ictl_load, checkins, out_dir="."):
+def build_and_write(runs, ictl_load, checkins, journal=None, out_dir="."):
     """Build normalized records, write the four dataset files next to the
     dashboard, and return a summary dict for the build log."""
     import os
     from datetime import datetime
 
-    records = build_records(runs, ictl_load, checkins)
+    records = build_records(runs, ictl_load, checkins, journal=journal)
 
     analysis_doc = {
         "schema_version": SCHEMA_VERSION,

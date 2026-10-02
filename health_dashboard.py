@@ -74,6 +74,7 @@ def fetch_garmin_data(garmin):
         avg_speed = r.get("averageSpeed")
         max_speed = r.get("maxSpeed")
         data["runs"].append({
+            "activity_id": r["activityId"],
             "date": r["startTimeLocal"][:10],
             "type": r.get("activityType", {}).get("typeKey", "running"),
             "distance": round(r.get("distance", 0) / 1000, 1),
@@ -764,6 +765,24 @@ def load_checkins():
     except Exception as e:
         print(f"  Check-ins load failed: {e}")
     return []
+
+# ─── RUN JOURNAL ────────────────────────────────────────────────────────────
+
+JOURNAL_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "journal.json")
+
+def load_journal():
+    """Load committed run-journal entries (qualitative layer: RPE, feel, pain,
+    what worked / change next time, tags), keyed per run by activity_id/date."""
+    try:
+        if os.path.exists(JOURNAL_FILE):
+            with open(JOURNAL_FILE, encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                return data
+    except Exception as e:
+        print(f"  Journal load failed: {e}")
+    return []
+
 
 def get_latest_checkin(checkins):
     """Return today's check-in, or yesterday's if within 24h relevance window."""
@@ -2067,7 +2086,7 @@ def compute_training_decision(readiness, achilles, hrv, sleep, weather, phase_in
     }
 
 
-def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None, comparison_section_html="", embedded_css="", comparison_runs_export=None):
+def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_commentary="", weather=None, intervals=None, load_data=None, recovery=None, injury_contributors=None, tissue_capacity=None, monotony=None, why_today=None, checkins=None, comparison_section_html="", embedded_css="", comparison_runs_export=None, journal=None):
     runs        = garmin_data.get("runs", [])
     readiness   = garmin_data.get("readiness", {})
     hrv         = garmin_data.get("hrv", {})
@@ -2153,6 +2172,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     latest_checkin      = get_latest_checkin(checkins)
     checkin_history_json = json.dumps(list(reversed(checkins[-14:])))
     today_iso           = date.today().isoformat()
+    journal_data_json   = json.dumps(journal or [])
 
     # Analysis/export dataset (written at build time next to index.html) —
     # plain links so the same-origin files can be downloaded or fetched.
@@ -2242,6 +2262,7 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     recent_runs_export = []
     for r in runs[:8]:
         recent_runs_export.append({
+            "activity_id": r.get("activity_id"),
             "date": r["date"],
             "type": r.get("type", "running"),
             "distance_km": r["distance"],
@@ -3656,6 +3677,17 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     </div>
   </div>
 
+  <!-- RUN JOURNAL (qualitative layer — RPE, feel, pain, lessons) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Run Journal</div>
+      <div style="font-size:10px;color:var(--text3)">qualitative layer · RPE / feel / pain / lessons</div>
+    </div>
+    <div class="chart-box">
+      <div id="journal-container">Loading…</div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-header"><div class="section-title">Lap Breakdown</div></div>
     <div class="chart-grid">
@@ -4485,6 +4517,184 @@ async function syncCheckinToServer(entry) {{
 const checkInServerHistory = {checkin_history_json};
 const checkInToday = '{today_iso}';
 
+// ── RUN JOURNAL ──
+const JOURNAL_KEY = 'health_dashboard_journal';
+const journalData = {journal_data_json};
+const FEEL_OPTIONS = ['Great', 'Good', 'Normal', 'Tired', 'Heavy', 'Achy'];
+
+function journalKey(e) {{
+  return String(e.activity_id || e.date || '');
+}}
+
+function getLocalJournal() {{
+  try {{
+    return JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]');
+  }} catch (e) {{
+    return [];
+  }}
+}}
+
+function getMergedJournal() {{
+  const byKey = {{}};
+  (journalData || []).forEach(e => {{ if (e && journalKey(e)) byKey[journalKey(e)] = e; }});
+  getLocalJournal().forEach(e => {{ if (e && journalKey(e)) byKey[journalKey(e)] = e; }});
+  return Object.values(byKey);
+}}
+
+function findJournalEntry(run) {{
+  const entries = getMergedJournal();
+  if (!run) return null;
+  return entries.find(e => e.activity_id === run.activity_id) ||
+         entries.find(e => e.date === run.date) || null;
+}}
+
+function renderJournal() {{
+  const el = document.getElementById('journal-container');
+  if (!el) return;
+  const run = dashboardData && dashboardData.recent_runs && dashboardData.recent_runs[0];
+  if (!run) {{
+    el.innerHTML = '<div style="color:var(--text3);font-size:12px">No runs yet — journal appears once your last run is available.</div>';
+    return;
+  }}
+  const entry = findJournalEntry(run);
+  el.innerHTML = renderJournalCard(run, entry);
+  const btn = document.getElementById('journal-toggle-btn');
+  if (btn) btn.addEventListener('click', () => {{
+    const form = document.getElementById('journal-form');
+    if (form) {{
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      if (form.style.display === 'block') prefillJournalForm(run, entry);
+    }}
+  }});
+  const save = document.getElementById('journal-save-btn');
+  if (save) save.addEventListener('click', () => saveJournal(run, entry));
+}}
+
+function renderJournalCard(run, entry) {{
+  const header = entry
+    ? `<div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--text2)">
+        <div>RPE <strong style="color:var(--text)">${{entry.rpe ?? '—'}}/10</strong></div>
+        <div>Feel <strong style="color:var(--text)">${{entry.feel || '—'}}</strong></div>
+        <div>Pain <strong style="color:var(--text)">${{entry.pain ?? '—'}}/10</strong></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;line-height:1.6">
+        ${{entry.worked ? '<strong style="color:#34d399">✓ What worked:</strong> ' + escapeHtml(entry.worked) + '<br>' : ''}}
+        ${{entry.change ? '<strong style="color:#fbbf24">→ Change next time:</strong> ' + escapeHtml(entry.change) + '<br>' : ''}}
+        ${{(entry.tags || []).length ? '<div style="margin-top:6px">' + (entry.tags.map(t => '<span class="tag">' + escapeHtml(t) + '</span>').join('')) + '</div>' : ''}}
+      </div>`
+    : '<div style="color:var(--text3);font-size:12px">No reflection on today\\'s/last run yet.</div>';
+
+  return `<div class="journal-entry" style="font-size:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div style="font-weight:600;color:var(--text)">${{run.date}} · ${{run.distance_km}} km · ${{run.avg_pace ?? '--'}} min/km</div>
+      <button class="btn btn-outline" id="journal-toggle-btn" style="font-size:11px">${{entry ? '✏ Edit reflection' : '+ Add reflection'}}</button>
+    </div>
+    <div style="margin-top:8px">${{header}}</div>
+    <div id="journal-form" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px">
+        <label><span style="color:var(--text3)">RPE</span><input type="range" id="journal-rpe" min="0" max="10" value="5" style="width:100%;display:block;margin-top:4px"><span id="journal-rpe-val" style="color:var(--text)">5/10</span></label>
+        <label><span style="color:var(--text3)">Feel</span>
+          <select id="journal-feel" style="width:100%;display:block;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px">${{FEEL_OPTIONS.map(f => '<option>' + f + '</option>').join('')}}</select>
+        </label>
+        <label><span style="color:var(--text3)">Pain</span><input type="range" id="journal-pain" min="0" max="10" value="0" style="width:100%;display:block;margin-top:4px"><span id="journal-pain-val" style="color:var(--text)">0/10</span></label>
+      </div>
+      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">✓ What worked</span>
+        <textarea id="journal-worked" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="3-3 breathing felt great…"></textarea>
+      </label>
+      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">→ Change next time</span>
+        <textarea id="journal-change" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="Fuel earlier…"></textarea>
+      </label>
+      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">Tags (comma separated)</span>
+        <input id="journal-tags" type="text" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="breathing, fueling, pacing">
+      </label>
+      <div style="margin-top:12px">
+        <button class="btn btn-purple" id="journal-save-btn">Save reflection</button>
+        <span id="journal-save-status" style="font-size:11px;color:var(--text3);margin-left:8px"></span>
+      </div>
+    </div>
+  </div>`;
+}}
+
+function prefillJournalForm(run, entry) {{
+  entry = entry || {{}};
+  const rpe = document.getElementById('journal-rpe');
+  if (rpe) {{
+    rpe.value = entry.rpe ?? 5;
+    const label = document.getElementById('journal-rpe-val');
+    if (label) label.textContent = rpe.value + '/10';
+  }}
+  const pain = document.getElementById('journal-pain');
+  if (pain) {{
+    pain.value = entry.pain ?? 0;
+    const label = document.getElementById('journal-pain-val');
+    if (label) label.textContent = pain.value + '/10';
+  }}
+  const feel = document.getElementById('journal-feel');
+  if (feel && entry.feel) feel.value = entry.feel;
+  const w = document.getElementById('journal-worked');
+  if (w) w.value = entry.worked || '';
+  const c = document.getElementById('journal-change');
+  if (c) c.value = entry.change || '';
+  const t = document.getElementById('journal-tags');
+  if (t) t.value = (entry.tags || []).join(', ');
+}}
+
+function saveJournal(run, prev) {{
+  const worked = document.getElementById('journal-worked').value.trim();
+  const change = document.getElementById('journal-change').value.trim();
+  const tags = document.getElementById('journal-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+  const entry = {{
+    activity_id: run.activity_id || null,
+    date: run.date,
+    rpe: parseInt(document.getElementById('journal-rpe').value, 10),
+    feel: document.getElementById('journal-feel').value,
+    pain: parseInt(document.getElementById('journal-pain').value, 10),
+    worked: worked,
+    change: change,
+    tags: tags,
+    saved_at: new Date().toISOString(),
+  }};
+  const key = journalKey(entry);
+  const local = getLocalJournal().filter(e => journalKey(e) !== key);
+  local.push(entry);
+  localStorage.setItem(JOURNAL_KEY, JSON.stringify(local));
+  const status = document.getElementById('journal-save-status');
+  if (status) status.textContent = 'Saved locally\\u2026';
+  renderJournal();
+  syncJournalToServer(entry, status);
+}}
+
+async function syncJournalToServer(entry, status) {{
+  if (!SYNC_WORKER_URL) {{
+    if (status) status.textContent = 'Saved locally — no auto-sync configured.';
+    return;
+  }}
+  const secret = getSyncSecret();
+  if (!secret) {{
+    if (status) status.textContent = 'Saved locally — sync skipped (no secret), use Export for manual backup.';
+    return;
+  }}
+  try {{
+    const resp = await fetch(SYNC_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ ...entry, kind: 'journal', secret }}),
+    }});
+    if (resp.ok) {{
+      if (status) status.textContent = 'Synced to server \\u2713';
+    }} else {{
+      const err = await resp.json().catch(() => ({{}}));
+      if (status) status.textContent = 'Saved locally, sync failed (' + (err.error || resp.status) + ').';
+    }}
+  }} catch (e) {{
+    if (status) status.textContent = 'Saved locally, sync failed (network).';
+  }}
+}}
+
+function escapeHtml(s) {{
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}}
+
 function painClass(v) {{
   if (v >= 5) return 'pain-high';
   if (v >= 3) return 'pain-med';
@@ -4599,6 +4809,8 @@ renderCheckinTrend();
 
 // ── EXPORT ──
 const dashboardData = {export_data};
+
+renderJournal();
 
 async function exportJSON() {{
   const json = JSON.stringify(dashboardData, null, 2);
@@ -4728,6 +4940,7 @@ def main():
 
     print("Computing Achilles load score...")
     checkins = load_checkins()
+    journal = load_journal()
     latest_checkin = get_latest_checkin(checkins)
     if latest_checkin:
         print(f"  Check-in: {latest_checkin['date']} — stiffness {latest_checkin.get('stiffness', '?')}/10")
@@ -4819,6 +5032,7 @@ def main():
             garmin_data.get("runs_all", garmin_data["runs"]),
             intervals.get("load_data", []) if intervals else [],
             checkins,
+            journal=journal,
             out_dir=".",
         )
         print(f"  {dataset['n_runs']} runs, {dataset['n_intervals']} intervals, "
@@ -4830,11 +5044,12 @@ def main():
 
     print("Generating dashboard...")
     html = generate_html(garmin_data, bp_readings, phase_info, achilles, "", weather, intervals,
-                         load_data=load_data, recovery=recovery, injury_contributors=injury_contributors,
-                         tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today,
-                         checkins=checkins, comparison_section_html=comparison_section_html,
-                         embedded_css=comparison_css,
-                         comparison_runs_export=comparison_runs_export)
+                     load_data=load_data, recovery=recovery, injury_contributors=injury_contributors,
+                     tissue_capacity=tissue_capacity, monotony=monotony, why_today=why_today,
+                     checkins=checkins, journal=journal,
+                     comparison_section_html=comparison_section_html,
+                     embedded_css=comparison_css,
+                     comparison_runs_export=comparison_runs_export)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDone! Open: {OUTPUT_FILE}")
