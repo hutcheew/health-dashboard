@@ -16,8 +16,11 @@
     "feel_notes": "Felt good legs are lighter",
     "worked": "3-3 until 8km, 3-2 from 8.5-10km",
     "change": "",
-    "tags": [],
+    "tags": [
+      "Breathing",
+      "Mechanical"
+    ],
     "source": "browser",
-    "saved_at": "2026-10-02T23:22:29.560Z"
+    "saved_at": "2026-10-03T00:12:40.847Z"
   }
 ]
