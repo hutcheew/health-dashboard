@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-03 00:02",
+  "generated": "2026-10-03 00:24",
   "runs": [
     {
       "activity": {
@@ -93,7 +93,10 @@
         "feel_notes": "Felt good legs are lighter",
         "worked": "3-3 until 8km, 3-2 from 8.5-10km",
         "change": "",
-        "tags": [],
+        "tags": [
+          "Breathing",
+          "Mechanical"
+        ],
         "has_entry": true
       },
       "session_type": {
