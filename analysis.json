@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-02 23:31",
+  "generated": "2026-10-03 00:02",
   "runs": [
     {
       "activity": {
@@ -13,9 +13,9 @@
           "hr_drift_pct": null,
           "decoupling_pct": null,
           "efficiency_factor": null,
-          "training_load": null,
-          "ctl": null,
-          "atl": null
+          "training_load": 50,
+          "ctl": 23.1,
+          "atl": 19.4
         }
       },
       "measured": {
@@ -62,9 +62,9 @@
       },
       "load": {
         "elevation_gain_m": 72,
-        "training_load": null,
-        "ctl": null,
-        "atl": null,
+        "training_load": 50,
+        "ctl": 23.1,
+        "atl": 19.4,
         "calories": 704.0
       },
       "injury": {
@@ -2301,9 +2301,9 @@
           "hr_drift_pct": null,
           "decoupling_pct": null,
           "efficiency_factor": null,
-          "training_load": 142,
-          "ctl": 29.3,
-          "atl": 43.4
+          "training_load": null,
+          "ctl": null,
+          "atl": null
         }
       },
       "measured": {
@@ -2350,9 +2350,9 @@
       },
       "load": {
         "elevation_gain_m": 227,
-        "training_load": 142,
-        "ctl": 29.3,
-        "atl": 43.4,
+        "training_load": null,
+        "ctl": null,
+        "atl": null,
         "calories": 2058.0
       },
       "injury": {
