@@ -3193,6 +3193,20 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
 
   /* ── RUN COMPARISON (embedded from run_model.py) ── */
   {embedded_css}
+
+  /* ── RUN JOURNAL / LEARNING ENGINE ── */
+  .tag {{ display: inline-block; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); border-radius: 10px; padding: 1px 8px; font-size: 10px; margin: 2px 4px 0 0; }}
+  .journal-entry {{ line-height: 1.5; }}
+  .journal-empty {{ color: var(--text3); font-size: 12px; padding: 8px 0; }}
+  .tag-chip {{ background: var(--surface2); border: 1px solid var(--border); color: var(--text2); border-radius: 12px; padding: 3px 10px; font-size: 11px; cursor: pointer; margin: 3px 5px 3px 0; transition: all .15s ease; }}
+  .tag-chip.selected {{ background: var(--purple); border-color: var(--purple); color: #fff; }}
+  .lesson-card {{ padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface2); }}
+  .lesson-run {{ font-size: 11px; color: var(--text3); }}
+  .insight-card {{ padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface2); font-size: 12px; }}
+  .insight-title {{ font-weight: 600; font-size: 12px; margin-bottom: 8px; color: var(--text); }}
+  .insight-row {{ display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); }}
+  .insight-row:last-child {{ border-bottom: none; }}
+  .insight-caveat {{ font-size: 10px; color: var(--text3); margin-top: 8px; font-style: italic; }}
 </style>
 </head>
 <body>
@@ -3685,6 +3699,29 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     </div>
     <div class="chart-box">
       <div id="journal-container">Loading…</div>
+    </div>
+  </div>
+
+  <!-- RUNNING LESSONS (searchable, tag-grouped pattern ledger) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Running Lessons</div>
+      <div style="font-size:10px;color:var(--text3)">patterns from your reflections · grouped by tag</div>
+    </div>
+    <div class="chart-box">
+      <select id="lessons-filter" style="margin-bottom:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px" onchange="renderLessons()"></select>
+      <div id="lessons-container">Loading…</div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS (observed associations, not causation) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Insights</div>
+      <div style="font-size:10px;color:var(--text3)">observed associations from your data · not causation</div>
+    </div>
+    <div class="chart-box">
+      <div id="insights-container">Loading…</div>
     </div>
   </div>
 
@@ -4523,6 +4560,7 @@ const journalData = {journal_data_json};
 const FEEL_OPTIONS = ['Great', 'Good', 'Normal', 'Tired', 'Heavy', 'Achy'];
 const MOOD_BEFORE_OPTIONS = ['Fresh', 'Good', 'Neutral', 'Tired', 'Low'];
 const MOOD_AFTER_OPTIONS = ['Energized', 'Good', 'Neutral', 'Flat', 'Rough'];
+const TAG_CHOICES = ['Breathing', 'Pacing', 'Fueling', 'Mechanical', 'Recovery', 'Shoes', 'Strength', 'Weather', 'Mental', 'Pain'];
 
 function journalKey(e) {{
   return String(e.activity_id || e.date || '');
@@ -4541,6 +4579,153 @@ function getMergedJournal() {{
   (journalData || []).forEach(e => {{ if (e && journalKey(e)) byKey[journalKey(e)] = e; }});
   getLocalJournal().forEach(e => {{ if (e && journalKey(e)) byKey[journalKey(e)] = e; }});
   return Object.values(byKey);
+}}
+
+let journalTagSel = [];
+
+function updateJournalRanges() {{
+  ['journal-rpe', 'journal-pain'].forEach(id => {{
+    const el = document.getElementById(id);
+    const lab = document.getElementById(id + '-val');
+    if (el && lab) lab.textContent = el.value + '/10';
+  }});
+}}
+
+function renderTagChips() {{
+  const wrap = document.getElementById('journal-tags-chips');
+  if (!wrap) return;
+  wrap.innerHTML = TAG_CHOICES.map(t => {{
+    const on = journalTagSel.indexOf(t) !== -1;
+    return '<button type="button" class="tag-chip' + (on ? ' selected' : '') + '" onclick="toggleJournalTag(\\'' + t + '\\')">' + t + '</button>';
+  }}).join('');
+}}
+
+function toggleJournalTag(t) {{
+  const i = journalTagSel.indexOf(t);
+  if (i !== -1) journalTagSel.splice(i, 1); else journalTagSel.push(t);
+  renderTagChips();
+}}
+
+function preseedJournalTags(entry) {{
+  journalTagSel = [];
+  const extras = [];
+  const known = TAG_CHOICES.map(t => t.toLowerCase());
+  (entry && entry.tags || []).forEach(tag => {{
+    const hit = known.indexOf(String(tag).trim().toLowerCase());
+    if (hit !== -1) journalTagSel.push(TAG_CHOICES[hit]);
+    else extras.push(String(tag).trim());
+  }});
+  const custom = document.getElementById('journal-tags-custom');
+  if (custom) custom.value = extras.join(', ');
+  renderTagChips();
+}}
+
+function collectedJournalTags() {{
+  const custom = document.getElementById('journal-tags-custom');
+  const extras = custom ? custom.value.split(',').map(s => s.trim()).filter(Boolean) : [];
+  return [...journalTagSel, ...extras];
+}}
+
+function runContextFor(date) {{
+  const rs = (dashboardData && dashboardData.recent_runs) || [];
+  return rs.find(r => r.date === date);
+}}
+
+function renderLessons() {{
+  const el = document.getElementById('lessons-container');
+  if (!el) return;
+  const filter = document.getElementById('lessons-filter');
+  const entries = getMergedJournal();
+  const lessons = {{}};
+  entries.forEach(e => {{
+    const ctx = runContextFor(e.date);
+    (e.tags || []).forEach(tag => {{
+      const tagName = String(tag).trim();
+      if (!tagName) return;
+      if (!lessons[tagName]) lessons[tagName] = [];
+      lessons[tagName].push({{
+        date: e.date,
+        dist: ctx && ctx.distance_km != null ? ctx.distance_km : null,
+        pace: ctx && ctx.avg_pace ? ctx.avg_pace : null,
+        rpe: e.rpe ?? null,
+        snippet: e.change || e.worked || e.feel_notes || '',
+      }});
+    }});
+  }});
+  const tagNames = Object.keys(lessons).sort((a, b) => lessons[b].length - lessons[a].length || a.localeCompare(b));
+  if (filter) {{
+    const cur = filter.value;
+    filter.innerHTML = '<option value="__all__">All tags (' + entries.length + ' reflections)</option>' +
+      tagNames.map(t => '<option value="' + escapeHtml(t) + '">' + escapeHtml(t) + ' (' + lessons[t].length + ')</option>').join('');
+    if (tagNames.indexOf(cur) !== -1) filter.value = cur;
+  }}
+  if (!tagNames.length) {{
+    el.innerHTML = '<div class="journal-empty">No tagged reflections yet — pick tags (Breathing, Fueling, Pacing, Shoes, Weather…) when you save a reflection. Lessons group here automatically.</div>';
+    return;
+  }}
+  const active = filter && filter.value !== '__all__' ? filter.value : null;
+  const shown = active ? [active] : tagNames;
+  el.innerHTML = shown.map(tag => {{
+    const items = lessons[tag];
+    const plural = items.length === 1 ? 'reflection' : 'reflections';
+    const rows = items.map(it => {{
+      const head = [it.date, it.dist != null ? it.dist + ' km' : null, it.pace || null, it.rpe != null ? 'RPE ' + it.rpe : null].filter(Boolean).join(' · ');
+      const snip = (it.snippet || '—');
+      const shownSnip = snip.length > 110 ? snip.slice(0, 110) + '…' : snip;
+      return '<div class="lesson-card" style="margin-top:8px"><div class="lesson-run">' + escapeHtml(head) + '</div><div style="margin-top:3px">' + escapeHtml(shownSnip) + '</div></div>';
+    }}).join('');
+    return '<div style="margin-top:8px"><div style="font-size:12px;font-weight:600;color:var(--text)">' + escapeHtml(tag) + ' <span style="color:var(--text3);font-weight:400">· ' + items.length + ' ' + plural + '</span></div>' + rows + '</div>';
+  }}).join('');
+}}
+
+function avgOf(arr) {{ return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null; }}
+const fmtR = v => (typeof v === 'number' ? v.toFixed(1) : '—');
+function insightCard(c) {{
+  const pct = c.b ? Math.round((c.a - c.b) / c.b * 100) : null;
+  const dir = pct == null ? '' : (pct > 0 ? ' averaged ' + (c.a - c.b).toFixed(1) + ' RPE higher' : (pct < 0 ? ' averaged ' + (c.b - c.a).toFixed(1) + ' RPE lower' : ' matched'));
+  const small = Math.min(c.an, c.bn) < 5 ? '<div class="insight-caveat">small sample — keep collecting</div>' : '';
+  return '<div class="insight-card">' +
+    '<div class="insight-title">' + escapeHtml(c.t) + '</div>' +
+    '<div class="insight-row"><span>' + escapeHtml(c.aL) + '</span><span>avg RPE ' + fmtR(c.a) + ' (n=' + c.an + ')</span></div>' +
+    '<div class="insight-row"><span>' + escapeHtml(c.bL) + '</span><span>avg RPE ' + fmtR(c.b) + ' (n=' + c.bn + ')</span></div>' +
+    '<div style="margin-top:6px;color:var(--text2)">Observed: runs ' + escapeHtml(c.aL.toLowerCase()) + ' ' + dir + ' than ' + escapeHtml(c.bL.toLowerCase()) + '.</div>' + small +
+    '</div>';
+}}
+
+function renderInsights() {{
+  const el = document.getElementById('insights-container');
+  if (!el) return;
+  const withRpe = getMergedJournal().filter(e => typeof e.rpe === 'number');
+  if (withRpe.length < 3) {{
+    el.innerHTML = '<div class="journal-empty">Insights appear once you have roughly 5+ reflections with RPE + a bit of context (sleep, mood, tags). Keep logging — this section does the math for you.</div>';
+    return;
+  }}
+  const rpe = e => e.rpe;
+  const cards = [];
+  const sleepLo = withRpe.filter(e => e.sleep_hours != null && e.sleep_hours < 7);
+  const sleepHi = withRpe.filter(e => e.sleep_hours != null && e.sleep_hours >= 7);
+  if (sleepLo.length && sleepHi.length) cards.push({{ t: 'Sleep < 7h vs ≥ 7h → RPE', aL: '< 7h sleep', a: avgOf(sleepLo.map(rpe)), an: sleepLo.length, bL: '≥ 7h sleep', b: avgOf(sleepHi.map(rpe)), bn: sleepHi.length }});
+  const moodLo = withRpe.filter(e => ['Tired', 'Low'].indexOf(e.mood_before) !== -1);
+  const moodHi = withRpe.filter(e => ['Fresh', 'Good'].indexOf(e.mood_before) !== -1);
+  if (moodLo.length && moodHi.length) cards.push({{ t: 'Mood before: Tired / Low vs Fresh / Good → RPE', aL: 'Tired / Low', a: avgOf(moodLo.map(rpe)), an: moodLo.length, bL: 'Fresh / Good', b: avgOf(moodHi.map(rpe)), bn: moodHi.length }});
+  const painYes = withRpe.filter(e => e.pain > 0);
+  const painNo = withRpe.filter(e => e.pain === 0);
+  if (painYes.length && painNo.length) cards.push({{ t: 'Pain during (>0) vs none → RPE', aL: 'With pain', a: avgOf(painYes.map(rpe)), an: painYes.length, bL: 'No pain', b: avgOf(painNo.map(rpe)), bn: painNo.length }});
+  const tagRows = [];
+  TAG_CHOICES.forEach(tag => {{
+    const picked = withRpe.filter(e => (e.tags || []).some(tg => String(tg).toLowerCase() === tag.toLowerCase()));
+    if (picked.length >= 2 && picked.length <= withRpe.length - 1) tagRows.push({{ tag: tag, avg: avgOf(picked.map(rpe)), n: picked.length }});
+  }});
+  tagRows.sort((x, y) => y.avg - x.avg);
+  const body = cards.map(insightCard).join('');
+  const tagHtml = tagRows.length
+    ? '<div class="insight-card" style="margin-top:10px"><div class="insight-title">Effort by tag (observed)</div>' +
+      tagRows.map(r => '<div class="insight-row"><span class="tag">' + escapeHtml(r.tag) + '</span><span>avg RPE ' + fmtR(r.avg) + ' (n=' + r.n + ')</span></div>').join('') +
+      '<div class="insight-caveat">which tags sit with the harder days — correlations only.</div></div>'
+    : '';
+  el.innerHTML = (body || '<div class="journal-empty">Not enough pairs yet — sleep, mood or pain comparisons need both sides to show up.</div>') +
+    tagHtml +
+    '<div style="margin-top:10px;font-size:10px;color:var(--text3)">Observed associations from your own runs — small numbers, correlation not causation, nothing here tells you what to do. It is a mirror, not a coach.</div>';
 }}
 
 function findJournalEntry(run) {{
@@ -4570,6 +4755,10 @@ function renderJournal() {{
   }});
   const save = document.getElementById('journal-save-btn');
   if (save) save.addEventListener('click', () => saveJournal(run, entry));
+  ['journal-rpe', 'journal-pain'].forEach(id => {{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateJournalRanges);
+  }});
 }}
 
 function renderJournalCard(run, entry) {{
@@ -4614,21 +4803,12 @@ function renderJournalCard(run, entry) {{
         <label><span style="color:var(--text3)">Mood after run</span>${{sel('journal-mood-after', MOOD_AFTER_OPTIONS, entry && entry.mood_after)}}</label>
         <label><span style="color:var(--text3)">Sleep last night (hrs)</span><input id="journal-sleep" type="number" min="0" max="16" step="0.5" value="${{entry && entry.sleep_hours != null ? entry.sleep_hours : ''}}" placeholder="8" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 6px;box-sizing:border-box"></label>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;margin-top:10px">
-        <label><span style="color:var(--text3)">Food beforehand</span>
-          <input type="text" id="journal-food-before" value="${{entry && entry.food_before ? escapeHtml(entry.food_before) : ''}}" placeholder="eggs, toast + coffee ~90min before" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
-        </label>
-        <label><span style="color:var(--text3)">Nutrition during</span>
-          <input type="text" id="journal-nutrition-during" value="${{entry && entry.nutrition_during ? escapeHtml(entry.nutrition_during) : ''}}" placeholder="water only / gel at 45 min" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
-        </label>
-        <label><span style="color:var(--text3)">Aches / Injuries</span>
-          <input type="text" id="journal-aches" value="${{entry && entry.aches ? escapeHtml(entry.aches) : ''}}" placeholder="slight Achilles tightness first km, then fine" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
-        </label>
-        <label><span style="color:var(--text3)">Weather</span>
-          <input type="text" id="journal-weather" value="${{entry && entry.weather_notes ? escapeHtml(entry.weather_notes) : ''}}" placeholder="windy N, ~8°C, humid" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
-        </label>
+      <div style="margin-top:10px;font-size:11px">
+        <span style="color:var(--text3)">Tags — tap the ones that apply</span>
+        <div id="journal-tags-chips" style="margin-top:6px"></div>
+        <input id="journal-tags-custom" type="text" value="" placeholder="custom tag (e.g. hills, first-10k…)" style="width:100%;margin-top:6px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
       </div>
-      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">How did the run feel?</span>
+      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3);font-weight:600">What stood out?</span>
         <textarea id="journal-feel-notes" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="Private notes beyond the quick feel above — pacing, breathing, mindset…">${{entry && entry.feel_notes ? escapeHtml(entry.feel_notes) : ''}}</textarea>
       </label>
       <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">✓ What worked</span>
@@ -4637,9 +4817,23 @@ function renderJournalCard(run, entry) {{
       <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">→ Change next time</span>
         <textarea id="journal-change" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="Fuel earlier…"></textarea>
       </label>
-      <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3)">Tags (comma separated)</span>
-        <input id="journal-tags" type="text" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="breathing, fueling, pacing">
-      </label>
+      <details style="margin-top:10px;font-size:11px">
+        <summary style="color:var(--text3);cursor:pointer">Context — food, aches, weather</summary>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <label><span style="color:var(--text3)">Food beforehand</span>
+            <input type="text" id="journal-food-before" value="${{entry && entry.food_before ? escapeHtml(entry.food_before) : ''}}" placeholder="eggs, toast + coffee ~90min before" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+          </label>
+          <label><span style="color:var(--text3)">Nutrition during</span>
+            <input type="text" id="journal-nutrition-during" value="${{entry && entry.nutrition_during ? escapeHtml(entry.nutrition_during) : ''}}" placeholder="water only / gel at 45 min" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+          </label>
+          <label><span style="color:var(--text3)">Aches / Injuries</span>
+            <input type="text" id="journal-aches" value="${{entry && entry.aches ? escapeHtml(entry.aches) : ''}}" placeholder="slight Achilles tightness first km, then fine" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+          </label>
+          <label><span style="color:var(--text3)">Weather</span>
+            <input type="text" id="journal-weather" value="${{entry && entry.weather_notes ? escapeHtml(entry.weather_notes) : ''}}" placeholder="windy N, ~8°C, humid" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+          </label>
+        </div>
+      </details>
       <div style="margin-top:12px">
         <button class="btn btn-purple" id="journal-save-btn">Save reflection</button>
         <span id="journal-save-status" style="font-size:11px;color:var(--text3);margin-left:8px"></span>
@@ -4684,8 +4878,7 @@ function prefillJournalForm(run, entry) {{
   if (w) w.value = entry.worked || '';
   const c = document.getElementById('journal-change');
   if (c) c.value = entry.change || '';
-  const t = document.getElementById('journal-tags');
-  if (t) t.value = (entry.tags || []).join(', ');
+  preseedJournalTags(entry);
 }}
 
 function saveJournal(run, prev) {{
@@ -4698,7 +4891,7 @@ function saveJournal(run, prev) {{
   const txt = (id) => {{ const el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }};
   const worked = txt('journal-worked');
   const change = txt('journal-change');
-  const tags = document.getElementById('journal-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+  const tags = collectedJournalTags();
   const entry = {{
     activity_id: run.activity_id || null,
     date: run.date,
@@ -4875,6 +5068,8 @@ renderCheckinTrend();
 const dashboardData = {export_data};
 
 renderJournal();
+renderLessons();
+renderInsights();
 
 async function exportJSON() {{
   const json = JSON.stringify(dashboardData, null, 2);
