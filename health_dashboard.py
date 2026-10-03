@@ -3702,11 +3702,10 @@ def generate_html(garmin_data, bp_readings, phase_info=None, achilles=None, ai_c
     </div>
   </div>
 
-  <!-- RUNNING LESSONS (searchable, tag-grouped pattern ledger) -->
-  <div class="section">
+  <div class="section" id="lessons-section">
     <div class="section-header">
-      <div class="section-title">Running Lessons</div>
-      <div style="font-size:10px;color:var(--text3)">patterns from your reflections · grouped by tag</div>
+      <div class="section-title">Your Running Lessons</div>
+      <div style="font-size:10px;color:var(--text3)">your reflections as a knowledge base · grouped by tag · patterns as you log more</div>
     </div>
     <div class="chart-box">
       <select id="lessons-filter" style="margin-bottom:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px" onchange="renderLessons()"></select>
@@ -4604,6 +4603,37 @@ function toggleJournalTag(t) {{
   const i = journalTagSel.indexOf(t);
   if (i !== -1) journalTagSel.splice(i, 1); else journalTagSel.push(t);
   renderTagChips();
+  syncLessonsFilter();
+}}
+
+function syncLessonsFilter() {{
+  const filter = document.getElementById('lessons-filter');
+  if (!filter) return;
+  if (journalTagSel.length === 1) {{
+    const want = journalTagSel[0];
+    const opts = filter.options;
+    for (let k = 0; k < opts.length; k++) {{
+      if (opts[k].value === want) {{ filter.value = want; renderLessons(); return; }}
+    }}
+    filter.value = '__all__';
+    renderLessons();
+  }} else if (journalTagSel.length === 0 && filter.value !== '__all__') {{
+    filter.value = '__all__';
+    renderLessons();
+  }}
+}}
+
+function filterByTag(t) {{
+  const filter = document.getElementById('lessons-filter');
+  if (filter) {{
+    const opts = filter.options;
+    let found = '__all__';
+    for (let k = 0; k < opts.length; k++) {{ if (opts[k].value === t) {{ found = t; break; }} }}
+    filter.value = found;
+  }}
+  renderLessons();
+  const sec = document.getElementById('lessons-section');
+  if (sec) sec.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
 }}
 
 function preseedJournalTags(entry) {{
@@ -4631,6 +4661,65 @@ function runContextFor(date) {{
   return rs.find(r => r.date === date);
 }}
 
+const PATTERN_THRESHOLD_ENTRIES = 15;
+const PATTERN_THRESHOLD_TAG = 3;
+const TAG_TOPICS = {{
+  Breathing: ['3-3', '3-2', '2-3', '3-4', 'breathing', 'exhale', 'inhale', 'rhythm'],
+  Fueling: ['fuel', 'gel', 'eat', 'food', 'water', 'drink', 'carb', 'hungry', 'coffee'],
+  Pacing: ['negative split', 'progression', 'slow start', 'started', 'pushed', 'effort'],
+  Mechanical: ['leg', 'foot', 'strike', 'cadence', 'stride', 'tight', 'calf', 'form', 'hip', 'knee', 'shoulder'],
+  Shoes: ['shoe', 'break-in', 'lace', 'cushion'],
+  Recovery: ['sleep', 'rest', 'sore', 'tired', 'recover'],
+  Weather: ['wind', 'wet', 'hot', 'cold', 'rain', 'humid', 'cool'],
+  Mental: ['mind', 'focus', 'head', 'calm', 'mentally'],
+  Pain: ['pain', 'ache', 'sting', 'sharp', 'hurt', 'soreness'],
+}};
+
+function normPhrase(s) {{ return String(s || '').toLowerCase().replace(/\\s+/g, ' ').trim(); }}
+
+function patternCards(lessons, entries) {{
+  if (entries.length < PATTERN_THRESHOLD_ENTRIES) return '';
+  const cards = [];
+  Object.keys(lessons).forEach(tag => {{
+    const items = lessons[tag];
+    if (items.length < PATTERN_THRESHOLD_TAG) return;
+    const lines = [];
+    const changeCounts = {{}};
+    items.forEach(it => {{
+      if (!it.change) return;
+      const key = normPhrase(it.change);
+      if (!key || key.length < 3) return;
+      changeCounts[key] = (changeCounts[key] || 0) + 1;
+    }});
+    Object.keys(changeCounts).forEach(key => {{
+      const c = changeCounts[key];
+      if (c < 2 || c < items.length * 0.4) return;
+      lines.push('You wrote this change ' + c + 'x across ' + items.length + ' ' + tag + ' reflections: "' + escapeHtml(key) + '"');
+    }});
+    const topics = TAG_TOPICS[tag] || [];
+    if (topics.length) {{
+      const counts = {{}};
+      items.forEach(it => {{
+        const body = normPhrase(it.body);
+        topics.forEach(k => {{ if (body.indexOf(k) !== -1) counts[k] = (counts[k] || 0) + 1; }});
+      }});
+      Object.keys(counts).sort((x, y) => counts[y] - counts[x]).slice(0, 2).forEach(k => {{
+        const c = counts[k];
+        if (c < 3) return;
+        lines.push('"' + escapeHtml(k) + '" appears ' + c + 'x across ' + items.length + ' ' + tag + ' reflections');
+      }});
+    }}
+    if (lines.length) cards.push({{ tag: tag, lines: lines }});
+  }});
+  if (!cards.length) return '';
+  return '<div style="margin-bottom:10px">' +
+    '<div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Patterns noticed so far</div>' +
+    cards.map(c => '<div style="margin-top:6px"><span class="tag">' + escapeHtml(c.tag) + '</span>' +
+      c.lines.map(l => '<div style="margin-top:2px;font-size:12px;line-height:1.5">· ' + l + '</div>').join('') +
+      '</div>').join('') +
+    '<div class="insight-caveat">auto-detected by text matching — always re-read the reflections before trusting it</div></div>';
+}}
+
 function renderLessons() {{
   const el = document.getElementById('lessons-container');
   if (!el) return;
@@ -4648,6 +4737,9 @@ function renderLessons() {{
         dist: ctx && ctx.distance_km != null ? ctx.distance_km : null,
         pace: ctx && ctx.avg_pace ? ctx.avg_pace : null,
         rpe: e.rpe ?? null,
+        change: e.change || '',
+        worked: e.worked || '',
+        body: [e.worked, e.change, e.feel_notes].filter(Boolean).join(' '),
         snippet: e.change || e.worked || e.feel_notes || '',
       }});
     }});
@@ -4665,7 +4757,11 @@ function renderLessons() {{
   }}
   const active = filter && filter.value !== '__all__' ? filter.value : null;
   const shown = active ? [active] : tagNames;
-  el.innerHTML = shown.map(tag => {{
+  const patternHtml = patternCards(lessons, entries) ||
+    (entries.length < PATTERN_THRESHOLD_ENTRIES
+      ? '<div style="font-size:10px;color:var(--text3);margin-bottom:8px">Patterns auto-appear as the log grows — currently ' + entries.length + '/' + PATTERN_THRESHOLD_ENTRIES + ' reflections. For now this is your raw, searchable log.</div>'
+      : '');
+  el.innerHTML = patternHtml + shown.map(tag => {{
     const items = lessons[tag];
     const plural = items.length === 1 ? 'reflection' : 'reflections';
     const rows = items.map(it => {{
@@ -4778,7 +4874,7 @@ function renderJournalCard(run, entry) {{
         <div style="margin-top:8px;line-height:1.6">
           ${{entry.worked ? '<strong style="color:#34d399">✓ What worked:</strong> ' + escapeHtml(entry.worked) + '<br>' : ''}}
           ${{entry.change ? '<strong style="color:#fbbf24">→ Change next time:</strong> ' + escapeHtml(entry.change) + '<br>' : ''}}
-          ${{(entry.tags || []).length ? '<div style="margin-top:6px">' + (entry.tags.map(t => '<span class="tag">' + escapeHtml(t) + '</span>').join('')) + '</div>' : ''}}
+          ${{(entry.tags || []).length ? '<div style="margin-top:6px">' + (entry.tags.map(t => '<button type="button" class="tag" style="cursor:pointer" onclick="filterByTag(\\'' + escapeHtml(t) + '\\')">' + escapeHtml(t) + '</button>').join('')) + '</div>' : ''}}
         </div>
       </div>`
     : '<div style="color:var(--text3);font-size:12px">No reflection on today\\'s/last run yet.</div>';
@@ -4807,6 +4903,7 @@ function renderJournalCard(run, entry) {{
         <span style="color:var(--text3)">Tags — tap the ones that apply</span>
         <div id="journal-tags-chips" style="margin-top:6px"></div>
         <input id="journal-tags-custom" type="text" value="" placeholder="custom tag (e.g. hills, first-10k…)" style="width:100%;margin-top:6px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;box-sizing:border-box">
+        <div style="color:var(--text3);margin-top:4px;font-size:10px">Pain = something hurt · Mechanical = legs/form/movement stood out · pick the tag for the observation, not the outcome. Selecting a tag shows your past notes on it below.</div>
       </div>
       <label style="display:block;margin-top:10px;font-size:11px"><span style="color:var(--text3);font-weight:600">What stood out?</span>
         <textarea id="journal-feel-notes" rows="2" style="width:100%;margin-top:4px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px" placeholder="Private notes beyond the quick feel above — pacing, breathing, mindset…">${{entry && entry.feel_notes ? escapeHtml(entry.feel_notes) : ''}}</textarea>
