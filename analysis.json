@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-07 02:23",
+  "generated": "2026-10-07 08:24",
   "runs": [
     {
       "activity": {
@@ -69,15 +69,15 @@
       },
       "injury": {
         "pain_before": null,
-        "pain_stiffness": null,
-        "pain_first_steps": null,
-        "pain_post_run": null,
+        "pain_stiffness": 0,
+        "pain_first_steps": 0,
+        "pain_post_run": 0,
         "pain_during": null,
         "location": null,
         "side": null,
         "neurological_symptoms": null,
-        "calf_raises_done": null,
-        "has_checkin": false
+        "calf_raises_done": true,
+        "has_checkin": true
       },
       "journal": {
         "rpe": null,
@@ -212,15 +212,15 @@
       },
       "injury": {
         "pain_before": null,
-        "pain_stiffness": null,
-        "pain_first_steps": null,
-        "pain_post_run": null,
+        "pain_stiffness": 0,
+        "pain_first_steps": 0,
+        "pain_post_run": 0,
         "pain_during": null,
         "location": null,
         "side": null,
         "neurological_symptoms": null,
-        "calf_raises_done": null,
-        "has_checkin": false
+        "calf_raises_done": true,
+        "has_checkin": true
       },
       "journal": {
         "rpe": null,
