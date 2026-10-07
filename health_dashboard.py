@@ -5008,6 +5008,7 @@ function saveJournal(run, prev) {{
     tags: tags,
     saved_at: new Date().toISOString(),
   }};
+  const key = journalKey(entry);
   const collides = (e) => journalKey(e) === key || e.date === entry.date;
   const local = getLocalJournal().filter(e => !collides(e));
   local.push(entry);
