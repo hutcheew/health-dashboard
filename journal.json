@@ -38,10 +38,13 @@
     "aches": "",
     "weather_notes": "",
     "feel_notes": "",
-    "worked": "",
-    "change": "",
-    "tags": [],
+    "worked": "3-2 but hrm was playing up.",
+    "change": "Sip of water",
+    "tags": [
+      "Breathing",
+      "Mechanical"
+    ],
     "source": "browser",
-    "saved_at": "2026-10-08T06:52:35.849Z"
+    "saved_at": "2026-10-08T06:53:56.404Z"
   }
 ]
