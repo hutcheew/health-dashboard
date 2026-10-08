@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-08 02:41",
+  "generated": "2026-10-08 15:55",
   "runs": [
     {
       "activity": {
@@ -80,21 +80,24 @@
         "has_checkin": true
       },
       "journal": {
-        "rpe": null,
-        "feel": null,
-        "pain": null,
-        "mood_before": null,
-        "mood_after": null,
+        "rpe": 5,
+        "feel": "Great",
+        "pain": 0,
+        "mood_before": "Fresh",
+        "mood_after": "Energized",
         "sleep_hours": null,
-        "food_before": null,
-        "nutrition_during": null,
-        "aches": null,
-        "weather_notes": null,
-        "feel_notes": null,
-        "worked": null,
-        "change": null,
-        "tags": [],
-        "has_entry": false
+        "food_before": "",
+        "nutrition_during": "",
+        "aches": "",
+        "weather_notes": "",
+        "feel_notes": "",
+        "worked": "3-2 but hrm was playing up.",
+        "change": "",
+        "tags": [
+          "Breathing",
+          "Mechanical"
+        ],
+        "has_entry": true
       },
       "session_type": {
         "label": "interval",
