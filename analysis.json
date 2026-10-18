@@ -1,7 +1,150 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-17 12:31",
+  "generated": "2026-10-18 01:01",
   "runs": [
+    {
+      "activity": {
+        "activity_id": 24760720004,
+        "date": "2026-10-18",
+        "garmin_type": "running",
+        "derived": {
+          "avg_pace_sec_km": 342.6,
+          "gct_balance_symmetry_pp": null,
+          "hr_drift_pct": null,
+          "decoupling_pct": null,
+          "efficiency_factor": null,
+          "training_load": 11,
+          "ctl": 24.2,
+          "atl": 22.3
+        }
+      },
+      "measured": {
+        "distance_km": 3.0,
+        "duration_min": 17.2,
+        "moving_duration_min": 17.1,
+        "avg_pace_min_km": 5.71,
+        "max_pace_min_km": 4.52,
+        "avg_hr": 135.0,
+        "max_hr": 148.0,
+        "calories": 195.0,
+        "elevation_gain_m": 15,
+        "avg_temperature_c": null,
+        "avg_gct_ms": null,
+        "gct_balance_left_pct": null,
+        "avg_cadence_spm": 178,
+        "avg_stride_cm": 97.79000244140626,
+        "avg_power_w": null,
+        "max_power_w": 423.0,
+        "aerobic_te": 2.200000047683716,
+        "anaerobic_te": 0.0
+      },
+      "cardio": {
+        "avg_hr": 135.0,
+        "max_hr": 148.0,
+        "hr_drift_pct": null,
+        "decoupling_pct": null,
+        "aerobic_te": 2.200000047683716,
+        "anaerobic_te": 0.0
+      },
+      "mechanics": {
+        "avg_gct_ms": null,
+        "gct_change_ms": null,
+        "gct_balance_left_pct": null,
+        "balance_symmetry_pp": null,
+        "avg_cadence_spm": 178,
+        "avg_stride_cm": 97.79000244140626,
+        "stride_change_cm": null
+      },
+      "power": {
+        "avg_power_w": null,
+        "max_power_w": 423.0,
+        "power_cv_pct": null
+      },
+      "load": {
+        "elevation_gain_m": 15,
+        "training_load": 11,
+        "ctl": 24.2,
+        "atl": 22.3,
+        "calories": 195.0
+      },
+      "injury": {
+        "pain_before": null,
+        "pain_stiffness": null,
+        "pain_first_steps": null,
+        "pain_post_run": null,
+        "pain_during": null,
+        "location": null,
+        "side": null,
+        "neurological_symptoms": null,
+        "calf_raises_done": null,
+        "has_checkin": false
+      },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
+      "session_type": {
+        "label": "steady",
+        "confidence": 0.6,
+        "reason": "low lap pace variance (CV 0.03)"
+      },
+      "measurement_quality": {
+        "session_classification": {
+          "value": "steady",
+          "confidence": 0.6,
+          "reason": "low lap pace variance (CV 0.03)"
+        },
+        "mechanics_change": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.0,
+          "reason": "Per-lap stream analysis not yet run for this activity"
+        },
+        "power_cv": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.0,
+          "reason": "Lap-level power not available for this activity"
+        }
+      },
+      "measurement_quality_derived": {
+        "hr_drift_pct": {
+          "value": null,
+          "valid": true,
+          "confidence": 0.85,
+          "reason": "Steady-state session"
+        },
+        "decoupling_pct": {
+          "value": null,
+          "valid": true,
+          "confidence": 0.85,
+          "reason": "Steady-state session"
+        },
+        "efficiency_factor": {
+          "value": null,
+          "valid": true,
+          "confidence": 0.85,
+          "reason": "Steady-state session"
+        }
+      },
+      "interpretation": {
+        "note": "Drop in stride + rise in GCT = mechanical fatigue accumulation; balance drifting from 50% = side compensation. See dashboard.",
+        "needs_review": false
+      }
+    },
     {
       "activity": {
         "activity_id": 24749073714,
@@ -5546,149 +5689,6 @@
           "value": "steady",
           "confidence": 0.6,
           "reason": "low lap pace variance (CV 0.08)"
-        },
-        "mechanics_change": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.0,
-          "reason": "Per-lap stream analysis not yet run for this activity"
-        },
-        "power_cv": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.0,
-          "reason": "Lap-level power not available for this activity"
-        }
-      },
-      "measurement_quality_derived": {
-        "hr_drift_pct": {
-          "value": null,
-          "valid": true,
-          "confidence": 0.85,
-          "reason": "Steady-state session"
-        },
-        "decoupling_pct": {
-          "value": null,
-          "valid": true,
-          "confidence": 0.85,
-          "reason": "Steady-state session"
-        },
-        "efficiency_factor": {
-          "value": null,
-          "valid": true,
-          "confidence": 0.85,
-          "reason": "Steady-state session"
-        }
-      },
-      "interpretation": {
-        "note": "Drop in stride + rise in GCT = mechanical fatigue accumulation; balance drifting from 50% = side compensation. See dashboard.",
-        "needs_review": false
-      }
-    },
-    {
-      "activity": {
-        "activity_id": 23927879233,
-        "date": "2026-08-11",
-        "garmin_type": "running",
-        "derived": {
-          "avg_pace_sec_km": 324.6,
-          "gct_balance_symmetry_pp": null,
-          "hr_drift_pct": null,
-          "decoupling_pct": null,
-          "efficiency_factor": null,
-          "training_load": null,
-          "ctl": null,
-          "atl": null
-        }
-      },
-      "measured": {
-        "distance_km": 10.3,
-        "duration_min": 55.8,
-        "moving_duration_min": 55.6,
-        "avg_pace_min_km": 5.41,
-        "max_pace_min_km": 4.13,
-        "avg_hr": 139.0,
-        "max_hr": 170.0,
-        "calories": 693.0,
-        "elevation_gain_m": 66,
-        "avg_temperature_c": null,
-        "avg_gct_ms": null,
-        "gct_balance_left_pct": null,
-        "avg_cadence_spm": 186,
-        "avg_stride_cm": 99.07000122070313,
-        "avg_power_w": null,
-        "max_power_w": 473.0,
-        "aerobic_te": 3.5,
-        "anaerobic_te": 0.6000000238418579
-      },
-      "cardio": {
-        "avg_hr": 139.0,
-        "max_hr": 170.0,
-        "hr_drift_pct": null,
-        "decoupling_pct": null,
-        "aerobic_te": 3.5,
-        "anaerobic_te": 0.6000000238418579
-      },
-      "mechanics": {
-        "avg_gct_ms": null,
-        "gct_change_ms": null,
-        "gct_balance_left_pct": null,
-        "balance_symmetry_pp": null,
-        "avg_cadence_spm": 186,
-        "avg_stride_cm": 99.07000122070313,
-        "stride_change_cm": null
-      },
-      "power": {
-        "avg_power_w": null,
-        "max_power_w": 473.0,
-        "power_cv_pct": null
-      },
-      "load": {
-        "elevation_gain_m": 66,
-        "training_load": null,
-        "ctl": null,
-        "atl": null,
-        "calories": 693.0
-      },
-      "injury": {
-        "pain_before": null,
-        "pain_stiffness": 1,
-        "pain_first_steps": 0,
-        "pain_post_run": 0,
-        "pain_during": null,
-        "location": null,
-        "side": null,
-        "neurological_symptoms": null,
-        "calf_raises_done": true,
-        "has_checkin": true
-      },
-      "journal": {
-        "rpe": null,
-        "feel": null,
-        "pain": null,
-        "mood_before": null,
-        "mood_after": null,
-        "sleep_hours": null,
-        "food_before": null,
-        "nutrition_during": null,
-        "aches": null,
-        "weather_notes": null,
-        "feel_notes": null,
-        "worked": null,
-        "change": null,
-        "tags": [],
-        "has_entry": false
-      },
-      "session_type": {
-        "label": "steady",
-        "confidence": 0.6,
-        "reason": "low lap pace variance (CV 0.06)"
-      },
-      "measurement_quality": {
-        "session_classification": {
-          "value": "steady",
-          "confidence": 0.6,
-          "reason": "low lap pace variance (CV 0.06)"
         },
         "mechanics_change": {
           "value": null,
