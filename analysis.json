@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-22 14:09",
+  "generated": "2026-10-23 01:30",
   "runs": [
     {
       "activity": {
@@ -2307,9 +2307,9 @@
           "hr_drift_pct": null,
           "decoupling_pct": null,
           "efficiency_factor": null,
-          "training_load": 19,
-          "ctl": 24.3,
-          "atl": 14.8
+          "training_load": null,
+          "ctl": null,
+          "atl": null
         }
       },
       "measured": {
@@ -2356,9 +2356,9 @@
       },
       "load": {
         "elevation_gain_m": 25,
-        "training_load": 19,
-        "ctl": 24.3,
-        "atl": 14.8,
+        "training_load": null,
+        "ctl": null,
+        "atl": null,
         "calories": 347.0
       },
       "injury": {
