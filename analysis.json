@@ -1,7 +1,150 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-10-25 13:25",
+  "generated": "2026-10-26 01:09",
   "runs": [
+    {
+      "activity": {
+        "activity_id": 24850649260,
+        "date": "2026-10-26",
+        "garmin_type": "running",
+        "derived": {
+          "avg_pace_sec_km": 346.8,
+          "gct_balance_symmetry_pp": null,
+          "hr_drift_pct": null,
+          "decoupling_pct": null,
+          "efficiency_factor": null,
+          "training_load": 12,
+          "ctl": 21.0,
+          "atl": 11.6
+        }
+      },
+      "measured": {
+        "distance_km": 3.5,
+        "duration_min": 19.9,
+        "moving_duration_min": 19.9,
+        "avg_pace_min_km": 5.78,
+        "max_pace_min_km": 3.75,
+        "avg_hr": 135.0,
+        "max_hr": 153.0,
+        "calories": 228.0,
+        "elevation_gain_m": 24,
+        "avg_temperature_c": null,
+        "avg_gct_ms": null,
+        "gct_balance_left_pct": null,
+        "avg_cadence_spm": 174,
+        "avg_stride_cm": 95.22000122070312,
+        "avg_power_w": null,
+        "max_power_w": 525.0,
+        "aerobic_te": 2.299999952316284,
+        "anaerobic_te": 0.6000000238418579
+      },
+      "cardio": {
+        "avg_hr": 135.0,
+        "max_hr": 153.0,
+        "hr_drift_pct": null,
+        "decoupling_pct": null,
+        "aerobic_te": 2.299999952316284,
+        "anaerobic_te": 0.6000000238418579
+      },
+      "mechanics": {
+        "avg_gct_ms": null,
+        "gct_change_ms": null,
+        "gct_balance_left_pct": null,
+        "balance_symmetry_pp": null,
+        "avg_cadence_spm": 174,
+        "avg_stride_cm": 95.22000122070312,
+        "stride_change_cm": null
+      },
+      "power": {
+        "avg_power_w": null,
+        "max_power_w": 525.0,
+        "power_cv_pct": null
+      },
+      "load": {
+        "elevation_gain_m": 24,
+        "training_load": 12,
+        "ctl": 21.0,
+        "atl": 11.6,
+        "calories": 228.0
+      },
+      "injury": {
+        "pain_before": null,
+        "pain_stiffness": null,
+        "pain_first_steps": null,
+        "pain_post_run": null,
+        "pain_during": null,
+        "location": null,
+        "side": null,
+        "neurological_symptoms": null,
+        "calf_raises_done": null,
+        "has_checkin": false
+      },
+      "journal": {
+        "rpe": null,
+        "feel": null,
+        "pain": null,
+        "mood_before": null,
+        "mood_after": null,
+        "sleep_hours": null,
+        "food_before": null,
+        "nutrition_during": null,
+        "aches": null,
+        "weather_notes": null,
+        "feel_notes": null,
+        "worked": null,
+        "change": null,
+        "tags": [],
+        "has_entry": false
+      },
+      "session_type": {
+        "label": "steady",
+        "confidence": 0.6,
+        "reason": "low lap pace variance (CV 0.07)"
+      },
+      "measurement_quality": {
+        "session_classification": {
+          "value": "steady",
+          "confidence": 0.6,
+          "reason": "low lap pace variance (CV 0.07)"
+        },
+        "mechanics_change": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.0,
+          "reason": "Per-lap stream analysis not yet run for this activity"
+        },
+        "power_cv": {
+          "value": null,
+          "valid": false,
+          "confidence": 0.0,
+          "reason": "Lap-level power not available for this activity"
+        }
+      },
+      "measurement_quality_derived": {
+        "hr_drift_pct": {
+          "value": null,
+          "valid": true,
+          "confidence": 0.85,
+          "reason": "Steady-state session"
+        },
+        "decoupling_pct": {
+          "value": null,
+          "valid": true,
+          "confidence": 0.85,
+          "reason": "Steady-state session"
+        },
+        "efficiency_factor": {
+          "value": null,
+          "valid": true,
+          "confidence": 0.85,
+          "reason": "Steady-state session"
+        }
+      },
+      "interpretation": {
+        "note": "Drop in stride + rise in GCT = mechanical fatigue accumulation; balance drifting from 50% = side compensation. See dashboard.",
+        "needs_review": false
+      }
+    },
     {
       "activity": {
         "activity_id": 24828613273,
@@ -5578,149 +5721,6 @@
           "valid": true,
           "confidence": 0.85,
           "reason": "Steady-state session"
-        }
-      },
-      "interpretation": {
-        "note": "Drop in stride + rise in GCT = mechanical fatigue accumulation; balance drifting from 50% = side compensation. See dashboard.",
-        "needs_review": false
-      }
-    },
-    {
-      "activity": {
-        "activity_id": 24044595892,
-        "date": "2026-08-20",
-        "garmin_type": "running",
-        "derived": {
-          "avg_pace_sec_km": 331.8,
-          "gct_balance_symmetry_pp": null,
-          "hr_drift_pct": null,
-          "decoupling_pct": null,
-          "efficiency_factor": null,
-          "training_load": null,
-          "ctl": null,
-          "atl": null
-        }
-      },
-      "measured": {
-        "distance_km": 5.0,
-        "duration_min": 27.7,
-        "moving_duration_min": 27.6,
-        "avg_pace_min_km": 5.53,
-        "max_pace_min_km": 4.65,
-        "avg_hr": 142.0,
-        "max_hr": 151.0,
-        "calories": 350.0,
-        "elevation_gain_m": 29,
-        "avg_temperature_c": null,
-        "avg_gct_ms": null,
-        "gct_balance_left_pct": null,
-        "avg_cadence_spm": 182,
-        "avg_stride_cm": 99.42000122070313,
-        "avg_power_w": null,
-        "max_power_w": 405.0,
-        "aerobic_te": 3.0999999046325684,
-        "anaerobic_te": 0.0
-      },
-      "cardio": {
-        "avg_hr": 142.0,
-        "max_hr": 151.0,
-        "hr_drift_pct": null,
-        "decoupling_pct": null,
-        "aerobic_te": 3.0999999046325684,
-        "anaerobic_te": 0.0
-      },
-      "mechanics": {
-        "avg_gct_ms": null,
-        "gct_change_ms": null,
-        "gct_balance_left_pct": null,
-        "balance_symmetry_pp": null,
-        "avg_cadence_spm": 182,
-        "avg_stride_cm": 99.42000122070313,
-        "stride_change_cm": null
-      },
-      "power": {
-        "avg_power_w": null,
-        "max_power_w": 405.0,
-        "power_cv_pct": null
-      },
-      "load": {
-        "elevation_gain_m": 29,
-        "training_load": null,
-        "ctl": null,
-        "atl": null,
-        "calories": 350.0
-      },
-      "injury": {
-        "pain_before": null,
-        "pain_stiffness": null,
-        "pain_first_steps": null,
-        "pain_post_run": null,
-        "pain_during": null,
-        "location": null,
-        "side": null,
-        "neurological_symptoms": null,
-        "calf_raises_done": null,
-        "has_checkin": false
-      },
-      "journal": {
-        "rpe": null,
-        "feel": null,
-        "pain": null,
-        "mood_before": null,
-        "mood_after": null,
-        "sleep_hours": null,
-        "food_before": null,
-        "nutrition_during": null,
-        "aches": null,
-        "weather_notes": null,
-        "feel_notes": null,
-        "worked": null,
-        "change": null,
-        "tags": [],
-        "has_entry": false
-      },
-      "session_type": {
-        "label": "fartlek",
-        "confidence": 0.5,
-        "reason": "moderate lap pace variance (CV 0.10)"
-      },
-      "measurement_quality": {
-        "session_classification": {
-          "value": "fartlek",
-          "confidence": 0.5,
-          "reason": "moderate lap pace variance (CV 0.10)"
-        },
-        "mechanics_change": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.0,
-          "reason": "Per-lap stream analysis not yet run for this activity"
-        },
-        "power_cv": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.0,
-          "reason": "Lap-level power not available for this activity"
-        }
-      },
-      "measurement_quality_derived": {
-        "hr_drift_pct": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.35,
-          "reason": "Non-steady-state session \u2014 aggregate drift is dominated by rep/recovery swings"
-        },
-        "decoupling_pct": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.35,
-          "reason": "Non-steady-state session \u2014 aggregate drift is dominated by rep/recovery swings"
-        },
-        "efficiency_factor": {
-          "value": null,
-          "valid": false,
-          "confidence": 0.35,
-          "reason": "Non-steady-state session \u2014 aggregate drift is dominated by rep/recovery swings"
         }
       },
       "interpretation": {

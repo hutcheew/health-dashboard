@@ -1,4 +1,5 @@
 activity_id,date,garmin_type,session_type,session_confidence,distance_km,duration_min,moving_duration_min,avg_pace_min_km,avg_pace_sec_km,max_pace_min_km,avg_hr,max_hr,elevation_gain_m,avg_gct_ms,gct_balance_left_pct,balance_symmetry_pp,avg_cadence_spm,avg_stride_cm,avg_power_w,max_power_w,aerobic_te,anaerobic_te,avg_temperature_c,calories,training_load,ctl,atl,hr_drift_pct,hr_drift_valid,efficiency_factor,pain_before,pain_stiffness,pain_first_steps,pain_post_run,pain_during,rpe,feel,journal_pain,mood_before,mood_after,sleep_hours,tags
+24850649260,2026-10-26,running,steady,0.6,3.5,19.9,19.9,5.78,346.8,3.75,135.0,153.0,24,,,,174,95.22000122070312,,525.0,2.299999952316284,0.6000000238418579,,228.0,12,21.0,11.6,,True,,,,,,,,,,,,,
 24828613273,2026-10-24,running,interval,0.6,4.0,20.4,20.3,5.09,305.4,4.27,149.0,174.0,20,,,,188,103.89000244140625,,449.0,3.0,0.0,,265.0,19,21.7,13.3,,False,,,,,,,,,,,,,
 24806801929,2026-10-22,running,steady,0.6,3.0,16.6,16.5,5.51,330.6,4.93,144.0,155.0,10,,,,187,97.00999755859375,,380.0,2.5,0.0,,204.0,13,22.3,14.3,,True,,,,,,,,,,,,,
 24760720004,2026-10-18,running,steady,0.6,3.0,17.2,17.1,5.71,342.6,4.52,135.0,148.0,15,,,,178,97.79000244140626,,423.0,2.200000047683716,0.0,,195.0,11,24.2,22.3,,True,,,,,,,,,,,,,
@@ -38,4 +39,3 @@ activity_id,date,garmin_type,session_type,session_confidence,distance_km,duratio
 24066055827,2026-08-22,running,steady,0.6,11.0,61.8,61.7,5.62,337.2,4.75,140.0,150.0,65,,,,183,97.32000122070313,,397.0,3.5,0.0,,759.0,,,,,True,,,,,,,,,,,,,
 24057530851,2026-08-21,running,fartlek,0.5,7.0,37.8,37.7,5.39,323.4,4.71,139.0,147.0,35,,,,183,101.22000122070312,,411.0,3.200000047683716,0.0,,471.0,,,,,False,,,1,0,0,,,,,,,,
 24053519097,2026-08-21,running,steady,0.6,9.0,51.0,50.9,5.66,339.6,5.06,143.0,151.0,53,,,,184,96.02000122070314,,397.0,3.4000000953674316,0.0,,638.0,,,,,True,,,1,0,0,,,,,,,,
-24044595892,2026-08-20,running,fartlek,0.5,5.0,27.7,27.6,5.53,331.8,4.65,142.0,151.0,29,,,,182,99.42000122070313,,405.0,3.0999999046325684,0.0,,350.0,,,,,False,,,,,,,,,,,,,
