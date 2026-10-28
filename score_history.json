@@ -12872,9 +12872,9 @@
     "date": "2026-10-28",
     "inputs": {
       "resting_hr": 54,
-      "hrv": null,
-      "sleep_score": null,
-      "body_battery": 48,
+      "hrv": 33,
+      "sleep_score": 66,
+      "body_battery": 67,
       "ran_today": false,
       "last_run": {
         "date": "2026-10-26",
@@ -12894,8 +12894,8 @@
       "checkin_pain_returned": null
     },
     "scores": {
-      "readiness": null,
-      "recovery": 52,
+      "readiness": 87,
+      "recovery": 53,
       "achilles": 15.0,
       "tissue_capacity": 36,
       "monotony": 19,
