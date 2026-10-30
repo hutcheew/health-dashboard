@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Health">
 <link rel="manifest" href="manifest.json">
-<title>Nat's Health Dashboard — 2026-10-30</title>
+<title>Nat's Health Dashboard — 2026-10-31</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -411,8 +411,8 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-logo">NAT / HEALTH</div>
-  <div class="topbar-date">2026-10-30</div>
-  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 02:36</div>
+  <div class="topbar-date">2026-10-31</div>
+  <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Updated 15:23</div>
   <div class="topbar-right">
     <div class="status-dot"></div>
     <div class="status-text">LIVE</div>
@@ -437,22 +437,22 @@
 <div class="tab-panel active" id="panel-overview">
 
   <!-- TRAINING DECISION ENGINE -->
-  <div class="decision-card" style="--decision-color:#3dd68c;border-color:#3dd68c33">
-    <div class="decision-status" style="color:#3dd68c">🟢 TRAIN HARD</div>
-    <div class="decision-sub">TRAINING DECISION · 2026-10-30 · Week 27/28 — Taper</div>
+  <div class="decision-card" style="--decision-color:#f26565;border-color:#f2656533">
+    <div class="decision-status" style="color:#f26565">🔴 REST DAY</div>
+    <div class="decision-sub">TRAINING DECISION · 2026-10-31 · Week 27/28 — Taper</div>
     <div class="decision-body">
       <div class="decision-factors">
         <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Why</div>
-        <div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Readiness high</div><div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Sleep good</div><div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Achilles risk low</div><div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Form positive (TSB +12.5)</div><div class="factor"><div class="factor-dot" style="background:#f5c842"></div>HRV moderate (33ms)</div>
-        
+        <div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Achilles risk low</div><div class="factor"><div class="factor-dot" style="background:#3dd68c"></div>Form positive (TSB +12.5)</div><div class="factor"><div class="factor-dot" style="background:#f26565"></div>Readiness low (0/100)</div><div class="factor"><div class="factor-dot" style="background:#f26565"></div>Sleep poor (0/100)</div>
+        <div class="avoid-list">✗ Avoid today: Running · High intensity · Long sessions</div>
       </div>
       <div class="decision-rec">
         <div class="rec-label">Recommended Session</div>
-        <div class="rec-row"><span class="rec-key">Type</span><span class="rec-val">Progressive run</span></div>
-        <div class="rec-row"><span class="rec-key">Distance</span><span class="rec-val">6–8 km</span></div>
-        <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">5:00–5:30/km</span></div>
-        <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val"><155 bpm</span></div>
-        <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">Morning · 25.0°C</span></div>
+        <div class="rec-row"><span class="rec-key">Type</span><span class="rec-val">Rest, gentle walk, or mobility work</span></div>
+        <div class="rec-row"><span class="rec-key">Distance</span><span class="rec-val">--</span></div>
+        <div class="rec-row"><span class="rec-key">Pace</span><span class="rec-val">--</span></div>
+        <div class="rec-row"><span class="rec-key">HR target</span><span class="rec-val">--</span></div>
+        <div class="rec-row"><span class="rec-key">Best time</span><span class="rec-val">Morning · 20.7°C</span></div>
       </div>
     </div>
   </div>
@@ -536,40 +536,40 @@
     <div class="section-header"><div class="section-title">Today's Vitals</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Readiness</div>
-        <div class="stat-value">96</div>
-        <div class="stat-unit">Prime</div>
-        <div class="stat-sub">Ready For Action</div>
+        <div class="stat-value">--</div>
+        <div class="stat-unit"></div>
+        <div class="stat-sub"></div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Sleep Score</div>
-        <div class="stat-value">77</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV Avg 7d</div>
-        <div class="stat-value">33</div>
+        <div class="stat-value">None</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Resting HR</div>
-        <div class="stat-value">50</div>
+        <div class="stat-value">53</div>
         <div class="stat-unit">bpm</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Body Battery</div>
-        <div class="stat-value">88</div>
+        <div class="stat-value">51</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Recovery</div>
-        <div class="stat-value sm">1</div>
+        <div class="stat-value sm">--</div>
         <div class="stat-unit">min</div>
       </div>
     </div>
@@ -620,89 +620,89 @@
     <div class="stat-grid">
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
-              <div class="stat-label">Today · 2026-10-30</div>
-              <div class="stat-value sm">🌫️ 25.0°</div>
-              <div class="stat-unit">8.2° low · Foggy</div>
-              <div class="stat-sub">💧0% · 💨15.1 km/h</div>
+              <div class="stat-label">Today · 2026-10-31</div>
+              <div class="stat-value sm">🌤️ 20.7°</div>
+              <div class="stat-unit">12.0° low · </div>
+              <div class="stat-sub">💧100% · 💨21.3 km/h</div>
             </div>
             <div class="stat">
               <div class="stat-accent" style="background:var(--blue)"></div>
-              <div class="stat-label">Tomorrow · 2026-10-31</div>
-              <div class="stat-value sm">⛈️ 19.7°</div>
-              <div class="stat-unit">12.0° low · Thunderstorm</div>
-              <div class="stat-sub">💧100% · 💨22.7 km/h</div>
-            </div>
-            <div class="stat">
-              <div class="stat-accent" style="background:var(--blue)"></div>
-              <div class="stat-label">Day +2 · 2026-11-01</div>
-              <div class="stat-value sm">🌧️ 18.2°</div>
+              <div class="stat-label">Tomorrow · 2026-11-01</div>
+              <div class="stat-value sm">🌧️ 18.6°</div>
               <div class="stat-unit">10.6° low · Light drizzle</div>
-              <div class="stat-sub">💧40% · 💨13.6 km/h</div>
+              <div class="stat-sub">💧27% · 💨13.1 km/h</div>
+            </div>
+            <div class="stat">
+              <div class="stat-accent" style="background:var(--blue)"></div>
+              <div class="stat-label">Day +2 · 2026-11-02</div>
+              <div class="stat-value sm">🌧️ 18.7°</div>
+              <div class="stat-unit">8.6° low · Showers</div>
+              <div class="stat-sub">💧84% · 💨14.4 km/h</div>
             </div></div>
-    <div style="padding:8px 12px;background:rgba(242,101,101,0.08);border-left:3px solid var(--red);border-radius:6px;font-size:12px;color:var(--text2);margin-bottom:6px;">Rain 100%</div>
+    
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;margin-bottom:10px;">
-      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window Tomorrow — 2026-10-31</div>
-      <div style="font-size:20px;font-weight:600;color:var(--yellow);margin-bottom:4px;">Morning</div>
-      <div style="font-size:11px;color:var(--text3);">Morning: 17.8°C 64% rain · Afternoon: 16.9°C 83% rain</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">Best Run Window Tomorrow — 2026-11-01</div>
+      <div style="font-size:20px;font-weight:600;color:var(--green);margin-bottom:4px;">Morning</div>
+      <div style="font-size:11px;color:var(--text3);">Morning: 12.0°C 4% rain · Afternoon: 17.2°C 12% rain</div>
     </div>
     <div class="tbl-wrap">
       <table class="tbl">
         <thead><tr><th>Day</th><th>Temp</th><th>Rain</th><th>Best Window</th><th>Conditions</th><th>Status</th></tr></thead>
         <tbody>
             <tr>
-              <td style="font-weight:500">Fri 10-30</td>
-              <td>🌫️ 25.0° / 8.2°</td>
-              <td>💧0%</td>
-              <td style="color:var(--green);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">9.8°C 0% rain</td>
-              <td style="color:var(--green)">Good</td>
-            </tr>
-            <tr>
               <td style="font-weight:500">Sat 10-31</td>
-              <td>⛈️ 19.7° / 12.0°</td>
+              <td>🌤️ 20.7° / 12.0°</td>
               <td>💧100%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">17.8°C 64% rain</td>
+              <td style="color:var(--text3)">17.8°C 45% rain</td>
               <td style="color:var(--red)">Rain 100%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Sun 11-01</td>
-              <td>🌧️ 18.2° / 10.6°</td>
-              <td>💧40%</td>
+              <td>🌧️ 18.6° / 10.6°</td>
+              <td>💧27%</td>
               <td style="color:var(--green);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">12.3°C 4% rain</td>
+              <td style="color:var(--text3)">12.0°C 4% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr>
             <tr>
               <td style="font-weight:500">Mon 11-02</td>
-              <td>🌧️ 17.5° / 8.1°</td>
-              <td>💧80%</td>
+              <td>🌧️ 18.7° / 8.6°</td>
+              <td>💧84%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">10.8°C 23% rain</td>
-              <td style="color:var(--red)">Rain 80%</td>
+              <td style="color:var(--text3)">11.4°C 20% rain</td>
+              <td style="color:var(--red)">Rain 84%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Tue 11-03</td>
-              <td>🌧️ 18.8° / 11.1°</td>
-              <td>💧73%</td>
+              <td>🌧️ 19.3° / 11.4°</td>
+              <td>💧61%</td>
               <td style="color:var(--yellow);font-weight:500">Afternoon</td>
-              <td style="color:var(--text3)">17.6°C 28% rain</td>
-              <td style="color:var(--red)">Rain 73%</td>
+              <td style="color:var(--text3)">17.7°C 22% rain</td>
+              <td style="color:var(--red)">Rain 61%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Wed 11-04</td>
-              <td>🌧️ 19.5° / 9.0°</td>
-              <td>💧73%</td>
+              <td>🌧️ 19.3° / 9.5°</td>
+              <td>💧94%</td>
               <td style="color:var(--yellow);font-weight:500">Morning</td>
-              <td style="color:var(--text3)">12.3°C 8% rain</td>
-              <td style="color:var(--red)">Rain 73%</td>
+              <td style="color:var(--text3)">12.8°C 13% rain</td>
+              <td style="color:var(--red)">Rain 94%</td>
             </tr>
             <tr>
               <td style="font-weight:500">Thu 11-05</td>
-              <td>🌧️ 14.8° / 7.4°</td>
-              <td>💧53%</td>
+              <td>🌧️ 14.6° / 8.9°</td>
+              <td>💧58%</td>
               <td style="color:var(--green);font-weight:500">Afternoon</td>
-              <td style="color:var(--text3)">13.3°C 19% rain</td>
+              <td style="color:var(--text3)">13.5°C 10% rain</td>
+              <td style="color:var(--green)">Good</td>
+            </tr>
+            <tr>
+              <td style="font-weight:500">Fri 11-06</td>
+              <td>🌧️ 14.9° / 8.3°</td>
+              <td>💧35%</td>
+              <td style="color:var(--green);font-weight:500">Morning</td>
+              <td style="color:var(--text3)">10.1°C 4% rain</td>
               <td style="color:var(--green)">Good</td>
             </tr></tbody>
       </table>
@@ -760,12 +760,12 @@
       <div class="stat" style="text-align:center">
         <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Recovery</div>
-        <div class="stat-value" style="font-size:42px;color:var(--yellow)">59</div>
+        <div class="stat-value" style="font-size:42px;color:var(--yellow)">53</div>
         <div class="stat-unit" style="color:var(--yellow)">moderate</div>
       </div>
       <div class="chart-box">
         <div class="chart-label">Factors</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">HRV (33ms) <span style="color:var(--text3);font-size:10px">35%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">7 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Sleep (77/100, 8.8h) <span style="color:var(--text3);font-size:10px">30%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">23 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Resting HR (50 bpm) <span style="color:var(--text3);font-size:10px">20%</span></span><span style="color:var(--green);font-family:JetBrains Mono,monospace">15 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Readiness (96/100) <span style="color:var(--text3);font-size:10px">15%</span></span><span style="color:var(--green);font-family:JetBrains Mono,monospace">14 pts</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">HRV (no data) <span style="color:var(--text3);font-size:10px">35%</span></span><span style="color:var(--red);font-family:JetBrains Mono,monospace">17 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Sleep (no data) <span style="color:var(--text3);font-size:10px">30%</span></span><span style="color:var(--red);font-family:JetBrains Mono,monospace">15 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Resting HR (53 bpm) <span style="color:var(--text3);font-size:10px">20%</span></span><span style="color:var(--yellow);font-family:JetBrains Mono,monospace">14 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">Readiness (no data) <span style="color:var(--text3);font-size:10px">15%</span></span><span style="color:var(--red);font-family:JetBrains Mono,monospace">7 pts</span></div>
       </div>
     </div>
   </div>
@@ -1116,7 +1116,7 @@
 <tr><td>Session density</td><td style="color:#4ade80">0 big sessions in 5 days ✓</td></tr>
 <tr><td>Cadence</td><td style="color:#4ade80">Stable 181 spm ✓</td></tr>
 <tr><td>GCT</td><td style="color:#4ade80">248ms (baseline 248ms) ✓</td></tr>
-<tr><td>Previous Achilles injury</td><td style="color:#f87171">Left insertional (286d ago, 0d symptom-free '→' 1.00 decay → 15.0 pts)</td></tr>
+<tr><td>Previous Achilles injury</td><td style="color:#f87171">Left insertional (287d ago, 0d symptom-free '→' 1.00 decay → 15.0 pts)</td></tr>
 <tr><td>Mileage change</td><td style="color:#4ade80">-50% vs last week ✓</td></tr>
 </tbody>
       </table>
@@ -1301,49 +1301,49 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Total Sleep</div>
-        <div class="stat-value">8.8</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Deep Sleep</div>
-        <div class="stat-value">0.9</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">REM Sleep</div>
-        <div class="stat-value">1.8</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--text3)"></div>
         <div class="stat-label">Light Sleep</div>
-        <div class="stat-value">6.1</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Awake</div>
-        <div class="stat-value">0.8</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">hours</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">Avg SpO2</div>
-        <div class="stat-value">97.0</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">%</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Respiration</div>
-        <div class="stat-value">16.0</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">breaths/min</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--orange)"></div>
         <div class="stat-label">Sleep Stress</div>
-        <div class="stat-value">20.0</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">avg stress</div>
       </div>
     </div>
@@ -1359,39 +1359,39 @@
     <div class="section-header"><div class="section-title">Recovery Metrics</div></div>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Training Readiness</div>
-        <div class="stat-value">96</div>
-        <div class="stat-unit">Prime</div>
+        <div class="stat-value">--</div>
+        <div class="stat-unit"></div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Sleep Score</div>
-        <div class="stat-value">77</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV 7d Avg</div>
-        <div class="stat-value">33</div>
+        <div class="stat-value">None</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Resting HR</div>
-        <div class="stat-value">50</div>
+        <div class="stat-value">53</div>
         <div class="stat-unit">bpm</div>
       </div>
       <div class="stat">
-        <div class="stat-accent" style="background:var(--green)"></div>
+        <div class="stat-accent" style="background:var(--yellow)"></div>
         <div class="stat-label">Body Battery</div>
-        <div class="stat-value">88</div>
+        <div class="stat-value">51</div>
         <div class="stat-unit">/ 100</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Recovery Time</div>
-        <div class="stat-value sm">1</div>
+        <div class="stat-value sm">--</div>
         <div class="stat-unit">min</div>
       </div>
     </div>
@@ -1403,25 +1403,25 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">HRV 7d Average</div>
-        <div class="stat-value">33</div>
+        <div class="stat-value">None</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Last Reading</div>
-        <div class="stat-value">27</div>
-        <div class="stat-unit">ms · 06:43</div>
+        <div class="stat-value">--</div>
+        <div class="stat-unit">ms · --</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Peak Last Night</div>
-        <div class="stat-value">72</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">ms</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--cyan)"></div>
         <div class="stat-label">Low Last Night</div>
-        <div class="stat-value">16</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">ms</div>
       </div>
     </div>
@@ -1553,13 +1553,13 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">VO2 Max</div>
-        <div class="stat-value">53.2</div>
+        <div class="stat-value">None</div>
         <div class="stat-unit">ml/kg/min</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--purple)"></div>
         <div class="stat-label">Endurance Score</div>
-        <div class="stat-value">6854</div>
+        <div class="stat-value">--</div>
         <div class="stat-unit">Well Trained 6500+</div>
       </div>
       <div class="stat">
@@ -1584,7 +1584,7 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
         <div class="stat-label">5K</div>
-        <div class="stat-value sm">21:20</div>
+        <div class="stat-value sm">21:19</div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--green)"></div>
@@ -1620,23 +1620,23 @@
       <div class="stat">
         <div class="stat-accent" style="background:var(--blue)"></div>
         <div class="stat-label">Aerobic Low</div>
-        <div class="stat-value sm">367</div>
-        <div class="stat-unit">target 408–928</div>
-        <div class="gct-bar-wrap"><div class="gct-bar" style="width:40%;background:var(--blue)"></div></div>
+        <div class="stat-value sm">0</div>
+        <div class="stat-unit">target ?–?</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:0%;background:var(--blue)"></div></div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--orange)"></div>
         <div class="stat-label">Aerobic High</div>
-        <div class="stat-value sm">964</div>
-        <div class="stat-unit">target 543–1063</div>
-        <div class="gct-bar-wrap"><div class="gct-bar" style="width:91%;background:var(--orange)"></div></div>
+        <div class="stat-value sm">0</div>
+        <div class="stat-unit">target ?–?</div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:0%;background:var(--orange)"></div></div>
       </div>
       <div class="stat">
         <div class="stat-accent" style="background:var(--red)"></div>
         <div class="stat-label">Anaerobic</div>
-        <div class="stat-value sm">55</div>
+        <div class="stat-value sm">0</div>
         <div class="stat-unit">this month</div>
-        <div class="gct-bar-wrap"><div class="gct-bar" style="width:4%;background:var(--red)"></div></div>
+        <div class="gct-bar-wrap"><div class="gct-bar" style="width:0%;background:var(--red)"></div></div>
       </div>
     </div>
   </div>
@@ -2119,7 +2119,7 @@ if (closeBtn) closeBtn.addEventListener('click', rcCloseChart);
   <a class='btn btn-outline' href='activities.csv' download>📁 activities.csv</a><a class='btn btn-outline' href='intervals.csv' download>📁 intervals.csv</a><a class='btn btn-outline' href='pain_log.csv' download>📁 pain_log.csv</a><a class='btn btn-outline' href='analysis.json' download>📁 analysis.json</a>
   <button class="btn btn-purple" onclick="openClaude()">✦ Analyse with Claude</button>
   <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">
-    GENERATED 2026-10-30 02:36 · GARMIN + WITHINGS
+    GENERATED 2026-10-30 15:23 · GARMIN + WITHINGS
   </span>
 </div>
 
@@ -2169,8 +2169,8 @@ new Chart(document.getElementById('weeklyComboChart'), {
 new Chart(document.getElementById('hrvChart'), {
   type: 'line',
   data: {
-    labels: ["21:13", "21:28", "21:43", "21:58", "22:13", "22:28", "22:43", "22:58", "23:13", "23:28", "23:43", "23:58", "00:13", "00:28", "00:43", "00:58", "01:13", "01:28", "01:43", "01:58", "02:13", "02:28", "02:43", "02:58", "03:13", "03:28", "03:43", "03:58", "04:13", "04:28", "04:43", "04:58", "05:13", "05:28", "05:43", "05:58", "06:13", "06:28", "06:43"],
-    datasets: [{ data: [30, 45, 50, 72, 48, 58, 39, 42, 30, 52, 48, 42, 32, 25, 22, 38, 48, 18, 16, 39, 33, 23, 23, 35, 34, 28, 29, 21, 27, 37, 22, 18, 36, 48, 35, 22, 18, 34, 27], borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
+    labels: [],
+    datasets: [{ data: [], borderColor: C.cyan, backgroundColor: 'rgba(56,217,245,0.08)',
       tension: 0.3, fill: true, pointRadius: 2 }]
   },
   options: { ...base }
@@ -2178,12 +2178,12 @@ new Chart(document.getElementById('hrvChart'), {
 
 // HRV + Sleep Stage Overlay
 (function() {
-  const hrvTimes = ["21:13", "21:28", "21:43", "21:58", "22:13", "22:28", "22:43", "22:58", "23:13", "23:28", "23:43", "23:58", "00:13", "00:28", "00:43", "00:58", "01:13", "01:28", "01:43", "01:58", "02:13", "02:28", "02:43", "02:58", "03:13", "03:28", "03:43", "03:58", "04:13", "04:28", "04:43", "04:58", "05:13", "05:28", "05:43", "05:58", "06:13", "06:28", "06:43"];
-  const hrvVals  = [30, 45, 50, 72, 48, 58, 39, 42, 30, 52, 48, 42, 32, 25, 22, 38, 48, 18, 16, 39, 33, 23, 23, 35, 34, 28, 29, 21, 27, 37, 22, 18, 36, 48, 35, 22, 18, 34, 27];
-  const deepData  = [null, 45, null, null, null, null, null, 42, null, 52, null, null, null, null, 22, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-  const lightData = [30, null, 50, 72, 48, 58, 39, null, 30, null, null, null, 32, 25, null, 38, null, null, 16, 39, 33, 23, null, null, 34, 28, 29, 21, 27, null, 22, null, null, 48, 35, 22, null, 34, 27];
-  const remData   = [null, null, null, null, null, null, null, null, null, null, 48, 42, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 18, null, null];
-  const awakeData = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 48, 18, null, null, null, null, 23, 35, null, null, null, null, null, 37, null, 18, 36, null, null, null, null, null, null];
+  const hrvTimes = [];
+  const hrvVals  = [];
+  const deepData  = [];
+  const lightData = [];
+  const remData   = [];
+  const awakeData = [];
 
   // Max HRV for band height
   const maxHrv = Math.max(...hrvVals.filter(v => v)) * 1.1;
@@ -2375,7 +2375,7 @@ new Chart(document.getElementById('sleepStagesChart'), {
   data: {
     labels: ['Deep', 'Light', 'REM', 'Awake'],
     datasets: [{ 
-      data: [0.9, 6.1, 1.8, 0.8],
+      data: [0, 0, 0, 0],
       backgroundColor: [C.blue, C.muted, C.cyan, C.yellow],
       borderWidth: 0,
       hoverOffset: 4,
@@ -2389,8 +2389,8 @@ new Chart(document.getElementById('sleepStagesChart'), {
 
 // PWA — Body Battery Push Notification
 (function() {
-  const bodyBattery = 88;
-  const readinessScore = 96;
+  const bodyBattery = 51;
+  const readinessScore = null;
 
   // Unregister any existing service worker — cache control is now handled
   // via the _headers file (GitHub Pages). Keeping a SW active can cause
@@ -3097,7 +3097,7 @@ loadTodayCheckin();
 renderCheckinTrend();
 
 // ── EXPORT ──
-const dashboardData = {"generated": "2026-10-30 02:36", "training": {"week": 27, "phase": "Taper", "week_in_phase": 3, "phase_total": 4, "days_to_race": -18, "phase_target_km": "30-40", "this_week_km": 3.5, "last_week_km": 7.0}, "load": {"acute_km": 7.4, "chronic_km": 28.6, "acr": 0.26, "acr_status": "low", "easy_pct": 50, "moderate_pct": 50, "hard_pct": 0, "btb_risk": false}, "tissue_capacity": {"score": 36, "level": "low", "limiting_factor": "Few long run exposures \u2014 limited repeated-bout adaptation"}, "monotony": {"score": 19, "level": "low"}, "readiness": {"score": 96, "level": "PRIME", "sleep_score": 77, "hrv_weekly_avg": 33, "resting_hr": 50, "min_hr": 49, "max_hr": 77, "body_battery": 88, "recovery_time": 1, "acwr": 1.0, "feedback": "Ready For Action"}, "hrv": {"weekly_avg": 33, "daily_times": ["21:13", "21:28", "21:43", "21:58", "22:13", "22:28", "22:43", "22:58", "23:13", "23:28", "23:43", "23:58", "00:13", "00:28", "00:43", "00:58", "01:13", "01:28", "01:43", "01:58", "02:13", "02:28", "02:43", "02:58", "03:13", "03:28", "03:43", "03:58", "04:13", "04:28", "04:43", "04:58", "05:13", "05:28", "05:43", "05:58", "06:13", "06:28", "06:43"], "daily_values": [30, 45, 50, 72, 48, 58, 39, 42, 30, 52, 48, 42, 32, 25, 22, 38, 48, 18, 16, 39, 33, 23, 23, 35, 34, 28, 29, 21, 27, 37, 22, 18, 36, 48, 35, 22, 18, 34, 27]}, "sleep": {"duration_hrs": 8.8, "deep_hrs": 0.9, "light_hrs": 6.1, "rem_hrs": 1.8, "awake_hrs": 0.8, "score": 77, "avg_spo2": 97.0, "avg_respiration": 16.0, "avg_stress": 20.0, "levels": [{"start": "21:09", "end": "21:19", "stage": "light"}, {"start": "21:19", "end": "21:38", "stage": "deep"}, {"start": "21:38", "end": "22:57", "stage": "light"}, {"start": "22:57", "end": "23:04", "stage": "deep"}, {"start": "23:04", "end": "23:25", "stage": "light"}, {"start": "23:25", "end": "23:37", "stage": "deep"}, {"start": "23:37", "end": "00:11", "stage": "rem"}, {"start": "00:11", "end": "00:40", "stage": "light"}, {"start": "00:40", "end": "00:55", "stage": "deep"}, {"start": "00:55", "end": "01:05", "stage": "light"}, {"start": "01:05", "end": "01:34", "stage": "awake"}, {"start": "01:34", "end": "02:41", "stage": "light"}, {"start": "02:41", "end": "03:03", "stage": "awake"}, {"start": "03:03", "end": "03:26", "stage": "light"}, {"start": "03:26", "end": "03:27", "stage": "rem"}, {"start": "03:27", "end": "04:03", "stage": "light"}, {"start": "04:03", "end": "04:05", "stage": "rem"}, {"start": "04:05", "end": "04:24", "stage": "light"}, {"start": "04:24", "end": "04:34", "stage": "awake"}, {"start": "04:34", "end": "04:35", "stage": "rem"}, {"start": "04:35", "end": "04:45", "stage": "light"}, {"start": "04:45", "end": "05:25", "stage": "awake"}, {"start": "05:25", "end": "05:43", "stage": "light"}, {"start": "05:43", "end": "05:49", "stage": "awake"}, {"start": "05:49", "end": "06:06", "stage": "light"}, {"start": "06:06", "end": "06:16", "stage": "rem"}, {"start": "06:16", "end": "06:32", "stage": "light"}, {"start": "06:32", "end": "06:34", "stage": "rem"}, {"start": "06:34", "end": "06:45", "stage": "light"}]}, "vo2max": 53.2, "race_predictions": {"5k": "21:20", "10k": "44:56", "half": "1:38:34", "marathon": "3:34:03", "marathon_secs": 12843}, "endurance_score": {"score": 6854, "classification": 4, "lower_well_trained": 6500, "lower_expert": 7200}, "running_tolerance": {"load": 4520, "tolerance": 53562, "pct": 8}, "training_load_balance": {"aerobic_low": 367, "aerobic_high": 964, "anaerobic": 55, "target_low_min": 408, "target_low_max": 928, "target_high_min": 543, "target_high_max": 1063}, "intensity_minutes": {"weekly_total": 42, "weekly_moderate": 2, "weekly_vigorous": 20, "goal": 150, "goal_met_day": null}, "intervals_icu": {"ctl": 19.1, "atl": 6.5, "tsb": 12.5, "ctl_atl_history": [{"date": "2026-08-01", "ctl": 27.0, "atl": 27.8, "tsb": -0.7, "ramp": 0.45}, {"date": "2026-08-02", "ctl": 26.4, "atl": 24.1, "tsb": 2.3, "ramp": 0.44}, {"date": "2026-08-03", "ctl": 26.1, "atl": 22.6, "tsb": 3.5, "ramp": -0.56}, {"date": "2026-08-04", "ctl": 26.4, "atl": 24.8, "tsb": 1.6, "ramp": -0.38}, {"date": "2026-08-05", "ctl": 26.2, "atl": 23.9, "tsb": 2.3, "ramp": -2.35}, {"date": "2026-08-06", "ctl": 26.4, "atl": 25.2, "tsb": 1.1, "ramp": -1.5}, {"date": "2026-08-07", "ctl": 25.7, "atl": 21.9, "tsb": 3.9, "ramp": -1.93}, {"date": "2026-08-08", "ctl": 25.1, "atl": 19.0, "tsb": 6.2, "ramp": -1.89}, {"date": "2026-08-09", "ctl": 24.6, "atl": 16.4, "tsb": 8.1, "ramp": -1.84}, {"date": "2026-08-10", "ctl": 24.8, "atl": 18.9, "tsb": 5.9, "ramp": -1.28}, {"date": "2026-08-11", "ctl": 25.2, "atl": 21.7, "tsb": 3.4, "ramp": -1.23}, {"date": "2026-08-12", "ctl": 27.2, "atl": 33.9, "tsb": -6.6, "ramp": 1.04}, {"date": "2026-08-13", "ctl": 26.6, "atl": 29.4, "tsb": -2.8, "ramp": 0.21}, {"date": "2026-08-14", "ctl": 26.6, "atl": 29.2, "tsb": -2.6, "ramp": 0.87}, {"date": "2026-08-15", "ctl": 26.0, "atl": 25.3, "tsb": 0.7, "ramp": 0.85}, {"date": "2026-08-16", "ctl": 25.4, "atl": 21.9, "tsb": 3.5, "ramp": 0.83}, {"date": "2026-08-17", "ctl": 24.8, "atl": 19.0, "tsb": 5.8, "ramp": -0.02}, {"date": "2026-08-18", "ctl": 24.2, "atl": 16.5, "tsb": 7.7, "ramp": -0.96}, {"date": "2026-08-19", "ctl": 23.6, "atl": 14.3, "tsb": 9.3, "ramp": -3.59}, {"date": "2026-08-20", "ctl": 23.6, "atl": 15.2, "tsb": 8.4, "ramp": -3.02}, {"date": "2026-08-21", "ctl": 24.5, "atl": 21.8, "tsb": 2.7, "ramp": -2.07}, {"date": "2026-08-22", "ctl": 25.8, "atl": 29.2, "tsb": -3.4, "ramp": -0.21}, {"date": "2026-08-23", "ctl": 26.1, "atl": 30.5, "tsb": -4.4, "ramp": 0.71}, {"date": "2026-08-24", "ctl": 25.5, "atl": 26.4, "tsb": -0.9, "ramp": 0.69}, {"date": "2026-08-25", "ctl": 25.6, "atl": 27.2, "tsb": -1.5, "ramp": 1.43}, {"date": "2026-08-26", "ctl": 27.5, "atl": 37.5, "tsb": -10.0, "ramp": 3.87}, {"date": "2026-08-27", "ctl": 26.8, "atl": 32.5, "tsb": -5.7, "ramp": 3.28}, {"date": "2026-08-28", "ctl": 26.2, "atl": 28.2, "tsb": -2.0, "ramp": 1.67}, {"date": "2026-08-29", "ctl": 27.4, "atl": 34.6, "tsb": -7.2, "ramp": 1.61}, {"date": "2026-08-30", "ctl": 26.7, "atl": 30.0, "tsb": -3.2, "ramp": 0.66}, {"date": "2026-08-31", "ctl": 26.5, "atl": 28.2, "tsb": -1.7, "ramp": 1.04}, {"date": "2026-09-01", "ctl": 26.5, "atl": 28.2, "tsb": -1.7, "ramp": 0.92}, {"date": "2026-09-02", "ctl": 29.3, "atl": 43.4, "tsb": -14.1, "ramp": 1.77}, {"date": "2026-09-03", "ctl": 28.6, "atl": 37.6, "tsb": -9.0, "ramp": 1.73}, {"date": "2026-09-04", "ctl": 27.9, "atl": 32.6, "tsb": -4.7, "ramp": 1.69}, {"date": "2026-09-05", "ctl": 28.0, "atl": 32.6, "tsb": -4.6, "ramp": 0.64}, {"date": "2026-09-06", "ctl": 27.4, "atl": 28.3, "tsb": -0.9, "ramp": 0.62}, {"date": "2026-09-07", "ctl": 26.7, "atl": 24.5, "tsb": 2.2, "ramp": 0.21}, {"date": "2026-09-08", "ctl": 27.1, "atl": 27.2, "tsb": -0.1, "ramp": 0.6}, {"date": "2026-09-09", "ctl": 26.5, "atl": 23.6, "tsb": 2.9, "ramp": -2.75}, {"date": "2026-09-10", "ctl": 26.9, "atl": 25.9, "tsb": 0.9, "ramp": -1.72}, {"date": "2026-09-11", "ctl": 26.2, "atl": 22.5, "tsb": 3.7, "ramp": -1.68}, {"date": "2026-09-12", "ctl": 28.5, "atl": 36.1, "tsb": -7.6, "ramp": 0.52}, {"date": "2026-09-13", "ctl": 27.9, "atl": 31.3, "tsb": -3.4, "ramp": 0.51}, {"date": "2026-09-14", "ctl": 27.2, "atl": 27.2, "tsb": 0.1, "ramp": 0.5}, {"date": "2026-09-15", "ctl": 27.3, "atl": 27.5, "tsb": -0.2, "ramp": 0.13}, {"date": "2026-09-16", "ctl": 27.5, "atl": 28.9, "tsb": -1.4, "ramp": 1.02}, {"date": "2026-09-17", "ctl": 26.9, "atl": 25.1, "tsb": 1.8, "ramp": 0.03}, {"date": "2026-09-18", "ctl": 26.3, "atl": 21.7, "tsb": 4.5, "ramp": 0.03}, {"date": "2026-09-19", "ctl": 25.6, "atl": 18.8, "tsb": 6.8, "ramp": -2.91}, {"date": "2026-09-20", "ctl": 25.0, "atl": 16.3, "tsb": 8.7, "ramp": -2.84}, {"date": "2026-09-21", "ctl": 24.4, "atl": 14.2, "tsb": 10.3, "ramp": -2.77}, {"date": "2026-09-22", "ctl": 24.3, "atl": 14.8, "tsb": 9.5, "ramp": -2.97}, {"date": "2026-09-23", "ctl": 25.1, "atl": 20.6, "tsb": 4.6, "ramp": -2.43}, {"date": "2026-09-24", "ctl": 24.5, "atl": 17.8, "tsb": 6.7, "ramp": -2.37}, {"date": "2026-09-25", "ctl": 23.9, "atl": 15.4, "tsb": 8.5, "ramp": -2.31}, {"date": "2026-09-26", "ctl": 23.9, "atl": 16.5, "tsb": 7.5, "ramp": -1.72}, {"date": "2026-09-27", "ctl": 23.4, "atl": 14.3, "tsb": 9.1, "ramp": -1.68}, {"date": "2026-09-28", "ctl": 23.0, "atl": 13.4, "tsb": 9.6, "ramp": -1.45}, {"date": "2026-09-29", "ctl": 22.7, "atl": 13.1, "tsb": 9.6, "ramp": -1.6}, {"date": "2026-09-30", "ctl": 22.7, "atl": 14.3, "tsb": 8.4, "ramp": -2.41}, {"date": "2026-10-01", "ctl": 23.0, "atl": 16.9, "tsb": 6.0, "ramp": -1.56}, {"date": "2026-10-02", "ctl": 22.4, "atl": 14.7, "tsb": 7.8, "ramp": -1.52}, {"date": "2026-10-03", "ctl": 23.1, "atl": 19.4, "tsb": 3.7, "ramp": -0.85}, {"date": "2026-10-04", "ctl": 22.5, "atl": 16.8, "tsb": 5.7, "ramp": -0.83}, {"date": "2026-10-05", "ctl": 22.5, "atl": 17.3, "tsb": 5.1, "ramp": -0.5}, {"date": "2026-10-06", "ctl": 22.3, "atl": 17.2, "tsb": 5.2, "ramp": -0.37}, {"date": "2026-10-07", "ctl": 22.4, "atl": 18.5, "tsb": 4.0, "ramp": -0.25}, {"date": "2026-10-08", "ctl": 21.9, "atl": 16.0, "tsb": 5.9, "ramp": -1.04}, {"date": "2026-10-09", "ctl": 21.7, "atl": 15.3, "tsb": 6.3, "ramp": -0.76}, {"date": "2026-10-10", "ctl": 21.2, "atl": 13.3, "tsb": 7.8, "ramp": -1.92}, {"date": "2026-10-11", "ctl": 27.9, "atl": 52.5, "tsb": -24.6, "ramp": 5.38}, {"date": "2026-10-12", "ctl": 27.2, "atl": 45.5, "tsb": -18.3, "ramp": 4.75}, {"date": "2026-10-13", "ctl": 26.6, "atl": 39.5, "tsb": -12.9, "ramp": 4.27}, {"date": "2026-10-14", "ctl": 26.0, "atl": 34.2, "tsb": -8.2, "ramp": 3.53}, {"date": "2026-10-15", "ctl": 25.4, "atl": 29.7, "tsb": -4.3, "ramp": 3.45}, {"date": "2026-10-16", "ctl": 24.8, "atl": 25.7, "tsb": -0.9, "ramp": 3.11}, {"date": "2026-10-17", "ctl": 24.5, "atl": 24.0, "tsb": 0.5, "ramp": 3.34}, {"date": "2026-10-18", "ctl": 24.2, "atl": 22.3, "tsb": 1.9, "ramp": -3.73}, {"date": "2026-10-19", "ctl": 23.6, "atl": 19.3, "tsb": 4.3, "ramp": -3.64}, {"date": "2026-10-20", "ctl": 23.1, "atl": 16.8, "tsb": 6.3, "ramp": -3.55}, {"date": "2026-10-21", "ctl": 22.5, "atl": 14.5, "tsb": 8.0, "ramp": -3.47}, {"date": "2026-10-22", "ctl": 22.3, "atl": 14.3, "tsb": 8.0, "ramp": -3.08}, {"date": "2026-10-23", "ctl": 21.8, "atl": 12.4, "tsb": 9.3, "ramp": -3.01}, {"date": "2026-10-24", "ctl": 21.7, "atl": 13.3, "tsb": 8.4, "ramp": -2.8}, {"date": "2026-10-25", "ctl": 21.2, "atl": 11.5, "tsb": 9.7, "ramp": -2.99}, {"date": "2026-10-26", "ctl": 21.0, "atl": 11.6, "tsb": 9.4, "ramp": -2.64}, {"date": "2026-10-27", "ctl": 20.5, "atl": 10.0, "tsb": 10.4, "ramp": -2.58}, {"date": "2026-10-28", "ctl": 20.0, "atl": 8.7, "tsb": 11.3, "ramp": -2.51}, {"date": "2026-10-29", "ctl": 19.5, "atl": 7.5, "tsb": 12.0, "ramp": -2.76}, {"date": "2026-10-30", "ctl": 19.1, "atl": 6.5, "tsb": 12.5, "ramp": -2.7}]}, "recovery": {"score": 59, "level": "moderate", "factors": [{"label": "HRV (33ms)", "score": 7, "weight": "35%", "status": "moderate"}, {"label": "Sleep (77/100, 8.8h)", "score": 23, "weight": "30%", "status": "moderate"}, {"label": "Resting HR (50 bpm)", "score": 15, "weight": "20%", "status": "good"}, {"label": "Readiness (96/100)", "score": 14, "weight": "15%", "status": "good"}]}, "why_today": {"positives": ["Readiness 96/100 \u2014 body ready to train", "Load ratio 0.26 \u2014 within safe zone", "Achilles watch-list clear"], "negatives": ["Tissue capacity low (36/100) \u2014 tendon not fully adapted"], "decision": "Reduce today's session by 20-30%. One key flag \u2014 don't push through.", "limiter": "\u26a0 Workout limited by tendon (36/100), not cardio (96/100)"}, "achilles": {"score": 15.0, "level": "low", "factors": [{"label": "Long run distance", "value": "4.0km \u2713", "level": "low", "points": 0}, {"label": "Session density", "value": "0 big sessions in 5 days \u2713", "level": "low", "points": 0}, {"label": "Cadence", "value": "Stable 181 spm \u2713", "level": "low", "points": 0}, {"label": "GCT", "value": "248ms (baseline 248ms) \u2713", "level": "low", "points": 0}, {"label": "Previous Achilles injury", "value": "Left insertional (286d ago, 0d symptom-free '\u2192' 1.00 decay \u2192 15.0 pts)", "level": "high", "points": 15.0}, {"label": "Mileage change", "value": "-50% vs last week \u2713", "level": "low", "points": 0}]}, "last_run": {"date": "2026-10-26", "type": "running", "distance_km": 3.5, "duration_min": 19.9, "moving_duration_min": 19.9, "avg_pace_min_km": 5.78, "max_pace_min_km": 3.75, "avg_hr": 135.0, "max_hr": 153.0, "cadence": 174, "avg_stride_length": 95.22000122070312, "calories": 228.0, "elevation_m": 24, "max_elevation": null, "min_elevation": null, "gct_balance_left_pct": null, "avg_gct_ms": null, "avg_power": null, "max_power": 525.0, "training_effect_aerobic": 2.299999952316284, "training_effect_anaerobic": 0.6000000238418579, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.34, "hr": 133.0, "gct": 242.0, "gct_balance": 50, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.65, "hr": 139.0, "gct": 246.3, "gct_balance": 50, "cadence": 0, "power": 303.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 6.09, "hr": 136.0, "gct": 254.7, "gct_balance": 50, "cadence": 0, "power": 269.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 6.37, "hr": 125.0, "gct": 248.9, "gct_balance": 50, "cadence": 0, "power": 237.0, "vert_osc": null, "stride_length": null}]}, "recent_runs": [{"activity_id": 24850649260, "date": "2026-10-26", "type": "running", "distance_km": 3.5, "duration_min": 19.9, "moving_duration_min": 19.9, "avg_pace": 5.78, "max_pace": 3.75, "avg_hr": 135.0, "max_hr": 153.0, "cadence": 174, "avg_stride_length": 95.22000122070312, "calories": 228.0, "elevation_m": 24, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 525.0, "training_effect_aerobic": 2.299999952316284, "training_effect_anaerobic": 0.6000000238418579, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.34, "hr": 133.0, "gct": 242.0, "gct_balance": 50, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.65, "hr": 139.0, "gct": 246.3, "gct_balance": 50, "cadence": 0, "power": 303.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 6.09, "hr": 136.0, "gct": 254.7, "gct_balance": 50, "cadence": 0, "power": 269.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 6.37, "hr": 125.0, "gct": 248.9, "gct_balance": 50, "cadence": 0, "power": 237.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24828613273, "date": "2026-10-24", "type": "running", "distance_km": 4.0, "duration_min": 20.4, "moving_duration_min": 20.3, "avg_pace": 5.09, "max_pace": 4.27, "avg_hr": 149.0, "max_hr": 174.0, "cadence": 188, "avg_stride_length": 103.89000244140625, "calories": 265.0, "elevation_m": 20, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 449.0, "training_effect_aerobic": 3.0, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.2, "hr": 131.0, "gct": 246.5, "gct_balance": 50.0, "cadence": 0, "power": 306.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.6, "hr": 142.0, "gct": 245.8, "gct_balance": 50.1, "cadence": 0, "power": 302.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 4.98, "hr": 156.0, "gct": 239.4, "gct_balance": 50.1, "cadence": 0, "power": 337.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.61, "hr": 170.0, "gct": 232.8, "gct_balance": 50.0, "cadence": 0, "power": 365.0, "vert_osc": null, "stride_length": null}, {"km": 5, "pace": 3.2, "hr": 173.0, "gct": 230.0, "gct_balance": 49.8, "cadence": 0, "power": 356.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24806801929, "date": "2026-10-22", "type": "running", "distance_km": 3.0, "duration_min": 16.6, "moving_duration_min": 16.5, "avg_pace": 5.51, "max_pace": 4.93, "avg_hr": 144.0, "max_hr": 155.0, "cadence": 187, "avg_stride_length": 97.00999755859375, "calories": 204.0, "elevation_m": 10, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 380.0, "training_effect_aerobic": 2.5, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.34, "hr": 141.0, "gct": 244.3, "gct_balance": 50.5, "cadence": 0, "power": 305.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.57, "hr": 145.0, "gct": 244.3, "gct_balance": 51.0, "cadence": 0, "power": 299.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 5.62, "hr": 147.0, "gct": 245.6, "gct_balance": 50.9, "cadence": 0, "power": 299.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.58, "hr": 149.0, "gct": 256.0, "gct_balance": 51.0, "cadence": 0, "power": 281.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24760720004, "date": "2026-10-18", "type": "running", "distance_km": 3.0, "duration_min": 17.2, "moving_duration_min": 17.1, "avg_pace": 5.71, "max_pace": 4.52, "avg_hr": 135.0, "max_hr": 148.0, "cadence": 178, "avg_stride_length": 97.79000244140626, "calories": 195.0, "elevation_m": 15, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 423.0, "training_effect_aerobic": 2.200000047683716, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.41, "hr": 128.0, "gct": 241.9, "gct_balance": 49.1, "cadence": 0, "power": 318.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.79, "hr": 138.0, "gct": 250.6, "gct_balance": 50.3, "cadence": 0, "power": 294.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 5.94, "hr": 137.0, "gct": 248.6, "gct_balance": 50.6, "cadence": 0, "power": 287.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 5.7, "hr": 141.0, "gct": 253.0, "gct_balance": 50.5, "cadence": 0, "power": 285.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24749073714, "date": "2026-10-17", "type": "running", "distance_km": 3.0, "duration_min": 20.3, "moving_duration_min": 20.2, "avg_pace": 6.75, "max_pace": 4.7, "avg_hr": 136.0, "max_hr": 164.0, "cadence": 163, "avg_stride_length": 89.04000244140626, "calories": 214.0, "elevation_m": 17, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 398.0, "training_effect_aerobic": 2.0999999046325684, "training_effect_anaerobic": 0.10000000149011612, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.59, "hr": 133.0, "gct": 259.5, "gct_balance": 50.5, "cadence": 0, "power": 308.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 7.39, "hr": 136.0, "gct": 266.2, "gct_balance": 51.0, "cadence": 0, "power": 229.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 7.28, "hr": 139.0, "gct": 263.5, "gct_balance": 50.9, "cadence": 0, "power": 227.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 5.79, "hr": 147.0, "gct": 267.0, "gct_balance": 50.5, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24679730025, "date": "2026-10-11", "type": "running", "distance_km": 42.5, "duration_min": 217.9, "moving_duration_min": 217.5, "avg_pace": 5.12, "max_pace": 4.23, "avg_hr": 167.0, "max_hr": 188.0, "cadence": 180, "avg_stride_length": 107.04000244140626, "calories": 2874.0, "elevation_m": 154, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 483.0, "training_effect_aerobic": 5.0, "training_effect_anaerobic": 0.4000000059604645, "avg_temperature": null, "laps": [{"km": 1, "pace": 4.86, "hr": 150.0, "gct": 244.3, "gct_balance": 50.7, "cadence": 0, "power": 373.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 4.71, "hr": 151.0, "gct": 241.5, "gct_balance": 50.6, "cadence": 0, "power": 356.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 4.7, "hr": 147.0, "gct": 245.0, "gct_balance": 50.5, "cadence": 0, "power": 349.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.63, "hr": 151.0, "gct": 243.1, "gct_balance": 50.6, "cadence": 0, "power": 359.0, "vert_osc": null, "stride_length": null}, {"km": 5, "pace": 4.71, "hr": 154.0, "gct": 241.7, "gct_balance": 49.9, "cadence": 0, "power": 341.0, "vert_osc": null, "stride_length": null}, {"km": 6, "pace": 4.7, "hr": 162.0, "gct": 239.4, "gct_balance": 50.7, "cadence": 0, "power": 364.0, "vert_osc": null, "stride_length": null}, {"km": 7, "pace": 4.65, "hr": 160.0, "gct": 242.0, "gct_balance": 50.5, "cadence": 0, "power": 347.0, "vert_osc": null, "stride_length": null}, {"km": 8, "pace": 4.67, "hr": 160.0, "gct": 239.7, "gct_balance": 50.3, "cadence": 0, "power": 350.0, "vert_osc": null, "stride_length": null}, {"km": 9, "pace": 4.64, "hr": 175.0, "gct": 239.7, "gct_balance": 49.8, "cadence": 0, "power": 359.0, "vert_osc": null, "stride_length": null}, {"km": 10, "pace": 4.68, "hr": 176.0, "gct": 238.6, "gct_balance": 50.0, "cadence": 0, "power": 353.0, "vert_osc": null, "stride_length": null}, {"km": 11, "pace": 4.68, "hr": 173.0, "gct": 239.0, "gct_balance": 50.2, "cadence": 0, "power": 350.0, "vert_osc": null, "stride_length": null}, {"km": 12, "pace": 4.76, "hr": 175.0, "gct": 240.4, "gct_balance": 50.0, "cadence": 0, "power": 348.0, "vert_osc": null, "stride_length": null}, {"km": 13, "pace": 4.71, "hr": 173.0, "gct": 240.5, "gct_balance": 50.1, "cadence": 0, "power": 353.0, "vert_osc": null, "stride_length": null}, {"km": 14, "pace": 4.73, "hr": 175.0, "gct": 238.4, "gct_balance": 50.3, "cadence": 0, "power": 362.0, "vert_osc": null, "stride_length": null}, {"km": 15, "pace": 4.69, "hr": 174.0, "gct": 239.6, "gct_balance": 49.9, "cadence": 0, "power": 359.0, "vert_osc": null, "stride_length": null}, {"km": 16, "pace": 4.73, "hr": 175.0, "gct": 239.5, "gct_balance": 50.0, "cadence": 0, "power": 360.0, "vert_osc": null, "stride_length": null}, {"km": 17, "pace": 4.83, "hr": 173.0, "gct": 242.6, "gct_balance": 50.4, "cadence": 0, "power": 357.0, "vert_osc": null, "stride_length": null}, {"km": 18, "pace": 4.69, "hr": 172.0, "gct": 239.0, "gct_balance": 50.3, "cadence": 0, "power": 353.0, "vert_osc": null, "stride_length": null}, {"km": 19, "pace": 4.79, "hr": 173.0, "gct": 240.7, "gct_balance": 50.2, "cadence": 0, "power": 361.0, "vert_osc": null, "stride_length": null}, {"km": 20, "pace": 4.76, "hr": 175.0, "gct": 240.0, "gct_balance": 50.6, "cadence": 0, "power": 361.0, "vert_osc": null, "stride_length": null}, {"km": 21, "pace": 4.86, "hr": 175.0, "gct": 240.6, "gct_balance": 50.2, "cadence": 0, "power": 347.0, "vert_osc": null, "stride_length": null}, {"km": 22, "pace": 4.89, "hr": 173.0, "gct": 241.6, "gct_balance": 50.6, "cadence": 0, "power": 341.0, "vert_osc": null, "stride_length": null}, {"km": 23, "pace": 4.87, "hr": 173.0, "gct": 241.2, "gct_balance": 50.6, "cadence": 0, "power": 347.0, "vert_osc": null, "stride_length": null}, {"km": 24, "pace": 4.81, "hr": 172.0, "gct": 241.3, "gct_balance": 50.7, "cadence": 0, "power": 336.0, "vert_osc": null, "stride_length": null}, {"km": 25, "pace": 5.0, "hr": 172.0, "gct": 246.0, "gct_balance": 50.9, "cadence": 0, "power": 326.0, "vert_osc": null, "stride_length": null}, {"km": 26, "pace": 4.95, "hr": 172.0, "gct": 241.3, "gct_balance": 50.7, "cadence": 0, "power": 328.0, "vert_osc": null, "stride_length": null}, {"km": 27, "pace": 5.08, "hr": 172.0, "gct": 246.1, "gct_balance": 50.8, "cadence": 0, "power": 318.0, "vert_osc": null, "stride_length": null}, {"km": 28, "pace": 6.0, "hr": 165.0, "gct": 276.3, "gct_balance": 50.8, "cadence": 0, "power": 280.0, "vert_osc": null, "stride_length": null}, {"km": 29, "pace": 5.76, "hr": 166.0, "gct": 257.3, "gct_balance": 50.9, "cadence": 0, "power": 285.0, "vert_osc": null, "stride_length": null}, {"km": 30, "pace": 5.19, "hr": 169.0, "gct": 245.7, "gct_balance": 50.8, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 31, "pace": 5.2, "hr": 170.0, "gct": 247.0, "gct_balance": 50.7, "cadence": 0, "power": 317.0, "vert_osc": null, "stride_length": null}, {"km": 32, "pace": 5.57, "hr": 169.0, "gct": 259.9, "gct_balance": 50.7, "cadence": 0, "power": 298.0, "vert_osc": null, "stride_length": null}, {"km": 33, "pace": 5.66, "hr": 166.0, "gct": 259.2, "gct_balance": 51.0, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}, {"km": 34, "pace": 6.35, "hr": 162.0, "gct": 290.3, "gct_balance": 50.7, "cadence": 0, "power": 246.0, "vert_osc": null, "stride_length": null}, {"km": 35, "pace": 5.86, "hr": 162.0, "gct": 267.9, "gct_balance": 51.2, "cadence": 0, "power": 277.0, "vert_osc": null, "stride_length": null}, {"km": 36, "pace": 5.77, "hr": 168.0, "gct": 270.5, "gct_balance": 51.1, "cadence": 0, "power": 293.0, "vert_osc": null, "stride_length": null}, {"km": 37, "pace": 5.81, "hr": 167.0, "gct": 265.7, "gct_balance": 51.0, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}, {"km": 38, "pace": 6.0, "hr": 162.0, "gct": 262.2, "gct_balance": 51.2, "cadence": 0, "power": 280.0, "vert_osc": null, "stride_length": null}, {"km": 39, "pace": 6.55, "hr": 161.0, "gct": 297.1, "gct_balance": 51.0, "cadence": 0, "power": 250.0, "vert_osc": null, "stride_length": null}, {"km": 40, "pace": 5.61, "hr": 168.0, "gct": 258.6, "gct_balance": 51.4, "cadence": 0, "power": 293.0, "vert_osc": null, "stride_length": null}, {"km": 41, "pace": 5.91, "hr": 170.0, "gct": 261.5, "gct_balance": 50.4, "cadence": 0, "power": 294.0, "vert_osc": null, "stride_length": null}, {"km": 42, "pace": 5.37, "hr": 170.0, "gct": 248.8, "gct_balance": 50.7, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}, {"km": 43, "pace": 4.66, "hr": 177.0, "gct": 242.1, "gct_balance": 50.7, "cadence": 0, "power": 354.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24655409066, "date": "2026-10-09", "type": "running", "distance_km": 3.0, "duration_min": 15.7, "moving_duration_min": 15.6, "avg_pace": 5.22, "max_pace": 4.7, "avg_hr": 141.0, "max_hr": 155.0, "cadence": 187, "avg_stride_length": 102.14000244140625, "calories": 191.0, "elevation_m": 9, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 406.0, "training_effect_aerobic": 2.5, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.05, "hr": 133.0, "gct": 240.7, "gct_balance": 49.2, "cadence": 0, "power": 339.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.28, "hr": 143.0, "gct": 239.7, "gct_balance": 50.3, "cadence": 0, "power": 320.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 5.34, "hr": 146.0, "gct": 240.1, "gct_balance": 50.1, "cadence": 0, "power": 316.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.34, "hr": 148.0, "gct": 242.0, "gct_balance": 49.8, "cadence": 0, "power": 296.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24631296086, "date": "2026-10-07", "type": "running", "distance_km": 5.0, "duration_min": 24.2, "moving_duration_min": 24.0, "avg_pace": 4.84, "max_pace": 4.19, "avg_hr": 153.0, "max_hr": 197.0, "cadence": 188, "avg_stride_length": 108.2800048828125, "calories": 333.0, "elevation_m": 33, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 504.0, "training_effect_aerobic": 3.5999999046325684, "training_effect_anaerobic": 2.5999999046325684, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.12, "hr": 126.0, "gct": 243.3, "gct_balance": 49.8, "cadence": 0, "power": 323.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.48, "hr": 137.0, "gct": 244.7, "gct_balance": 49.9, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 4.45, "hr": 159.0, "gct": 232.2, "gct_balance": 49.8, "cadence": 0, "power": 383.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.6, "hr": 167.0, "gct": 234.0, "gct_balance": 50.0, "cadence": 0, "power": 378.0, "vert_osc": null, "stride_length": null}, {"km": 5, "pace": 4.57, "hr": 181.0, "gct": 230.8, "gct_balance": 49.6, "cadence": 0, "power": 379.0, "vert_osc": null, "stride_length": null}, {"km": 6, "pace": 3.0, "hr": 194.0, "gct": 216.5, "gct_balance": 47.5, "cadence": 0, "power": 477.0, "vert_osc": null, "stride_length": null}]}], "blood_pressure": [{"date": "2026-10-17 06:36", "diastolic": 80, "systolic": 121, "pulse": 52}, {"date": "2026-09-13 10:16", "diastolic": 78, "systolic": 119, "pulse": 58}, {"date": "2026-08-20 07:22", "diastolic": 83, "systolic": 129, "pulse": 64}, {"date": "2026-08-06 06:48", "diastolic": 83, "systolic": 127, "pulse": 57}, {"date": "2026-08-05 05:38", "diastolic": 80, "systolic": 120, "pulse": 58}, {"date": "2026-07-29 05:44", "diastolic": 74, "systolic": 117, "pulse": 55}, {"date": "2026-07-24 04:52", "diastolic": 78, "systolic": 119, "pulse": 54}, {"date": "2026-07-22 05:39", "diastolic": 76, "systolic": 114, "pulse": 54}, {"date": "2026-07-21 04:31", "diastolic": 74, "systolic": 114, "pulse": 55}, {"date": "2026-07-16 05:30", "diastolic": 79, "systolic": 116, "pulse": 57}, {"date": "2026-07-13 04:31", "diastolic": 75, "systolic": 120, "pulse": 57}, {"date": "2026-07-11 07:07", "diastolic": 76, "systolic": 119, "pulse": 59}, {"date": "2026-07-09 05:46", "diastolic": 76, "systolic": 118, "pulse": 58}, {"date": "2026-07-06 05:36", "diastolic": 80, "systolic": 121, "pulse": 58}, {"date": "2026-07-03 04:39", "diastolic": 81, "systolic": 121, "pulse": 55}, {"date": "2026-07-02 05:40", "diastolic": 70, "systolic": 110, "pulse": 60}, {"date": "2026-07-01 05:49", "diastolic": 76, "systolic": 113, "pulse": 59}, {"date": "2026-06-30 04:37", "diastolic": 83, "systolic": 117, "pulse": 60}, {"date": "2026-06-29 04:36", "diastolic": 76, "systolic": 120, "pulse": 57}, {"date": "2026-06-26 05:24", "diastolic": 74, "systolic": 114, "pulse": 60}], "checkins": [{"date": "2026-10-08", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-08T06:52:20.511Z"}, {"date": "2026-10-07", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-07T08:13:04.875Z"}, {"date": "2026-10-06", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-07T08:12:54.750Z"}, {"date": "2026-10-05", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-05T09:38:23.876Z"}, {"date": "2026-10-04", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-04T20:38:37.573Z"}, {"date": "2026-10-03", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-10-03T08:34:45.073Z"}, {"date": "2026-10-02", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-10-02T23:25:24.127Z"}, {"date": "2026-10-01", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-01T07:48:17.868Z"}, {"date": "2026-09-25", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-09-26T02:41:46.707Z"}, {"date": "2026-09-24", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-25T02:56:54.535Z"}, {"date": "2026-09-23", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-23T09:04:33.432Z"}, {"date": "2026-09-21", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-21T10:17:49.487Z"}, {"date": "2026-09-17", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-17T11:50:41.963Z"}, {"date": "2026-09-16", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-16T08:44:19.843Z"}, {"date": "2026-09-15", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-15T09:04:08.900Z"}, {"date": "2026-09-10", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-10T07:47:25.083Z"}, {"date": "2026-09-09", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-10T03:01:09.360Z"}, {"date": "2026-09-08", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-09T04:26:58.704Z"}, {"date": "2026-09-07", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-07T23:04:53.374Z"}, {"date": "2026-09-04", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-09-04T10:34:02.468Z"}, {"date": "2026-09-02", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-02T02:04:12.313Z"}, {"date": "2026-09-01", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-02T02:01:54.122Z"}, {"date": "2026-08-31", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-31T22:57:13.039Z"}, {"date": "2026-08-29", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-29T23:04:15.107Z"}, {"date": "2026-08-27", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-27T10:50:27.266Z"}, {"date": "2026-08-26", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-26T11:41:06.221Z"}, {"date": "2026-08-25", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-25T09:46:15.771Z"}, {"date": "2026-08-23", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-23T10:19:02.680Z"}, {"date": "2026-08-21", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-21T11:02:11.482Z"}, {"date": "2026-08-18", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-18T03:53:02.284Z"}], "latest_checkin": null, "stress": {"overall": null, "rest": null, "low": null, "med": null, "high": null}, "respiration": {"avg": null}, "spo2": {"avg": 97.0, "min": null, "max": null}, "body_composition": {}, "steps": {}, "floors": {"today": null, "goal": null}, "resting_hr_trend": []};
+const dashboardData = {"generated": "2026-10-30 15:23", "training": {"week": 27, "phase": "Taper", "week_in_phase": 3, "phase_total": 4, "days_to_race": -18, "phase_target_km": "30-40", "this_week_km": 3.5, "last_week_km": 7.0}, "load": {"acute_km": 7.4, "chronic_km": 28.6, "acr": 0.26, "acr_status": "low", "easy_pct": 50, "moderate_pct": 50, "hard_pct": 0, "btb_risk": false}, "tissue_capacity": {"score": 36, "level": "low", "limiting_factor": "Few long run exposures \u2014 limited repeated-bout adaptation"}, "monotony": {"score": 19, "level": "low"}, "readiness": {"score": null, "level": null, "sleep_score": null, "hrv_weekly_avg": null, "resting_hr": 53, "min_hr": 50, "max_hr": 59, "body_battery": 51, "recovery_time": null, "acwr": null, "feedback": null}, "hrv": {"weekly_avg": null, "daily_times": [], "daily_values": []}, "sleep": {"duration_hrs": null, "deep_hrs": null, "light_hrs": null, "rem_hrs": null, "awake_hrs": null, "score": null, "avg_spo2": null, "avg_respiration": null, "avg_stress": null, "levels": []}, "vo2max": null, "race_predictions": {"5k": "21:19", "10k": "44:56", "half": "1:38:34", "marathon": "3:34:03", "marathon_secs": 12843}, "endurance_score": {}, "running_tolerance": {"load": 4520, "tolerance": 53562, "pct": 8}, "training_load_balance": {}, "intensity_minutes": {"weekly_total": 42, "weekly_moderate": 2, "weekly_vigorous": 20, "goal": 150, "goal_met_day": null}, "intervals_icu": {"ctl": 19.1, "atl": 6.5, "tsb": 12.5, "ctl_atl_history": [{"date": "2026-08-01", "ctl": 27.0, "atl": 27.8, "tsb": -0.7, "ramp": 0.45}, {"date": "2026-08-02", "ctl": 26.4, "atl": 24.1, "tsb": 2.3, "ramp": 0.44}, {"date": "2026-08-03", "ctl": 26.1, "atl": 22.6, "tsb": 3.5, "ramp": -0.56}, {"date": "2026-08-04", "ctl": 26.4, "atl": 24.8, "tsb": 1.6, "ramp": -0.38}, {"date": "2026-08-05", "ctl": 26.2, "atl": 23.9, "tsb": 2.3, "ramp": -2.35}, {"date": "2026-08-06", "ctl": 26.4, "atl": 25.2, "tsb": 1.1, "ramp": -1.5}, {"date": "2026-08-07", "ctl": 25.7, "atl": 21.9, "tsb": 3.9, "ramp": -1.93}, {"date": "2026-08-08", "ctl": 25.1, "atl": 19.0, "tsb": 6.2, "ramp": -1.89}, {"date": "2026-08-09", "ctl": 24.6, "atl": 16.4, "tsb": 8.1, "ramp": -1.84}, {"date": "2026-08-10", "ctl": 24.8, "atl": 18.9, "tsb": 5.9, "ramp": -1.28}, {"date": "2026-08-11", "ctl": 25.2, "atl": 21.7, "tsb": 3.4, "ramp": -1.23}, {"date": "2026-08-12", "ctl": 27.2, "atl": 33.9, "tsb": -6.6, "ramp": 1.04}, {"date": "2026-08-13", "ctl": 26.6, "atl": 29.4, "tsb": -2.8, "ramp": 0.21}, {"date": "2026-08-14", "ctl": 26.6, "atl": 29.2, "tsb": -2.6, "ramp": 0.87}, {"date": "2026-08-15", "ctl": 26.0, "atl": 25.3, "tsb": 0.7, "ramp": 0.85}, {"date": "2026-08-16", "ctl": 25.4, "atl": 21.9, "tsb": 3.5, "ramp": 0.83}, {"date": "2026-08-17", "ctl": 24.8, "atl": 19.0, "tsb": 5.8, "ramp": -0.02}, {"date": "2026-08-18", "ctl": 24.2, "atl": 16.5, "tsb": 7.7, "ramp": -0.96}, {"date": "2026-08-19", "ctl": 23.6, "atl": 14.3, "tsb": 9.3, "ramp": -3.59}, {"date": "2026-08-20", "ctl": 23.6, "atl": 15.2, "tsb": 8.4, "ramp": -3.02}, {"date": "2026-08-21", "ctl": 24.5, "atl": 21.8, "tsb": 2.7, "ramp": -2.07}, {"date": "2026-08-22", "ctl": 25.8, "atl": 29.2, "tsb": -3.4, "ramp": -0.21}, {"date": "2026-08-23", "ctl": 26.1, "atl": 30.5, "tsb": -4.4, "ramp": 0.71}, {"date": "2026-08-24", "ctl": 25.5, "atl": 26.4, "tsb": -0.9, "ramp": 0.69}, {"date": "2026-08-25", "ctl": 25.6, "atl": 27.2, "tsb": -1.5, "ramp": 1.43}, {"date": "2026-08-26", "ctl": 27.5, "atl": 37.5, "tsb": -10.0, "ramp": 3.87}, {"date": "2026-08-27", "ctl": 26.8, "atl": 32.5, "tsb": -5.7, "ramp": 3.28}, {"date": "2026-08-28", "ctl": 26.2, "atl": 28.2, "tsb": -2.0, "ramp": 1.67}, {"date": "2026-08-29", "ctl": 27.4, "atl": 34.6, "tsb": -7.2, "ramp": 1.61}, {"date": "2026-08-30", "ctl": 26.7, "atl": 30.0, "tsb": -3.2, "ramp": 0.66}, {"date": "2026-08-31", "ctl": 26.5, "atl": 28.2, "tsb": -1.7, "ramp": 1.04}, {"date": "2026-09-01", "ctl": 26.5, "atl": 28.2, "tsb": -1.7, "ramp": 0.92}, {"date": "2026-09-02", "ctl": 29.3, "atl": 43.4, "tsb": -14.1, "ramp": 1.77}, {"date": "2026-09-03", "ctl": 28.6, "atl": 37.6, "tsb": -9.0, "ramp": 1.73}, {"date": "2026-09-04", "ctl": 27.9, "atl": 32.6, "tsb": -4.7, "ramp": 1.69}, {"date": "2026-09-05", "ctl": 28.0, "atl": 32.6, "tsb": -4.6, "ramp": 0.64}, {"date": "2026-09-06", "ctl": 27.4, "atl": 28.3, "tsb": -0.9, "ramp": 0.62}, {"date": "2026-09-07", "ctl": 26.7, "atl": 24.5, "tsb": 2.2, "ramp": 0.21}, {"date": "2026-09-08", "ctl": 27.1, "atl": 27.2, "tsb": -0.1, "ramp": 0.6}, {"date": "2026-09-09", "ctl": 26.5, "atl": 23.6, "tsb": 2.9, "ramp": -2.75}, {"date": "2026-09-10", "ctl": 26.9, "atl": 25.9, "tsb": 0.9, "ramp": -1.72}, {"date": "2026-09-11", "ctl": 26.2, "atl": 22.5, "tsb": 3.7, "ramp": -1.68}, {"date": "2026-09-12", "ctl": 28.5, "atl": 36.1, "tsb": -7.6, "ramp": 0.52}, {"date": "2026-09-13", "ctl": 27.9, "atl": 31.3, "tsb": -3.4, "ramp": 0.51}, {"date": "2026-09-14", "ctl": 27.2, "atl": 27.2, "tsb": 0.1, "ramp": 0.5}, {"date": "2026-09-15", "ctl": 27.3, "atl": 27.5, "tsb": -0.2, "ramp": 0.13}, {"date": "2026-09-16", "ctl": 27.5, "atl": 28.9, "tsb": -1.4, "ramp": 1.02}, {"date": "2026-09-17", "ctl": 26.9, "atl": 25.1, "tsb": 1.8, "ramp": 0.03}, {"date": "2026-09-18", "ctl": 26.3, "atl": 21.7, "tsb": 4.5, "ramp": 0.03}, {"date": "2026-09-19", "ctl": 25.6, "atl": 18.8, "tsb": 6.8, "ramp": -2.91}, {"date": "2026-09-20", "ctl": 25.0, "atl": 16.3, "tsb": 8.7, "ramp": -2.84}, {"date": "2026-09-21", "ctl": 24.4, "atl": 14.2, "tsb": 10.3, "ramp": -2.77}, {"date": "2026-09-22", "ctl": 24.3, "atl": 14.8, "tsb": 9.5, "ramp": -2.97}, {"date": "2026-09-23", "ctl": 25.1, "atl": 20.6, "tsb": 4.6, "ramp": -2.43}, {"date": "2026-09-24", "ctl": 24.5, "atl": 17.8, "tsb": 6.7, "ramp": -2.37}, {"date": "2026-09-25", "ctl": 23.9, "atl": 15.4, "tsb": 8.5, "ramp": -2.31}, {"date": "2026-09-26", "ctl": 23.9, "atl": 16.5, "tsb": 7.5, "ramp": -1.72}, {"date": "2026-09-27", "ctl": 23.4, "atl": 14.3, "tsb": 9.1, "ramp": -1.68}, {"date": "2026-09-28", "ctl": 23.0, "atl": 13.4, "tsb": 9.6, "ramp": -1.45}, {"date": "2026-09-29", "ctl": 22.7, "atl": 13.1, "tsb": 9.6, "ramp": -1.6}, {"date": "2026-09-30", "ctl": 22.7, "atl": 14.3, "tsb": 8.4, "ramp": -2.41}, {"date": "2026-10-01", "ctl": 23.0, "atl": 16.9, "tsb": 6.0, "ramp": -1.56}, {"date": "2026-10-02", "ctl": 22.4, "atl": 14.7, "tsb": 7.8, "ramp": -1.52}, {"date": "2026-10-03", "ctl": 23.1, "atl": 19.4, "tsb": 3.7, "ramp": -0.85}, {"date": "2026-10-04", "ctl": 22.5, "atl": 16.8, "tsb": 5.7, "ramp": -0.83}, {"date": "2026-10-05", "ctl": 22.5, "atl": 17.3, "tsb": 5.1, "ramp": -0.5}, {"date": "2026-10-06", "ctl": 22.3, "atl": 17.2, "tsb": 5.2, "ramp": -0.37}, {"date": "2026-10-07", "ctl": 22.4, "atl": 18.5, "tsb": 4.0, "ramp": -0.25}, {"date": "2026-10-08", "ctl": 21.9, "atl": 16.0, "tsb": 5.9, "ramp": -1.04}, {"date": "2026-10-09", "ctl": 21.7, "atl": 15.3, "tsb": 6.3, "ramp": -0.76}, {"date": "2026-10-10", "ctl": 21.2, "atl": 13.3, "tsb": 7.8, "ramp": -1.92}, {"date": "2026-10-11", "ctl": 27.9, "atl": 52.5, "tsb": -24.6, "ramp": 5.38}, {"date": "2026-10-12", "ctl": 27.2, "atl": 45.5, "tsb": -18.3, "ramp": 4.75}, {"date": "2026-10-13", "ctl": 26.6, "atl": 39.5, "tsb": -12.9, "ramp": 4.27}, {"date": "2026-10-14", "ctl": 26.0, "atl": 34.2, "tsb": -8.2, "ramp": 3.53}, {"date": "2026-10-15", "ctl": 25.4, "atl": 29.7, "tsb": -4.3, "ramp": 3.45}, {"date": "2026-10-16", "ctl": 24.8, "atl": 25.7, "tsb": -0.9, "ramp": 3.11}, {"date": "2026-10-17", "ctl": 24.5, "atl": 24.0, "tsb": 0.5, "ramp": 3.34}, {"date": "2026-10-18", "ctl": 24.2, "atl": 22.3, "tsb": 1.9, "ramp": -3.73}, {"date": "2026-10-19", "ctl": 23.6, "atl": 19.3, "tsb": 4.3, "ramp": -3.64}, {"date": "2026-10-20", "ctl": 23.1, "atl": 16.8, "tsb": 6.3, "ramp": -3.55}, {"date": "2026-10-21", "ctl": 22.5, "atl": 14.5, "tsb": 8.0, "ramp": -3.47}, {"date": "2026-10-22", "ctl": 22.3, "atl": 14.3, "tsb": 8.0, "ramp": -3.08}, {"date": "2026-10-23", "ctl": 21.8, "atl": 12.4, "tsb": 9.3, "ramp": -3.01}, {"date": "2026-10-24", "ctl": 21.7, "atl": 13.3, "tsb": 8.4, "ramp": -2.8}, {"date": "2026-10-25", "ctl": 21.2, "atl": 11.5, "tsb": 9.7, "ramp": -2.99}, {"date": "2026-10-26", "ctl": 21.0, "atl": 11.6, "tsb": 9.4, "ramp": -2.64}, {"date": "2026-10-27", "ctl": 20.5, "atl": 10.0, "tsb": 10.4, "ramp": -2.58}, {"date": "2026-10-28", "ctl": 20.0, "atl": 8.7, "tsb": 11.3, "ramp": -2.51}, {"date": "2026-10-29", "ctl": 19.5, "atl": 7.5, "tsb": 12.0, "ramp": -2.76}, {"date": "2026-10-30", "ctl": 19.1, "atl": 6.5, "tsb": 12.5, "ramp": -2.7}]}, "recovery": {"score": 53, "level": "moderate", "factors": [{"label": "HRV (no data)", "score": 17, "weight": "35%", "status": "unknown"}, {"label": "Sleep (no data)", "score": 15, "weight": "30%", "status": "unknown"}, {"label": "Resting HR (53 bpm)", "score": 14, "weight": "20%", "status": "moderate"}, {"label": "Readiness (no data)", "score": 7, "weight": "15%", "status": "unknown"}]}, "why_today": {"positives": ["Load ratio 0.26 \u2014 within safe zone", "Achilles watch-list clear"], "negatives": ["Tissue capacity low (36/100) \u2014 tendon not fully adapted", "Rain 100% \u2014 surface may be slippery"], "decision": "Reduce today's session by 20-30%. One key flag \u2014 don't push through.", "limiter": null}, "achilles": {"score": 15.0, "level": "low", "factors": [{"label": "Long run distance", "value": "4.0km \u2713", "level": "low", "points": 0}, {"label": "Session density", "value": "0 big sessions in 5 days \u2713", "level": "low", "points": 0}, {"label": "Cadence", "value": "Stable 181 spm \u2713", "level": "low", "points": 0}, {"label": "GCT", "value": "248ms (baseline 248ms) \u2713", "level": "low", "points": 0}, {"label": "Previous Achilles injury", "value": "Left insertional (287d ago, 0d symptom-free '\u2192' 1.00 decay \u2192 15.0 pts)", "level": "high", "points": 15.0}, {"label": "Mileage change", "value": "-50% vs last week \u2713", "level": "low", "points": 0}]}, "last_run": {"date": "2026-10-26", "type": "running", "distance_km": 3.5, "duration_min": 19.9, "moving_duration_min": 19.9, "avg_pace_min_km": 5.78, "max_pace_min_km": 3.75, "avg_hr": 135.0, "max_hr": 153.0, "cadence": 174, "avg_stride_length": 95.22000122070312, "calories": 228.0, "elevation_m": 24, "max_elevation": null, "min_elevation": null, "gct_balance_left_pct": null, "avg_gct_ms": null, "avg_power": null, "max_power": 525.0, "training_effect_aerobic": 2.299999952316284, "training_effect_anaerobic": 0.6000000238418579, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.34, "hr": 133.0, "gct": 242.0, "gct_balance": 50, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.65, "hr": 139.0, "gct": 246.3, "gct_balance": 50, "cadence": 0, "power": 303.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 6.09, "hr": 136.0, "gct": 254.7, "gct_balance": 50, "cadence": 0, "power": 269.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 6.37, "hr": 125.0, "gct": 248.9, "gct_balance": 50, "cadence": 0, "power": 237.0, "vert_osc": null, "stride_length": null}]}, "recent_runs": [{"activity_id": 24850649260, "date": "2026-10-26", "type": "running", "distance_km": 3.5, "duration_min": 19.9, "moving_duration_min": 19.9, "avg_pace": 5.78, "max_pace": 3.75, "avg_hr": 135.0, "max_hr": 153.0, "cadence": 174, "avg_stride_length": 95.22000122070312, "calories": 228.0, "elevation_m": 24, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 525.0, "training_effect_aerobic": 2.299999952316284, "training_effect_anaerobic": 0.6000000238418579, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.34, "hr": 133.0, "gct": 242.0, "gct_balance": 50, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.65, "hr": 139.0, "gct": 246.3, "gct_balance": 50, "cadence": 0, "power": 303.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 6.09, "hr": 136.0, "gct": 254.7, "gct_balance": 50, "cadence": 0, "power": 269.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 6.37, "hr": 125.0, "gct": 248.9, "gct_balance": 50, "cadence": 0, "power": 237.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24828613273, "date": "2026-10-24", "type": "running", "distance_km": 4.0, "duration_min": 20.4, "moving_duration_min": 20.3, "avg_pace": 5.09, "max_pace": 4.27, "avg_hr": 149.0, "max_hr": 174.0, "cadence": 188, "avg_stride_length": 103.89000244140625, "calories": 265.0, "elevation_m": 20, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 449.0, "training_effect_aerobic": 3.0, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.2, "hr": 131.0, "gct": 246.5, "gct_balance": 50.0, "cadence": 0, "power": 306.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.6, "hr": 142.0, "gct": 245.8, "gct_balance": 50.1, "cadence": 0, "power": 302.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 4.98, "hr": 156.0, "gct": 239.4, "gct_balance": 50.1, "cadence": 0, "power": 337.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.61, "hr": 170.0, "gct": 232.8, "gct_balance": 50.0, "cadence": 0, "power": 365.0, "vert_osc": null, "stride_length": null}, {"km": 5, "pace": 3.2, "hr": 173.0, "gct": 230.0, "gct_balance": 49.8, "cadence": 0, "power": 356.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24806801929, "date": "2026-10-22", "type": "running", "distance_km": 3.0, "duration_min": 16.6, "moving_duration_min": 16.5, "avg_pace": 5.51, "max_pace": 4.93, "avg_hr": 144.0, "max_hr": 155.0, "cadence": 187, "avg_stride_length": 97.00999755859375, "calories": 204.0, "elevation_m": 10, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 380.0, "training_effect_aerobic": 2.5, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.34, "hr": 141.0, "gct": 244.3, "gct_balance": 50.5, "cadence": 0, "power": 305.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.57, "hr": 145.0, "gct": 244.3, "gct_balance": 51.0, "cadence": 0, "power": 299.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 5.62, "hr": 147.0, "gct": 245.6, "gct_balance": 50.9, "cadence": 0, "power": 299.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.58, "hr": 149.0, "gct": 256.0, "gct_balance": 51.0, "cadence": 0, "power": 281.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24760720004, "date": "2026-10-18", "type": "running", "distance_km": 3.0, "duration_min": 17.2, "moving_duration_min": 17.1, "avg_pace": 5.71, "max_pace": 4.52, "avg_hr": 135.0, "max_hr": 148.0, "cadence": 178, "avg_stride_length": 97.79000244140626, "calories": 195.0, "elevation_m": 15, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 423.0, "training_effect_aerobic": 2.200000047683716, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.41, "hr": 128.0, "gct": 241.9, "gct_balance": 49.1, "cadence": 0, "power": 318.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.79, "hr": 138.0, "gct": 250.6, "gct_balance": 50.3, "cadence": 0, "power": 294.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 5.94, "hr": 137.0, "gct": 248.6, "gct_balance": 50.6, "cadence": 0, "power": 287.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 5.7, "hr": 141.0, "gct": 253.0, "gct_balance": 50.5, "cadence": 0, "power": 285.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24749073714, "date": "2026-10-17", "type": "running", "distance_km": 3.0, "duration_min": 20.3, "moving_duration_min": 20.2, "avg_pace": 6.75, "max_pace": 4.7, "avg_hr": 136.0, "max_hr": 164.0, "cadence": 163, "avg_stride_length": 89.04000244140626, "calories": 214.0, "elevation_m": 17, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 398.0, "training_effect_aerobic": 2.0999999046325684, "training_effect_anaerobic": 0.10000000149011612, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.59, "hr": 133.0, "gct": 259.5, "gct_balance": 50.5, "cadence": 0, "power": 308.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 7.39, "hr": 136.0, "gct": 266.2, "gct_balance": 51.0, "cadence": 0, "power": 229.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 7.28, "hr": 139.0, "gct": 263.5, "gct_balance": 50.9, "cadence": 0, "power": 227.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 5.79, "hr": 147.0, "gct": 267.0, "gct_balance": 50.5, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24679730025, "date": "2026-10-11", "type": "running", "distance_km": 42.5, "duration_min": 217.9, "moving_duration_min": 217.5, "avg_pace": 5.12, "max_pace": 4.23, "avg_hr": 167.0, "max_hr": 188.0, "cadence": 180, "avg_stride_length": 107.04000244140626, "calories": 2874.0, "elevation_m": 154, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 483.0, "training_effect_aerobic": 5.0, "training_effect_anaerobic": 0.4000000059604645, "avg_temperature": null, "laps": [{"km": 1, "pace": 4.86, "hr": 150.0, "gct": 244.3, "gct_balance": 50.7, "cadence": 0, "power": 373.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 4.71, "hr": 151.0, "gct": 241.5, "gct_balance": 50.6, "cadence": 0, "power": 356.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 4.7, "hr": 147.0, "gct": 245.0, "gct_balance": 50.5, "cadence": 0, "power": 349.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.63, "hr": 151.0, "gct": 243.1, "gct_balance": 50.6, "cadence": 0, "power": 359.0, "vert_osc": null, "stride_length": null}, {"km": 5, "pace": 4.71, "hr": 154.0, "gct": 241.7, "gct_balance": 49.9, "cadence": 0, "power": 341.0, "vert_osc": null, "stride_length": null}, {"km": 6, "pace": 4.7, "hr": 162.0, "gct": 239.4, "gct_balance": 50.7, "cadence": 0, "power": 364.0, "vert_osc": null, "stride_length": null}, {"km": 7, "pace": 4.65, "hr": 160.0, "gct": 242.0, "gct_balance": 50.5, "cadence": 0, "power": 347.0, "vert_osc": null, "stride_length": null}, {"km": 8, "pace": 4.67, "hr": 160.0, "gct": 239.7, "gct_balance": 50.3, "cadence": 0, "power": 350.0, "vert_osc": null, "stride_length": null}, {"km": 9, "pace": 4.64, "hr": 175.0, "gct": 239.7, "gct_balance": 49.8, "cadence": 0, "power": 359.0, "vert_osc": null, "stride_length": null}, {"km": 10, "pace": 4.68, "hr": 176.0, "gct": 238.6, "gct_balance": 50.0, "cadence": 0, "power": 353.0, "vert_osc": null, "stride_length": null}, {"km": 11, "pace": 4.68, "hr": 173.0, "gct": 239.0, "gct_balance": 50.2, "cadence": 0, "power": 350.0, "vert_osc": null, "stride_length": null}, {"km": 12, "pace": 4.76, "hr": 175.0, "gct": 240.4, "gct_balance": 50.0, "cadence": 0, "power": 348.0, "vert_osc": null, "stride_length": null}, {"km": 13, "pace": 4.71, "hr": 173.0, "gct": 240.5, "gct_balance": 50.1, "cadence": 0, "power": 353.0, "vert_osc": null, "stride_length": null}, {"km": 14, "pace": 4.73, "hr": 175.0, "gct": 238.4, "gct_balance": 50.3, "cadence": 0, "power": 362.0, "vert_osc": null, "stride_length": null}, {"km": 15, "pace": 4.69, "hr": 174.0, "gct": 239.6, "gct_balance": 49.9, "cadence": 0, "power": 359.0, "vert_osc": null, "stride_length": null}, {"km": 16, "pace": 4.73, "hr": 175.0, "gct": 239.5, "gct_balance": 50.0, "cadence": 0, "power": 360.0, "vert_osc": null, "stride_length": null}, {"km": 17, "pace": 4.83, "hr": 173.0, "gct": 242.6, "gct_balance": 50.4, "cadence": 0, "power": 357.0, "vert_osc": null, "stride_length": null}, {"km": 18, "pace": 4.69, "hr": 172.0, "gct": 239.0, "gct_balance": 50.3, "cadence": 0, "power": 353.0, "vert_osc": null, "stride_length": null}, {"km": 19, "pace": 4.79, "hr": 173.0, "gct": 240.7, "gct_balance": 50.2, "cadence": 0, "power": 361.0, "vert_osc": null, "stride_length": null}, {"km": 20, "pace": 4.76, "hr": 175.0, "gct": 240.0, "gct_balance": 50.6, "cadence": 0, "power": 361.0, "vert_osc": null, "stride_length": null}, {"km": 21, "pace": 4.86, "hr": 175.0, "gct": 240.6, "gct_balance": 50.2, "cadence": 0, "power": 347.0, "vert_osc": null, "stride_length": null}, {"km": 22, "pace": 4.89, "hr": 173.0, "gct": 241.6, "gct_balance": 50.6, "cadence": 0, "power": 341.0, "vert_osc": null, "stride_length": null}, {"km": 23, "pace": 4.87, "hr": 173.0, "gct": 241.2, "gct_balance": 50.6, "cadence": 0, "power": 347.0, "vert_osc": null, "stride_length": null}, {"km": 24, "pace": 4.81, "hr": 172.0, "gct": 241.3, "gct_balance": 50.7, "cadence": 0, "power": 336.0, "vert_osc": null, "stride_length": null}, {"km": 25, "pace": 5.0, "hr": 172.0, "gct": 246.0, "gct_balance": 50.9, "cadence": 0, "power": 326.0, "vert_osc": null, "stride_length": null}, {"km": 26, "pace": 4.95, "hr": 172.0, "gct": 241.3, "gct_balance": 50.7, "cadence": 0, "power": 328.0, "vert_osc": null, "stride_length": null}, {"km": 27, "pace": 5.08, "hr": 172.0, "gct": 246.1, "gct_balance": 50.8, "cadence": 0, "power": 318.0, "vert_osc": null, "stride_length": null}, {"km": 28, "pace": 6.0, "hr": 165.0, "gct": 276.3, "gct_balance": 50.8, "cadence": 0, "power": 280.0, "vert_osc": null, "stride_length": null}, {"km": 29, "pace": 5.76, "hr": 166.0, "gct": 257.3, "gct_balance": 50.9, "cadence": 0, "power": 285.0, "vert_osc": null, "stride_length": null}, {"km": 30, "pace": 5.19, "hr": 169.0, "gct": 245.7, "gct_balance": 50.8, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 31, "pace": 5.2, "hr": 170.0, "gct": 247.0, "gct_balance": 50.7, "cadence": 0, "power": 317.0, "vert_osc": null, "stride_length": null}, {"km": 32, "pace": 5.57, "hr": 169.0, "gct": 259.9, "gct_balance": 50.7, "cadence": 0, "power": 298.0, "vert_osc": null, "stride_length": null}, {"km": 33, "pace": 5.66, "hr": 166.0, "gct": 259.2, "gct_balance": 51.0, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}, {"km": 34, "pace": 6.35, "hr": 162.0, "gct": 290.3, "gct_balance": 50.7, "cadence": 0, "power": 246.0, "vert_osc": null, "stride_length": null}, {"km": 35, "pace": 5.86, "hr": 162.0, "gct": 267.9, "gct_balance": 51.2, "cadence": 0, "power": 277.0, "vert_osc": null, "stride_length": null}, {"km": 36, "pace": 5.77, "hr": 168.0, "gct": 270.5, "gct_balance": 51.1, "cadence": 0, "power": 293.0, "vert_osc": null, "stride_length": null}, {"km": 37, "pace": 5.81, "hr": 167.0, "gct": 265.7, "gct_balance": 51.0, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}, {"km": 38, "pace": 6.0, "hr": 162.0, "gct": 262.2, "gct_balance": 51.2, "cadence": 0, "power": 280.0, "vert_osc": null, "stride_length": null}, {"km": 39, "pace": 6.55, "hr": 161.0, "gct": 297.1, "gct_balance": 51.0, "cadence": 0, "power": 250.0, "vert_osc": null, "stride_length": null}, {"km": 40, "pace": 5.61, "hr": 168.0, "gct": 258.6, "gct_balance": 51.4, "cadence": 0, "power": 293.0, "vert_osc": null, "stride_length": null}, {"km": 41, "pace": 5.91, "hr": 170.0, "gct": 261.5, "gct_balance": 50.4, "cadence": 0, "power": 294.0, "vert_osc": null, "stride_length": null}, {"km": 42, "pace": 5.37, "hr": 170.0, "gct": 248.8, "gct_balance": 50.7, "cadence": 0, "power": 289.0, "vert_osc": null, "stride_length": null}, {"km": 43, "pace": 4.66, "hr": 177.0, "gct": 242.1, "gct_balance": 50.7, "cadence": 0, "power": 354.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24655409066, "date": "2026-10-09", "type": "running", "distance_km": 3.0, "duration_min": 15.7, "moving_duration_min": 15.6, "avg_pace": 5.22, "max_pace": 4.7, "avg_hr": 141.0, "max_hr": 155.0, "cadence": 187, "avg_stride_length": 102.14000244140625, "calories": 191.0, "elevation_m": 9, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 406.0, "training_effect_aerobic": 2.5, "training_effect_anaerobic": 0.0, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.05, "hr": 133.0, "gct": 240.7, "gct_balance": 49.2, "cadence": 0, "power": 339.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.28, "hr": 143.0, "gct": 239.7, "gct_balance": 50.3, "cadence": 0, "power": 320.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 5.34, "hr": 146.0, "gct": 240.1, "gct_balance": 50.1, "cadence": 0, "power": 316.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.34, "hr": 148.0, "gct": 242.0, "gct_balance": 49.8, "cadence": 0, "power": 296.0, "vert_osc": null, "stride_length": null}]}, {"activity_id": 24631296086, "date": "2026-10-07", "type": "running", "distance_km": 5.0, "duration_min": 24.2, "moving_duration_min": 24.0, "avg_pace": 4.84, "max_pace": 4.19, "avg_hr": 153.0, "max_hr": 197.0, "cadence": 188, "avg_stride_length": 108.2800048828125, "calories": 333.0, "elevation_m": 33, "max_elevation": null, "min_elevation": null, "avg_gct_ms": null, "gct_balance_left": null, "avg_power": null, "max_power": 504.0, "training_effect_aerobic": 3.5999999046325684, "training_effect_anaerobic": 2.5999999046325684, "avg_temperature": null, "laps": [{"km": 1, "pace": 5.12, "hr": 126.0, "gct": 243.3, "gct_balance": 49.8, "cadence": 0, "power": 323.0, "vert_osc": null, "stride_length": null}, {"km": 2, "pace": 5.48, "hr": 137.0, "gct": 244.7, "gct_balance": 49.9, "cadence": 0, "power": 314.0, "vert_osc": null, "stride_length": null}, {"km": 3, "pace": 4.45, "hr": 159.0, "gct": 232.2, "gct_balance": 49.8, "cadence": 0, "power": 383.0, "vert_osc": null, "stride_length": null}, {"km": 4, "pace": 4.6, "hr": 167.0, "gct": 234.0, "gct_balance": 50.0, "cadence": 0, "power": 378.0, "vert_osc": null, "stride_length": null}, {"km": 5, "pace": 4.57, "hr": 181.0, "gct": 230.8, "gct_balance": 49.6, "cadence": 0, "power": 379.0, "vert_osc": null, "stride_length": null}, {"km": 6, "pace": 3.0, "hr": 194.0, "gct": 216.5, "gct_balance": 47.5, "cadence": 0, "power": 477.0, "vert_osc": null, "stride_length": null}]}], "blood_pressure": [{"date": "2026-10-17 06:36", "diastolic": 80, "systolic": 121, "pulse": 52}, {"date": "2026-09-13 10:16", "diastolic": 78, "systolic": 119, "pulse": 58}, {"date": "2026-08-20 07:22", "diastolic": 83, "systolic": 129, "pulse": 64}, {"date": "2026-08-06 06:48", "diastolic": 83, "systolic": 127, "pulse": 57}, {"date": "2026-08-05 05:38", "diastolic": 80, "systolic": 120, "pulse": 58}, {"date": "2026-07-29 05:44", "diastolic": 74, "systolic": 117, "pulse": 55}, {"date": "2026-07-24 04:52", "diastolic": 78, "systolic": 119, "pulse": 54}, {"date": "2026-07-22 05:39", "diastolic": 76, "systolic": 114, "pulse": 54}, {"date": "2026-07-21 04:31", "diastolic": 74, "systolic": 114, "pulse": 55}, {"date": "2026-07-16 05:30", "diastolic": 79, "systolic": 116, "pulse": 57}, {"date": "2026-07-13 04:31", "diastolic": 75, "systolic": 120, "pulse": 57}, {"date": "2026-07-11 07:07", "diastolic": 76, "systolic": 119, "pulse": 59}, {"date": "2026-07-09 05:46", "diastolic": 76, "systolic": 118, "pulse": 58}, {"date": "2026-07-06 05:36", "diastolic": 80, "systolic": 121, "pulse": 58}, {"date": "2026-07-03 04:39", "diastolic": 81, "systolic": 121, "pulse": 55}, {"date": "2026-07-02 05:40", "diastolic": 70, "systolic": 110, "pulse": 60}, {"date": "2026-07-01 05:49", "diastolic": 76, "systolic": 113, "pulse": 59}, {"date": "2026-06-30 04:37", "diastolic": 83, "systolic": 117, "pulse": 60}, {"date": "2026-06-29 04:36", "diastolic": 76, "systolic": 120, "pulse": 57}, {"date": "2026-06-26 05:24", "diastolic": 74, "systolic": 114, "pulse": 60}], "checkins": [{"date": "2026-10-08", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-08T06:52:20.511Z"}, {"date": "2026-10-07", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-07T08:13:04.875Z"}, {"date": "2026-10-06", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-07T08:12:54.750Z"}, {"date": "2026-10-05", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-05T09:38:23.876Z"}, {"date": "2026-10-04", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-04T20:38:37.573Z"}, {"date": "2026-10-03", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-10-03T08:34:45.073Z"}, {"date": "2026-10-02", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-10-02T23:25:24.127Z"}, {"date": "2026-10-01", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-10-01T07:48:17.868Z"}, {"date": "2026-09-25", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-09-26T02:41:46.707Z"}, {"date": "2026-09-24", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-25T02:56:54.535Z"}, {"date": "2026-09-23", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-23T09:04:33.432Z"}, {"date": "2026-09-21", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-21T10:17:49.487Z"}, {"date": "2026-09-17", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-17T11:50:41.963Z"}, {"date": "2026-09-16", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-16T08:44:19.843Z"}, {"date": "2026-09-15", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-15T09:04:08.900Z"}, {"date": "2026-09-10", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-10T07:47:25.083Z"}, {"date": "2026-09-09", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-10T03:01:09.360Z"}, {"date": "2026-09-08", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-09T04:26:58.704Z"}, {"date": "2026-09-07", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-07T23:04:53.374Z"}, {"date": "2026-09-04", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": false, "source": "browser", "saved_at": "2026-09-04T10:34:02.468Z"}, {"date": "2026-09-02", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-02T02:04:12.313Z"}, {"date": "2026-09-01", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-09-02T02:01:54.122Z"}, {"date": "2026-08-31", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-31T22:57:13.039Z"}, {"date": "2026-08-29", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-29T23:04:15.107Z"}, {"date": "2026-08-27", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-27T10:50:27.266Z"}, {"date": "2026-08-26", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-26T11:41:06.221Z"}, {"date": "2026-08-25", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-25T09:46:15.771Z"}, {"date": "2026-08-23", "stiffness": 0, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-23T10:19:02.680Z"}, {"date": "2026-08-21", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-21T11:02:11.482Z"}, {"date": "2026-08-18", "stiffness": 1, "first_steps_pain": 0, "post_run_pain": 0, "calf_raises": true, "source": "browser", "saved_at": "2026-08-18T03:53:02.284Z"}], "latest_checkin": null, "stress": {"overall": null, "rest": null, "low": null, "med": null, "high": null}, "respiration": {"avg": null}, "spo2": {"avg": 97.0, "min": null, "max": null}, "body_composition": {}, "steps": {}, "floors": {"today": null, "goal": null}, "resting_hr_trend": []};
 
 renderJournal();
 renderLessons();
