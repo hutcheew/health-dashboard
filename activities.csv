@@ -1,4 +1,5 @@
 activity_id,date,garmin_type,session_type,session_confidence,distance_km,duration_min,moving_duration_min,avg_pace_min_km,avg_pace_sec_km,max_pace_min_km,avg_hr,max_hr,elevation_gain_m,avg_gct_ms,gct_balance_left_pct,balance_symmetry_pp,avg_cadence_spm,avg_stride_cm,avg_power_w,max_power_w,aerobic_te,anaerobic_te,avg_temperature_c,calories,training_load,ctl,atl,hr_drift_pct,hr_drift_valid,efficiency_factor,pain_before,pain_stiffness,pain_first_steps,pain_post_run,pain_during,rpe,feel,journal_pain,mood_before,mood_after,sleep_hours,tags
+25123256364,2026-11-19,running,fartlek,0.5,3.5,21.0,20.0,5.97,358.2,3.45,140.0,164.0,22,,,,171,98.97999877929688,,589.0,2.5999999046325684,0.699999988079071,,247.0,14,14.4,6.6,,False,,,,,,,,,,,,,
 25080376408,2026-11-15,running,interval,0.6,4.6,26.2,26.0,5.69,341.4,3.09,147.0,184.0,27,,,,177,98.22999877929688,,583.0,3.200000047683716,2.0999999046325684,,321.0,24,15.5,8.4,,False,,,,,,,,,,,,,
 25057826608,2026-11-13,running,steady,0.6,3.5,20.3,20.2,5.79,347.4,3.38,141.0,164.0,33,,,,179,95.87000122070313,,671.0,2.5999999046325684,1.899999976158142,,238.0,15,15.7,7.0,,True,,,,,,,,,,,,,
 25023039259,2026-11-10,running,fartlek,0.5,3.5,21.4,20.4,6.08,364.8,3.46,140.0,175.0,24,,,,176,94.39000244140625,,572.0,2.700000047683716,1.899999976158142,,252.0,15,16.4,7.7,,False,,,,,,,,,,,,,
@@ -38,4 +39,3 @@ activity_id,date,garmin_type,session_type,session_confidence,distance_km,duratio
 24180227561,2026-08-31,treadmill_running,steady,0.6,3.0,11.7,11.6,3.9,234.0,4.66,149.0,172.0,0,,,,184,98.82999877929689,,364.0,2.700000047683716,2.0,,152.0,,,,,True,,,0,0,0,,,,,,,,
 24180073949,2026-08-31,treadmill_running,steady,0.6,2.0,12.0,11.7,5.98,358.8,3.93,125.0,132.0,0,,,,175,135.0300048828125,,441.0,1.600000023841858,0.0,,126.0,,,,,True,,,0,0,0,,,,,,,,
 24156239957,2026-08-29,running,steady,0.6,9.0,51.3,51.2,5.7,342.0,4.73,143.0,152.0,69,,,,184,95.27000122070314,,427.0,3.4000000953674316,0.0,,634.0,,,,,True,,,0,0,0,,,,,,,,
-24153577764,2026-08-29,running,steady,0.6,9.0,50.1,50.0,5.56,333.6,4.93,142.0,153.0,47,,,,185,97.05000000000001,,390.0,3.4000000953674316,0.0,,631.0,,,,,True,,,0,0,0,,,,,,,,
