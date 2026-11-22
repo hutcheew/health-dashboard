@@ -1,4 +1,9 @@
 activity_id,date,garmin_type,session_type,interval_number,distance_km,pace_min_km,avg_hr,avg_power,gct_ms,gct_balance_left_pct,cadence_spm,stride_cm,vert_osc_mm
+25156115055,2026-11-22,running,interval,1,1,5.32,132.0,312.0,244.1,50.8,0,,
+25156115055,2026-11-22,running,interval,2,2,5.85,140.0,296.0,248.7,50.7,0,,
+25156115055,2026-11-22,running,interval,3,3,5.93,144.0,287.0,248.8,50.9,0,,
+25156115055,2026-11-22,running,interval,4,4,4.54,169.0,371.0,232.2,50.3,0,,
+25156115055,2026-11-22,running,interval,5,5,7.64,155.0,172.0,314.3,49.3,0,,
 25144966644,2026-11-21,running,interval,1,1,5.36,132.0,331.0,251.0,50.2,0,,
 25144966644,2026-11-21,running,interval,2,2,5.9,140.0,298.0,254.5,50.5,0,,
 25144966644,2026-11-21,running,interval,3,3,6.01,142.0,294.0,254.8,50.4,0,,
@@ -313,6 +318,3 @@ activity_id,date,garmin_type,session_type,interval_number,distance_km,pace_min_k
 24180227561,2026-08-31,treadmill_running,steady,1,1,5.56,141.0,287.0,245.9,50,0,,
 24180227561,2026-08-31,treadmill_running,steady,2,2,5.5,156.0,292.0,245.4,50,0,,
 24180227561,2026-08-31,treadmill_running,steady,3,3,5.32,171.0,304.0,241.3,50,0,,
-24180073949,2026-08-31,treadmill_running,steady,1,1,4.47,121.0,369.0,233.0,50,0,,
-24180073949,2026-08-31,treadmill_running,steady,2,2,4.16,127.0,396.0,231.0,50,0,,
-24180073949,2026-08-31,treadmill_running,steady,3,3,4.17,128.0,393.0,230.8,50,0,,

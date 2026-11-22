@@ -13339,16 +13339,16 @@
   {
     "date": "2026-11-22",
     "inputs": {
-      "resting_hr": null,
-      "hrv": null,
-      "sleep_score": null,
-      "body_battery": null,
-      "ran_today": false,
+      "resting_hr": 50,
+      "hrv": 31,
+      "sleep_score": 76,
+      "body_battery": 41,
+      "ran_today": true,
       "last_run": {
-        "date": "2026-11-21",
-        "distance": 4.5,
-        "pace": 5.58,
-        "avg_hr": 146.0
+        "date": "2026-11-22",
+        "distance": 4.6,
+        "pace": 5.7,
+        "avg_hr": 147.0
       },
       "checkin_stiffness": null,
       "checkin_first_steps_pain": null,
@@ -13362,12 +13362,12 @@
       "checkin_pain_returned": null
     },
     "scores": {
-      "readiness": null,
-      "recovery": 49,
-      "achilles": 25.0,
+      "readiness": 72,
+      "recovery": 54,
+      "achilles": 15.0,
       "tissue_capacity": 1,
-      "monotony": 64,
-      "acr": 1.53
+      "monotony": 62,
+      "acr": 1.99
     },
     "injury_model_shadow": {
       "state": "ACTIVE_INJURY",
