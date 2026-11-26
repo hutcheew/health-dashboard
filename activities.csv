@@ -1,4 +1,5 @@
 activity_id,date,garmin_type,session_type,session_confidence,distance_km,duration_min,moving_duration_min,avg_pace_min_km,avg_pace_sec_km,max_pace_min_km,avg_hr,max_hr,elevation_gain_m,avg_gct_ms,gct_balance_left_pct,balance_symmetry_pp,avg_cadence_spm,avg_stride_cm,avg_power_w,max_power_w,aerobic_te,anaerobic_te,avg_temperature_c,calories,training_load,ctl,atl,hr_drift_pct,hr_drift_valid,efficiency_factor,pain_before,pain_stiffness,pain_first_steps,pain_post_run,pain_during,rpe,feel,journal_pain,mood_before,mood_after,sleep_hours,tags
+25201900258,2026-11-26,running,hill,0.7,3.6,21.5,21.4,5.96,357.6,3.01,146.0,172.0,47,,,,173,96.02000122070314,,641.0,2.799999952316284,1.399999976158142,,260.0,18,13.6,8.0,,False,,,,,,,,,,,,,
 25156115055,2026-11-22,running,interval,0.6,4.6,26.2,26.1,5.7,342.0,2.88,147.0,178.0,20,,,,176,97.87000122070313,,510.0,3.200000047683716,2.0,,330.0,23,14.5,9.9,,False,,,,,,,,,,,,,
 25144966644,2026-11-21,running,interval,0.6,4.5,25.1,25.0,5.58,334.8,3.31,146.0,180.0,27,,,,176,99.67999877929688,,545.0,3.0999999046325684,1.7000000476837158,,309.0,22,14.3,7.9,,False,,,,,,,,,,,,,
 25123256364,2026-11-19,running,fartlek,0.5,3.5,21.0,20.0,5.97,358.2,3.45,140.0,164.0,22,,,,171,98.97999877929688,,589.0,2.5999999046325684,0.699999988079071,,247.0,14,14.4,6.6,,False,,,,,,,,,,,,,
@@ -38,4 +39,3 @@ activity_id,date,garmin_type,session_type,session_confidence,distance_km,duratio
 24240820875,2026-09-05,running,fartlek,0.5,8.0,45.2,45.2,5.65,339.0,4.84,141.0,152.0,45,,,,186,94.99000244140626,,456.0,3.299999952316284,0.0,,567.0,,,,,False,,,,,,,,,,,,,
 24207213055,2026-09-02,running,fartlek,0.5,30.0,163.0,162.8,5.43,325.8,4.31,147.0,182.0,227,,,,185,99.65999755859376,,488.0,5.0,0.20000000298023224,,2058.0,,,,,False,,,0,0,0,,,,,,,,
 24188499823,2026-09-01,running,steady,0.6,7.0,38.3,38.2,5.47,328.2,4.81,141.0,150.0,37,,,,188,97.47999877929688,,435.0,3.200000047683716,0.0,,488.0,,,,,True,,,0,0,0,,,,,,,,
-24180227561,2026-08-31,treadmill_running,steady,0.6,3.0,11.7,11.6,3.9,234.0,4.66,149.0,172.0,0,,,,184,98.82999877929689,,364.0,2.700000047683716,2.0,,152.0,,,,,True,,,0,0,0,,,,,,,,
